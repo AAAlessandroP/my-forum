@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+    <script language="javascript" type="text/javascript" src="./script.js"></script>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg" style="background-color:yellowgreen">
+                Fai l'accesso
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg" style="background-color:yellowgreen">
+                Utenza:<input type="text" id="Codice"><br>
+                Codice:<input type="password" id="passw">
+                <input type="button" value="Fai l'accesso" id="submitLogin">
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg" style="background-color:coral">
+                <fieldset>
+                    <legend>aggiungi/modifica:</legend>
+                    <div class="input-group mt-2 mb-2">
+                        <input type="text" class="form-control" name="nomefile" id="nomefile"
+                            placeholder="nome del file">
+                    </div>
+                    <div class="input-group mt-2 mb-2">
+
+                        <textarea class="form-control" placeholder="testo da aggiungere" rows="5"
+                            id="texttoadd"></textarea>
+                    </div>
+                    
+                    <input class="btn btn-dark" type="button" value="add" id="submitAdd">
+                </fieldset>
+            </div>
+
+            <div class="col-xs" style="background-color:cornflowerblue">
+                <fieldset style="padding: 0px 15px 0px 15px">
+                    <legend>tutti:</legend>
+                    <input class="btn btn-dark" type="button" value="elenca tutti" id="submitAll">
+                </fieldset>
+            </div>
+
+            <div class="col-md" style="background-color:crimson">
+                <fieldset>
+                    <legend>cerca:</legend>
+                    <div class="input-group mt-2 mb-2">
+                        <input type="text" class="form-control" name="tosearch" id="tosearch" placeholder="nome">
+                    </div>
+                    
+                    <input class="btn btn-dark" type="button" value="cerca" id="submitCerca">
+                </fieldset>
+            </div>
+
+            <div class="col-md" style="background-color:darkcyan">
+                <fieldset>
+                    <legend>terminale:</legend>
+                    <div class="form-group">
+                        <label for="out">risultato:</label>
+                        <textarea class="form-control" rows="5" id="output"></textarea>
+                    </div>
+                </fieldset>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+
+</html>

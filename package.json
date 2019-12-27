@@ -10,7 +10,9 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.16.4"
+    "express": "^4.12.4",
+    "mongodb": "*",
+    "cors": "^2.8.5"
   },
   "engines": {
     "node": "8.x"

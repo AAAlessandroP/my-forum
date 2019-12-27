@@ -1,11 +1,18 @@
-// server.js
-// where your node app starts
+var express = require("express");
+var bodyParser = require("body-parser");
+const crypto = require("crypto");
+var cors = require("cors"); // se volgio accettare req anche non provenienti da questa pag
+const MongoClient = require("mongodb").MongoClient;
+var app = express();
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cors())// ok richieste get/post da pagine diverse da una di questo sitoson
+app.use(bodyParser.json());
 
-// init project
-const express = require("express");
-const cors = require("cors");
-const app = express();
-app.use(cors())
+app.use(express.static("mia_pag")); // include con USE
+
+app.listen(3000);
+
+console.log("* app in funzione *");
 const uri = `mongodb+srv://r00t:${process.env.PASS}@miocluster2-igwb8.mongodb.net/test?retryWrites=true&w=majority`;
 
 var sessioni = {};
