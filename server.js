@@ -45,7 +45,6 @@ app.post("/login", (req, res) => {
                     Utente: resFind.Name,
                     chiave: pass
                 };
-                // console.log(`sessioni dopo /login`, sessioni);
                 res.send(sessId);
             } else res.sendStatus(401);
             db.close();
@@ -123,7 +122,7 @@ app.post("/newActivity", (req, res) => {
                 AppartenenteA: sessioni[sessid].IDUtente
             };
             var dbo = db.db("trello");
-            dbo.collection("utenti").insertOne(nuovaAttivita, function (err, resIns) {
+            dbo.collection("dati").insertOne(nuovaAttivita, function (err, resIns) {
                 console.log(`resIns`, resIns);
                 if (err) {
                     res.sendStatus(401);

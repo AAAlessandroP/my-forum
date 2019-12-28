@@ -36,7 +36,8 @@ $(function () {
 
     $("#submitAdd").click(() => {
         $(".row:eq(2)").append(proto($("#nome").val(), $("#texttoadd")[0].value))
-
+        $("#nome").val("")
+        $("#texttoadd")[0].value=""
         $("input.modifica").click(() => {
             console.log("sd");
 
