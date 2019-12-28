@@ -150,7 +150,7 @@ app.post("/allNote", function (req, res) {
             var dbo = db.db("trello");
             dbo
                 .collection("dati")
-                .find({ appartenenteA: sessioni[sessid].IDUtente }, (err, resFind) => {
+                .find({ appartenenteA: sessioni[sessid].IDUtente }).toArray((err, resFind) => {
 
                     console.log(`resFind`, resFind);
                     if (err) {
@@ -158,13 +158,17 @@ app.post("/allNote", function (req, res) {
                         db.close();
                         throw err;
                     }
-                    if (resFind) {
+                    if (resFind.length != 0) {
                         let key = sessioni[sessid].chiave;
-                        let decrittato = crypto
+                        resFind.forEach(element => {
+                            decrittato = crypto
                             .createDecipher("aes-256-ctr", key)
-                            .update(resFind.dato.toString(), "hex", "utf-8");
+                            .update(resFind.testo.toString(), "hex", "utf-8");
+                            decrittati.push(decrittato)
+                        });
+                        
                         res.send(nome + ":\n" + decrittato);
-                    } else res.send("non trovato");
+                    } else res.send("nulla salvato");
                     db.close();
                 }
                 );
