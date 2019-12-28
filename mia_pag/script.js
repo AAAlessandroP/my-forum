@@ -4,7 +4,7 @@ $(function () {
     var m_sessid = "dummy";
     $(".container:eq(1)").hide();
 
-    let arr = ["coral", "magenta", "cyan"]
+    let arr = ["coral", "magenta", "cyan", "AntiqueWhite", "Chartreuse "]
 
     function proto(nome, txt) {
 
@@ -27,7 +27,7 @@ $(function () {
     }
 
     $("#submitAdd").click(() => {
-        $(".row:eq(1)").append(proto($("#nome").val(), $("#texttoadd")[0].value))
+        $(".row:eq(2)").append(proto($("#nome").val(), $("#texttoadd")[0].value))
 
         $("input.modifica").click(() => {
             console.log("sd");
