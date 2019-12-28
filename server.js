@@ -95,18 +95,56 @@ app.post("/newActivity", (req, res) => {
 
     if (sessioni[sessid])
         MongoClient.connect(uri, { useNewUrlParser: true }, (err, db) => {
-            if (err) throw err;
-            var dbo = db.db("trello");
 
+            if (err) throw err;
+            let key = sessioni[sessid].chiave;
+            let testoCrittato = crypto
+                .createCipher("aes-256-ctr", key)
+                .update(testo.toString(), "utf-8", "hex");
             var nuovaAttivita = {
                 Name: nome,
-                Text: testo,
+                Text: testoCrittato,
                 AppartenenteA: sessioni[sessid].IDUtente
             };
+            var dbo = db.db("trello");
             dbo.collection("utenti").insertOne(nuovaAttivita, function (err, resIns) {
+                console.log(`resIns`, resIns);
                 if (err) throw err;
-                console.log("1 nuovo utente inserito");
+                console.log("1 nuovo doc inserito");
             });
         });
     else res.sendStatus(401);
+});
+
+
+app.post("/allNote", function (req, res) {
+    var sessid = req.body.sessid;
+    var nome = req.body.cosa;
+    if (sessioni[sessid]) {
+        MongoClient.connect(uri, { useNewUrlParser: true }, (err, db) => {
+            if (err) throw err;
+            var dbo = db.db("sicurezza_dati");
+            dbo
+                .collection("dati")
+                .findOne(
+                    { Titolo: nome, appartenenteA: sessioni[sessid].IDUtente },
+                    function (err, resFind) {
+                        console.log(`resFind`, resFind);
+                        if (err) {
+                            res.sendStatus(401);
+                            db.close();
+                            throw err;
+                        }
+                        if (resFind) {
+                            let key = sessioni[sessid].chiave;
+                            let decrittato = crypto
+                                .createDecipher("aes-256-ctr", key)
+                                .update(resFind.dato.toString(), "hex", "utf-8");
+                            res.send(nome + ":\n" + decrittato);
+                        } else res.send("non trovato");
+                        db.close();
+                    }
+                );
+        });
+    } else res.sendStatus(401);
 });
