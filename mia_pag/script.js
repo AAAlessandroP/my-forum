@@ -1,10 +1,42 @@
 $(function () {
+
     $("#output").val("")// pulisco per f5
     var m_sessid = "dummy";
     $(".container:eq(1)").hide();
 
+    let arr = ["coral", "magenta", "cyan"]
+
+    function proto(nome, txt) {
+
+        let randColor = arr[Math.floor(Math.random() * arr.length)];
+        return `
+        <div class="col-3" style="background-color:${randColor}">
+            <fieldset>
+                <legend>nota</legend>
+                <div class="input-group mt-2 mb-2">
+                    <input type="text" class="form-control" value="${nome}">
+                </div>
+                <div class="input-group mt-2 mb-2">
+
+                    <textarea class="form-control" rows="3">${txt}</textarea>
+                </div>
+
+                <input class="modifica btn btn-dark" type="button" value="modifica" class="modifica">
+            </fieldset>
+        </div>`;
+    }
+
+    $("#submitAdd").click(() => {
+        $(".row:eq(1)").append(proto($("#nome").val(), $("#texttoadd")[0].value))
+
+        $("input.modifica").click(() => {
+            console.log("sd");
+            
+        })
+    })
+
+
     $("#submitLogin").click(() => {
-        console.log("submitLogin");
 
         $.post("/login",
             {
@@ -18,6 +50,23 @@ $(function () {
                     $(".container:eq(1)").show(1000);
                 }
                 else alert("riprova credenziali")
+            });
+    });
+
+    $("#submitRegistrati").click(() => {
+
+        $.post("/addUser",
+            {
+                utente: $("#Codice").val(),
+                passw: $("#passw").val()
+            }).always((receivedData, status) => {
+                console.log(`status`, status);
+
+                if (status == "success") {
+                    m_sessid = receivedData
+                    $(".container:eq(1)").show(1000);
+                }
+                else alert("oopsie doopsie")
             });
     });
 

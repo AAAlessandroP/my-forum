@@ -23,8 +23,9 @@
         <div class="row">
             <div class="col-lg" style="background-color:yellowgreen">
                 Utenza:<input type="text" id="Codice"><br>
-                Codice:<input type="password" id="passw">
+                Codice d'accesso:<input type="password" id="passw">
                 <input type="button" value="Fai l'accesso" id="submitLogin">
+                <input type="button" value="registrati" id="submitRegistrati">
             </div>
         </div>
     </div>
@@ -32,50 +33,23 @@
     <div class="container">
         <div class="row">
 
-            <div class="col-lg" style="background-color:coral">
+            <div class="col-3" style="background-color:coral">
                 <fieldset>
-                    <legend>aggiungi/modifica:</legend>
+                    <legend>nota</legend>
                     <div class="input-group mt-2 mb-2">
-                        <input type="text" class="form-control" name="nomefile" id="nomefile"
+                        <input type="text" class="form-control" name="nomefile" id="nome"
                             placeholder="nome del file">
                     </div>
                     <div class="input-group mt-2 mb-2">
 
-                        <textarea class="form-control" placeholder="testo da aggiungere" rows="5"
+                        <textarea class="form-control" placeholder="testo da aggiungere" rows="3"
                             id="texttoadd"></textarea>
                     </div>
-                    
+
                     <input class="btn btn-dark" type="button" value="add" id="submitAdd">
                 </fieldset>
             </div>
-
-            <div class="col-xs" style="background-color:cornflowerblue">
-                <fieldset style="padding: 0px 15px 0px 15px">
-                    <legend>tutti:</legend>
-                    <input class="btn btn-dark" type="button" value="elenca tutti" id="submitAll">
-                </fieldset>
-            </div>
-
-            <div class="col-md" style="background-color:crimson">
-                <fieldset>
-                    <legend>cerca:</legend>
-                    <div class="input-group mt-2 mb-2">
-                        <input type="text" class="form-control" name="tosearch" id="tosearch" placeholder="nome">
-                    </div>
-                    
-                    <input class="btn btn-dark" type="button" value="cerca" id="submitCerca">
-                </fieldset>
-            </div>
-
-            <div class="col-md" style="background-color:darkcyan">
-                <fieldset>
-                    <legend>terminale:</legend>
-                    <div class="form-group">
-                        <label for="out">risultato:</label>
-                        <textarea class="form-control" rows="5" id="output"></textarea>
-                    </div>
-                </fieldset>
-            </div>
+            <div class="col-9"></div>
 
         </div>
     </div>
