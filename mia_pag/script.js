@@ -4,7 +4,13 @@ $(function () {
     var m_sessid = "dummy";
     $(".container:eq(1)").hide();
 
-    function ge
+    function getAllNotes() {
+
+        $.post("/allNote", { sessid: m_sessid }).always((dati) => {
+            console.log(`dati`, dati);
+        });
+    }
+
     let arr = ["coral", "magenta", "cyan", "AntiqueWhite", "Chartreuse", "DarkSeaGreen "]
 
     function proto(nome, txt) {
@@ -50,6 +56,7 @@ $(function () {
                 if (status == "success") {
                     m_sessid = receivedData
                     $(".container:eq(1)").show(1000);
+                    getAllNotes()
                 }
                 else alert("riprova credenziali")
             });
@@ -66,6 +73,7 @@ $(function () {
 
                 if (status == "success") {
                     m_sessid = receivedData
+                    getAllNotes()
                     $(".container:eq(1)").show(1000);
                 }
                 else alert("oopsie doopsie")

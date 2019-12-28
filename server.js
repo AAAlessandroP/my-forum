@@ -7,7 +7,7 @@ var app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors())// ok richieste get/post da pagine diverse da una di questo sitoson
 app.use(bodyParser.json());
-
+ 
 app.use(express.static("mia_pag")); // include con USE
 
 app.listen(3000);
