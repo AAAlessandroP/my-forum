@@ -4,6 +4,7 @@ $(function () {
     var m_sessid = "dummy";
     $(".container:eq(1)").hide();
 
+    function ge
     let arr = ["coral", "magenta", "cyan", "AntiqueWhite", "Chartreuse", "DarkSeaGreen "]
 
     function proto(nome, txt) {

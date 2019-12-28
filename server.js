@@ -137,7 +137,6 @@ app.post("/newActivity", (req, res) => {
     else res.sendStatus(401);
 });
 
-
 app.post("/allNote", function (req, res) {
     var sessid = req.body.sessid;
     if (sessioni[sessid]) {
@@ -159,15 +158,16 @@ app.post("/allNote", function (req, res) {
                         throw err;
                     }
                     if (resFind.length != 0) {
-                        let key = sessioni[sessid].chiave;
+                        let tutti = []
+                        const key = sessioni[sessid].chiave;
                         resFind.forEach(element => {
                             decrittato = crypto
-                            .createDecipher("aes-256-ctr", key)
-                            .update(resFind.testo.toString(), "hex", "utf-8");
-                            decrittati.push(decrittato)
+                                .createDecipher("aes-256-ctr", key)
+                                .update(element.Text.toString(), "hex", "utf-8");
+                            tutti.push({ nome: element.name, testo: decrittato })
                         });
-                        
-                        res.send(nome + ":\n" + decrittato);
+
+                        res.json(tutti)
                     } else res.send("nulla salvato");
                     db.close();
                 }
