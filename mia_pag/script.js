@@ -4,7 +4,7 @@ $(function () {
     var m_sessid = "dummy";
     $(".container:eq(1)").hide();
 
-    let arr = ["coral", "magenta", "cyan", "AntiqueWhite", "Chartreuse "]
+    let arr = ["coral", "magenta", "cyan", "AntiqueWhite", "Chartreuse","DarkSeaGreen "]
 
     function proto(nome, txt) {
 
