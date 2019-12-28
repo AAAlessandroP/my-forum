@@ -4,10 +4,10 @@ $(function () {
     var m_sessid = "dummy";
     $(".container:eq(1)").hide();
 
-    let arr = ["coral", "magenta", "cyan", "AntiqueWhite", "Chartreuse","DarkSeaGreen "]
+    let arr = ["coral", "magenta", "cyan", "AntiqueWhite", "Chartreuse", "DarkSeaGreen "]
 
     function proto(nome, txt) {
-        $.post("/newActivity",{nome:nome,testo:txt})
+        $.post("/newActivity", { sessid: m_sessid, nome: nome, testo: txt })
 
         let randColor = arr[Math.floor(Math.random() * arr.length)];
         return `
@@ -32,7 +32,7 @@ $(function () {
 
         $("input.modifica").click(() => {
             console.log("sd");
-            
+
         })
     })
 
