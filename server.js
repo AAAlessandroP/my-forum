@@ -89,5 +89,20 @@ app.post("/addUser", (req, res) => {
 });
 
 app.post("/newActivity", (req, res) => {
+    var nome = req.body.nome;
+    var testo = req.body.testo;
+    MongoClient.connect(uri, { useNewUrlParser: true }, (err, db) => {
+        if (err) throw err;
+        var dbo = db.db("trello");
 
+        var nuovaAttivita = {
+            Name: nome,
+            Text: testo,
+            AppartenenteA: 
+        };
+        dbo.collection("utenti").insertOne(nuovaAttivita, function (err, resIns) {
+            if (err) throw err;
+            console.log("1 nuovo utente inserito");
+        });
+    });
 });
