@@ -7,6 +7,7 @@ $(function () {
     let arr = ["coral", "magenta", "cyan", "AntiqueWhite", "Chartreuse","DarkSeaGreen "]
 
     function proto(nome, txt) {
+        $.post("/newActivity",{nome:nome,testo:txt})
 
         let randColor = arr[Math.floor(Math.random() * arr.length)];
         return `
