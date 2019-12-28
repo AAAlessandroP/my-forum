@@ -22,7 +22,11 @@ app.post("/login", (req, res) => {
     var pass = req.body.passw;
 
     MongoClient.connect(uri, { useNewUrlParser: true }, (err, db) => {
-        if (err) throw err;
+        if (err) {
+            res.sendStatus(401);
+            db.close();
+            throw err;
+        }
         var dbo = db.db("trello");
 
         dbo.collection("utenti").findOne({ Name: name }, function (err, resFind) {
@@ -58,7 +62,11 @@ app.post("/addUser", (req, res) => {
     let hashed = hash.digest("base64");
 
     MongoClient.connect(uri, { useNewUrlParser: true }, (err, db) => {
-        if (err) throw err;
+        if (err) {
+            res.sendStatus(401);
+            db.close();
+            throw err;
+        }
         var dbo = db.db("trello");
 
         var nuovo_utente = {
@@ -67,7 +75,11 @@ app.post("/addUser", (req, res) => {
             HashedPwd: hashed
         };
         dbo.collection("utenti").insertOne(nuovo_utente, function (err, resIns) {
-            if (err) throw err;
+            if (err) {
+                res.sendStatus(401);
+                db.close();
+                throw err;
+            }
             console.log("1 nuovo utente inserito");
             dbo.collection("utenti").findOne(nuovo_utente, function (err, resFind) {
                 if (err) {
@@ -96,7 +108,11 @@ app.post("/newActivity", (req, res) => {
     if (sessioni[sessid])
         MongoClient.connect(uri, { useNewUrlParser: true }, (err, db) => {
 
-            if (err) throw err;
+            if (err) {
+                res.sendStatus(401);
+                db.close();
+                throw err;
+            }
             let key = sessioni[sessid].chiave;
             let testoCrittato = crypto
                 .createCipher("aes-256-ctr", key)
@@ -109,8 +125,13 @@ app.post("/newActivity", (req, res) => {
             var dbo = db.db("trello");
             dbo.collection("utenti").insertOne(nuovaAttivita, function (err, resIns) {
                 console.log(`resIns`, resIns);
-                if (err) throw err;
+                if (err) {
+                    res.sendStatus(401);
+                    db.close();
+                    throw err;
+                }
                 console.log("1 nuovo doc inserito");
+                res.sendStatus(200);
             });
         });
     else res.sendStatus(401);
@@ -121,12 +142,16 @@ app.post("/allNote", function (req, res) {
     var sessid = req.body.sessid;
     if (sessioni[sessid]) {
         MongoClient.connect(uri, { useNewUrlParser: true }, (err, db) => {
-            if (err) throw err;
+            if (err) {
+                res.sendStatus(401);
+                db.close();
+                throw err;
+            }
             var dbo = db.db("trello");
             dbo
                 .collection("dati")
                 .find({ appartenenteA: sessioni[sessid].IDUtente }, (err, resFind) => {
-                    
+
                     console.log(`resFind`, resFind);
                     if (err) {
                         res.sendStatus(401);
