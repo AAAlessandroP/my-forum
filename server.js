@@ -143,7 +143,7 @@ app.post("/allNote", function (req, res) {
             console.log(`sessioni[sessid].IDUtente`, sessioni[sessid].IDUtente);
             dbo
                 .collection("dati")
-                .find({ appartenenteA: sessioni[sessid].IDUtente })
+                .find({/* appartenenteA: "5e08aea771b84b01083c41a4" */})
                 .toArray(function (err, resFind) {
                  
                     console.log(`resFind`, resFind);
