@@ -8,13 +8,15 @@ $(function () {
 
         $.post("/allNote", { sessid: m_sessid }).always((dati) => {
             console.log(`dati`, dati);
+            dati.forEach(element => {
+                
+            });
         });
     }
 
     let arr = ["coral", "magenta", "cyan", "AntiqueWhite", "Chartreuse", "DarkSeaGreen "]
 
     function proto(nome, txt) {
-        $.post("/newActivity", { sessid: m_sessid, nome: nome, testo: txt })
 
         let randColor = arr[Math.floor(Math.random() * arr.length)];
         return `
@@ -35,6 +37,7 @@ $(function () {
     }
 
     $("#submitAdd").click(() => {
+        $.post("/newActivity", { sessid: m_sessid, nome: $("#nome").val(), testo: $("#texttoadd")[0].value })
         $(".row:eq(2)").append(proto($("#nome").val(), $("#texttoadd")[0].value))
         $("#nome").val("")
         $("#texttoadd")[0].value=""
