@@ -146,6 +146,7 @@ app.post("/allNote", function (req, res) {
                 throw err;
             }
             var dbo = db.db("trello");
+            console.log(`sessioni[sessid].IDUtente`, sessioni[sessid].IDUtente);
             dbo
                 .collection("dati")
                 .find({ appartenenteA: sessioni[sessid].IDUtente }).toArray((err, resFind) => {
