@@ -7,7 +7,7 @@ var app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors())// ok richieste get/post da pagine diverse da una di questo sitoson
 app.use(bodyParser.json());
- 
+
 app.use(express.static("mia_pag")); // include con USE
 
 app.listen(3000);
@@ -74,27 +74,21 @@ app.post("/addUser", (req, res) => {
             HashedPwd: hashed
         };
         dbo.collection("utenti").insertOne(nuovo_utente, function (err, resIns) {
-            if (err) {
+            if (err || resIns.insertedCount != 1) {
                 res.sendStatus(401);
                 db.close();
                 throw err;
             }
+
+            var sessId = crypto.randomBytes(32).toString("hex");
+            sessioni[sessId] = {
+                IDUtente: resIns.insertedId,
+                Utente: name,
+                chiave: pass
+            };
             console.log("1 nuovo utente inserito");
-            dbo.collection("utenti").findOne(nuovo_utente, function (err, resFind) {
-                if (err) {
-                    res.sendStatus(401);
-                    db.close();
-                    throw err;
-                }
-                var sessId = crypto.randomBytes(32).toString("hex");
-                sessioni[sessId] = {
-                    IDUtente: resFind._id,
-                    Utente: nuovo_utente.Name,
-                    chiave: pass
-                };
-                res.send(sessId);
-                db.close();
-            });
+            res.send(sessId);
+            db.close();
         });
     });
 });
