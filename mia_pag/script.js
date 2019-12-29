@@ -19,7 +19,7 @@ $(function () {
     function proto(nome, txt, _id) {
 
         let randColor = arr[Math.floor(Math.random() * arr.length)];
-        let s = `
+        return `
         <div class="col-3" id="${_id}" style="background-color:${randColor}">
             <fieldset>
                 <legend>nota</legend>
@@ -34,13 +34,12 @@ $(function () {
                 <input class="modifica btn btn-dark" type="button" value="modifica" class="modifica">
             </fieldset>
         </div>`;
-        
-        return s;
     }
 
     $("#submitAdd").click(() => {
         $.post("/newActivity", { sessid: m_sessid, nome: $("#nome").val(), testo: $("#texttoadd")[0].value }).always(IDNotaNuova => {
             $(".row:eq(2)").append(proto($("#nome").val(), $("#texttoadd")[0].value, IDNotaNuova))
+            $(`#${IDNotaNuova}`).onclick(modifica(this))
             $("#nome").val("")
             $("#texttoadd")[0].value = ""
             $("input.modifica").click(() => {
@@ -122,3 +121,7 @@ $(function () {
     }
 
 });
+
+function modifica(chi){
+    console.log(`chi`, chi);
+}
