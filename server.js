@@ -124,7 +124,7 @@ app.post("/newActivity", (req, res) => {
                     throw err;
                 }
                 console.log("1 nuovo doc inserito");
-                res.sendStatus(200);
+                res.send(resIns.)
             });
         });
     else res.sendStatus(401);
@@ -145,7 +145,6 @@ app.post("/allNote", function (req, res) {
                 .find({ AppartenenteA: sessioni[sessid].IDUtente })
                 .toArray(function (err, resFind) {
 
-                    console.log(`resFind`, resFind);
                     if (err) {
                         res.sendStatus(401);
                         db.close();
