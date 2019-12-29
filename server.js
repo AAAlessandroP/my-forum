@@ -118,13 +118,13 @@ app.post("/newActivity", (req, res) => {
             var dbo = db.db("trello");
             dbo.collection("dati").insertOne(nuovaAttivita, function (err, resIns) {
                 console.log(`resIns`, resIns);
-                if (err) {
+                if (err || resIns.insertedCount != 1) {
                     res.sendStatus(401);
                     db.close();
                     throw err;
                 }
                 console.log("1 nuovo doc inserito");
-                res.send(resIns.)
+                res.send(resIns.insertedId)
             });
         });
     else res.sendStatus(401);
