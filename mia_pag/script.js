@@ -121,5 +121,6 @@ $(function () {
 
 function modifica(chi) {
     console.log(`chi`, chi);
-    $.post("/modificaNota",{IDNota: chi.id, testo})
+    console.log(`chi`, $(chi).children[0].children[1].value)
+    $.post("/modificaNota",{IDNota: chi.id, testoNuovo:$(chi).children()})
 }
