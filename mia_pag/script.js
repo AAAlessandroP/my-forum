@@ -9,7 +9,7 @@ $(function () {
         $.post("/allNote", { sessid: m_sessid }).always((note) => {
             console.log(`note`, note);
             note.forEach(nota => {
-                
+                $(".row:eq(2)").append(proto(nota.nome, nota.testo));
             });
         });
     }
@@ -40,7 +40,7 @@ $(function () {
         $.post("/newActivity", { sessid: m_sessid, nome: $("#nome").val(), testo: $("#texttoadd")[0].value })
         $(".row:eq(2)").append(proto($("#nome").val(), $("#texttoadd")[0].value))
         $("#nome").val("")
-        $("#texttoadd")[0].value=""
+        $("#texttoadd")[0].value = ""
         $("input.modifica").click(() => {
             console.log("sd");
 
