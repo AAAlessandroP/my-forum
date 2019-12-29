@@ -39,13 +39,10 @@ $(function () {
     $("#submitAdd").click(() => {
         $.post("/newActivity", { sessid: m_sessid, nome: $("#nome").val(), testo: $("#texttoadd")[0].value }).always(IDNotaNuova => {
             $(".row:eq(2)").append(proto($("#nome").val(), $("#texttoadd")[0].value, IDNotaNuova))
-            $(`#${IDNotaNuova}`).onclick(modifica(this))
+            $(`#${IDNotaNuova}`)[0].onclick = ()=>{modifica($(`#${IDNotaNuova}`)[0])}
             $("#nome").val("")
             $("#texttoadd")[0].value = ""
-            $("input.modifica").click(() => {
-                console.log("modifica");
 
-            });
         })
 
     })
@@ -122,6 +119,7 @@ $(function () {
 
 });
 
-function modifica(chi){
+function modifica(chi) {
     console.log(`chi`, chi);
+    $.post("/modificaNota",{IDNota: chi.id, testo})
 }
