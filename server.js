@@ -143,7 +143,7 @@ app.post("/allNote", function (req, res) {
             console.log(`sessioni[sessid].IDUtente`, sessioni[sessid].IDUtente);
             dbo
                 .collection("dati")
-                .find({ appartenenteA: sessioni[sessid].IDUtente }).toArray((err, resFind) => {
+                .find({}/*{ appartenenteA: sessioni[sessid].IDUtente }*/).toArray((err, resFind) => {
 
                     console.log(`resFind`, resFind);
                     if (err) {
