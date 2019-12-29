@@ -143,8 +143,9 @@ app.post("/allNote", function (req, res) {
             console.log(`sessioni[sessid].IDUtente`, sessioni[sessid].IDUtente);
             dbo
                 .collection("dati")
-                .find({}/*{ appartenenteA: sessioni[sessid].IDUtente }*/).toArray((err, resFind) => {
-
+                .find({ appartenenteA: sessioni[sessid].IDUtente })
+                .toArray(function (err, resFind) {
+                 
                     console.log(`resFind`, resFind);
                     if (err) {
                         res.sendStatus(401);
@@ -158,7 +159,7 @@ app.post("/allNote", function (req, res) {
                             decrittato = crypto
                                 .createDecipher("aes-256-ctr", key)
                                 .update(element.Text.toString(), "hex", "utf-8");
-                            tutti.push({ nome: element.name, testo: decrittato })
+                            tutti.push({ nome: element.Name, testo: decrittato })
                         });
 
                         res.json(tutti)

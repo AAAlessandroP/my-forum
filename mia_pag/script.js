@@ -6,9 +6,9 @@ $(function () {
 
     function getAllNotes() {
 
-        $.post("/allNote", { sessid: m_sessid }).always((dati) => {
-            console.log(`dati`, dati);
-            dati.forEach(element => {
+        $.post("/allNote", { sessid: m_sessid }).always((note) => {
+            console.log(`note`, note);
+            note.forEach(nota => {
                 
             });
         });
