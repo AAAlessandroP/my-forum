@@ -16,11 +16,11 @@ $(function () {
 
     let arr = ["coral", "magenta", "cyan", "AntiqueWhite", "Chartreuse", "DarkSeaGreen "]
 
-    function proto(nome, txt) {
+    function proto(nome, txt, id) {
 
         let randColor = arr[Math.floor(Math.random() * arr.length)];
         return `
-        <div class="col-3" style="background-color:${randColor}">
+        <div class="col-3" id="${id}" style="background-color:${randColor}">
             <fieldset>
                 <legend>nota</legend>
                 <div class="input-group mt-2 mb-2">
@@ -37,14 +37,16 @@ $(function () {
     }
 
     $("#submitAdd").click(() => {
-        $.post("/newActivity", { sessid: m_sessid, nome: $("#nome").val(), testo: $("#texttoadd")[0].value })
-        $(".row:eq(2)").append(proto($("#nome").val(), $("#texttoadd")[0].value))
-        $("#nome").val("")
-        $("#texttoadd")[0].value = ""
-        $("input.modifica").click(() => {
-            console.log("sd");
+        $.post("/newActivity", { sessid: m_sessid, nome: $("#nome").val(), testo: $("#texttoadd")[0].value }).always(IDNota => {
+            $(".row:eq(2)").append(proto($("#nome").val(), $("#texttoadd")[0].value, IDNota))
+            $("#nome").val("")
+            $("#texttoadd")[0].value = ""
+            $("input.modifica").click(() => {
+                console.log("modifica");
 
+            });
         })
+
     })
 
 

@@ -144,7 +144,7 @@ app.post("/allNote", function (req, res) {
                 .collection("dati")
                 .find({ AppartenenteA: sessioni[sessid].IDUtente })
                 .toArray(function (err, resFind) {
-                 
+
                     console.log(`resFind`, resFind);
                     if (err) {
                         res.sendStatus(401);
@@ -158,7 +158,7 @@ app.post("/allNote", function (req, res) {
                             decrittato = crypto
                                 .createDecipher("aes-256-ctr", key)
                                 .update(element.Text.toString(), "hex", "utf-8");
-                            tutti.push({ nome: element.Name, testo: decrittato })
+                            tutti.push({ IDNota: element._id, nome: element.Name, testo: decrittato })
                         });
 
                         res.json(tutti)
