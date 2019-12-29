@@ -168,3 +168,20 @@ app.post("/allNote", function (req, res) {
         });
     } else res.sendStatus(401);
 });
+
+app.post("/modificaNota", function (req, res) {
+    var sessid = req.body.sessid;
+    if (sessioni[sessid]) {
+        MongoClient.connect(uri, { useNewUrlParser: true }, (err, db) => {
+            if (err) {
+                res.sendStatus(401);
+                db.close();
+                throw err;
+            }
+            var dbo = db.db("trello");
+            dbo
+                .collection("dati")
+                .findOneAndUpdate();
+        });
+    } else res.sendStatus(401);
+});

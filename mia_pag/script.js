@@ -9,7 +9,9 @@ $(function () {
         $.post("/allNote", { sessid: m_sessid }).always((note) => {
             console.log(`note`, note);
             note.forEach(nota => {
-                $(".row:eq(2)").append(proto(nota.nome, nota.testo));
+                $(".row:eq(2)").append(proto(nota.nome, nota.testo, nota.IDNota));
+                $(`#${nota.IDNota}`)[0].onclick = ()=>{modifica($(`#${nota.IDNota}`)[0])}
+
             });
         });
     }
@@ -122,5 +124,6 @@ $(function () {
 function modifica(chi) {
     console.log(`chi`, chi);
     console.log(`chi`, chi.children[0].children[1].children[0].value)
-    $.post("/modificaNota",{IDNota: chi.id, testoNuovo: chi.children[0].children[1].children[0].value})
+    $.post("/modificaNota",
+    {IDNota: chi.id, titoloNuovo: chi.children[0].children[1].children[0].value, testoNuovo:chi.children[0].children[2].children[0].value})
 }
