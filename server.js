@@ -171,6 +171,9 @@ app.post("/allNote", function (req, res) {
 
 app.post("/modificaNota", function (req, res) {
     var sessid = req.body.sessid;
+    var IDNota = req.body.IDNota;
+    var titoloNuovo = req.body.titoloNuovo;
+    var testoNuovo = req.body.testoNuovo;
     if (sessioni[sessid]) {
         MongoClient.connect(uri, { useNewUrlParser: true }, (err, db) => {
             if (err) {
@@ -181,7 +184,7 @@ app.post("/modificaNota", function (req, res) {
             var dbo = db.db("trello");
             dbo
                 .collection("dati")
-                .findOneAndUpdate();
+                .findOneAndUpdate({_id:IDNota},{});
         });
     } else res.sendStatus(401);
 });
