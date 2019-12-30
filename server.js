@@ -186,7 +186,9 @@ app.post("/modificaNota", function (req, res) {
                 .collection("dati")
                 .updateOne({ _id: IDNota }, { $set: { Text: testoNuovo, Name: titoloNuovo } }, (error, result) => {
                     console.log(`result`, result);
+                    if(result.nModified==1)
                     res.sendStatus(200)
+                    res.sendStatus(503)
                 })
         });
     } else res.sendStatus(401);

@@ -1,7 +1,8 @@
+var m_sessid = "dummy";
+
 $(function () {
 
     $("#output").val("")// pulisco per f5
-    var m_sessid = "dummy";
     $(".container:eq(1)").hide();
 
     function getAllNotes() {
@@ -10,7 +11,7 @@ $(function () {
             console.log(`note`, note);
             note.forEach(nota => {
                 $(".row:eq(2)").append(proto(nota.nome, nota.testo, nota.IDNota));
-                $(`#${nota.IDNota}`)[0].onclick = ()=>{modifica($(`#${nota.IDNota}`)[0])}
+                $(`#${nota.IDNota}`)[0].onclick = () => { modifica($(`#${nota.IDNota}`)[0]) }
 
             });
         });
@@ -41,7 +42,7 @@ $(function () {
     $("#submitAdd").click(() => {
         $.post("/newActivity", { sessid: m_sessid, nome: $("#nome").val(), testo: $("#texttoadd")[0].value }).always(IDNotaNuova => {
             $(".row:eq(2)").append(proto($("#nome").val(), $("#texttoadd")[0].value, IDNotaNuova))
-            $(`#${IDNotaNuova}`)[0].onclick = ()=>{modifica($(`#${IDNotaNuova}`)[0])}
+            $(`#${IDNotaNuova}`)[0].onclick = () => { modifica($(`#${IDNotaNuova}`)[0]) }
             $("#nome").val("")
             $("#texttoadd")[0].value = ""
 
@@ -125,5 +126,5 @@ function modifica(chi) {
     console.log(`chi`, chi);
     console.log(`chi`, chi.children[0].children[1].children[0].value)
     $.post("/modificaNota",
-    {IDNota: chi.id, titoloNuovo: chi.children[0].children[1].children[0].value, testoNuovo:chi.children[0].children[2].children[0].value})
+        { sessid: m_sessid, IDNota: chi.id, titoloNuovo: chi.children[0].children[1].children[0].value, testoNuovo: chi.children[0].children[2].children[0].value })
 }
