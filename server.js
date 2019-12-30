@@ -186,11 +186,17 @@ app.post("/modificaNota", function (req, res) {
             var dbo = db.db("trello");
             dbo
                 .collection("dati")
-                .updateOne({ _id: ObjectId(IDNota) }, { $set: { Text: testoNuovo, Name: titoloNuovo } }, (error, result) => {
-                    console.log(`result`, result);
-                    if (result.upsertedCount == 1)
-                        res.sendStatus(200)
-                    else res.sendStatus(503)
+                // .updateOne({ _id: ObjectId(IDNota) }, { $set: { Text: testoNuovo, Name: titoloNuovo } }, (error, result) => {
+                //     console.log(`result`, result);
+                //     if (result.upsertedCount == 1)
+                //         res.sendStatus(200)
+                //     else res.sendStatus(503)
+                // })
+                .findOne({ _id: ObjectId(IDNota) }, (error, result) => {
+                        console.log(`result`, result);
+                    //     if (result.upsertedCount == 1)
+                    //         res.sendStatus(200)
+                    //     else res.sendStatus(503)
                 })
         });
     } else res.sendStatus(401);
