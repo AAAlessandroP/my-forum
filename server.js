@@ -181,10 +181,12 @@ app.post("/modificaNota", function (req, res) {
                 db.close();
                 throw err;
             }
+            console.log(`IDNota`, IDNota);
+
             var dbo = db.db("trello");
             dbo
                 .collection("dati")
-                .updateOne({ _id: IDNota }, { $set: { Text: testoNuovo, Name: titoloNuovo } }, (error, result) => {
+                .updateOne({ _id: ObjectId(IDNota) }, { $set: { Text: testoNuovo, Name: titoloNuovo } }, (error, result) => {
                     console.log(`result`, result);
                     if (result.upsertedCount == 1)
                         res.sendStatus(200)
