@@ -154,6 +154,7 @@ app.post("/allNote", function (req, res) {
                         let tutti = []
                         const key = sessioni[sessid].chiave;
                         resFind.forEach(element => {
+                            console.log(`element`, element);
                             decrittato = crypto
                                 .createDecipher("aes-256-ctr", key)
                                 .update(element.Text.toString(), "hex", "utf-8");
@@ -186,7 +187,7 @@ app.post("/modificaNota", function (req, res) {
             var dbo = db.db("trello");
             dbo
                 .collection("dati")
-                .updateOne({ _id: ObjectId(IDNota) }, { $set: { Text: testoNuovo, Name: titoloNuovo } }, (error, result) => {
+                .findOneAndUpdate({ _id: ObjectId(IDNota) }, { $set: { Text: testoNuovo, Name: titoloNuovo } }, (error, result) => {
                     console.log(`result`, result);
                     if (result.upsertedCount == 1)
                         res.sendStatus(200)
