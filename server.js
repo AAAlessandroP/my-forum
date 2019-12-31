@@ -18,6 +18,20 @@ const uri = `mongodb+srv://trello:${process.env.PASS}@miocluster2-igwb8.mongodb.
 
 var sessioni = {};
 
+function c(s, key) {
+    return crypto.createCipher("aes-256-ctr", key).update(s.toString(), "utf-8", "hex");
+}
+
+function d(s, key) {
+    return crypto.createDecipher("aes-256-ctr", key).update(s.toString(), "utf-8", "hex");
+}
+
+function h(s) {
+    var hash = crypto.createHash("sha256");
+    hash.update(s);
+    return hash.digest("base64");
+}
+
 app.post("/login", (req, res) => {
     var name = req.body.utente;
     var pass = req.body.passw;
@@ -36,10 +50,8 @@ app.post("/login", (req, res) => {
                 db.close();
                 return;
             }
-            const hash = crypto.createHash("sha256");
-            hash.update(resFind.Salt + pass);
-            let hashed = hash.digest("base64");
-            if (resFind.HashedPwd === hashed) {
+
+            if (resFind.HashedPwd === h(resFind.Salt + pass)) {
                 var sessId = crypto.randomBytes(32).toString("hex");
                 sessioni[sessId] = {
                     IDUtente: resFind._id,
@@ -57,9 +69,6 @@ app.post("/addUser", (req, res) => {
     var name = req.body.utente;
     var pass = req.body.passw;
     var salt = crypto.randomBytes(32).toString("hex");
-    const hash = crypto.createHash("sha256");
-    hash.update(salt + pass);
-    let hashed = hash.digest("base64");
 
     MongoClient.connect(uri, { useNewUrlParser: true }, (err, db) => {
         if (err) {
@@ -72,7 +81,7 @@ app.post("/addUser", (req, res) => {
         var nuovo_utente = {
             Name: name,
             Salt: salt,
-            HashedPwd: hashed
+            HashedPwd: h(salt + pass)
         };
         dbo.collection("utenti").insertOne(nuovo_utente, function (err, resIns) {
             if (err || resIns.insertedCount != 1) {
@@ -108,15 +117,10 @@ app.post("/newActivity", (req, res) => {
                 throw err;
             }
             let key = sessioni[sessid].chiave;
-            let testoCrittato = crypto
-                .createCipher("aes-256-ctr", key)
-                .update(testo.toString(), "utf-8", "hex");
-            let nomeCrittato = crypto
-                .createCipher("aes-256-ctr", key)
-                .update(n.toString(), "utf-8", "hex");
+
             var nuovaAttivita = {
-                Name: nomeCrittato,
-                Text: testoCrittato,
+                Name: c(nome.toString(), key),
+                Text: c(testo.toString(), key),
                 AppartenenteA: sessioni[sessid].IDUtente
             };
             var dbo = db.db("trello");
@@ -156,12 +160,11 @@ app.post("/allNote", function (req, res) {
                     }
                     if (resFind.length != 0) {
                         let tutti = []
-                        const key = sessioni[sessid].chiave;
+                        let key = sessioni[sessid].chiave;
+
                         resFind.forEach(element => {
-                            decrittato = crypto
-                                .createDecipher("aes-256-ctr", key)
-                                .update(element.Text, "hex", "utf-8");
-                            tutti.push({ IDNota: element._id, nome: element.Name, testo: decrittato })
+
+                            tutti.push({ IDNota: element._id, nome: d(element.Name, key), testo: d(element.Text, key) })
                         });
 
                         res.json(tutti)
@@ -180,10 +183,7 @@ app.post("/modificaNota", function (req, res) {
     var testoNuovo = req.body.testoNuovo;
 
     if (sessioni[sessid]) {
-
-        let testoCrittato = crypto
-            .createCipher("aes-256-ctr", sessioni[sessid].chiave)
-            .update(testoNuovo.toString(), "utf-8", "hex");
+        let key = sessioni[sessid].chiave;
 
         MongoClient.connect(uri, { useNewUrlParser: true }, (err, db) => {
             if (err) {
@@ -195,7 +195,7 @@ app.post("/modificaNota", function (req, res) {
             var dbo = db.db("trello");
             dbo
                 .collection("dati")
-                .updateOne({ _id: ObjectId(IDNota) }, { $set: { Text: testoCrittato, Name: titoloNuovo } }, (error, result) => {
+                .updateOne({ _id: ObjectId(IDNota) }, { $set: { Text: c(testoNuovo.toString(), key), Name: c(titoloNuovo.toString(), key) } }, (error, result) => {
                     assert.equal(err, null)
                     res.sendStatus(200)
                 })
@@ -227,3 +227,4 @@ app.post("/del", function (req, res) {
         });
     } else res.sendStatus(401);
 });
+
