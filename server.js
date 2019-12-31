@@ -32,22 +32,7 @@ function h(s) {
     return hash.digest("base64");
 }
 
-MongoClient.connect(uri, { useNewUrlParser: true }, (err, db) => {
-    if (err) {
-        db.close();
-        throw err;
-    }
 
-    db.db("sample_geospatial").collection("shipwrecks").find({}, function (err, resFind) {
-        if (err || resFind == null) {
-            db.close();
-            throw err;  
-        }
-        resFind.forEach(element => {
-            console.log(`element`, element.coordinates);  
-        });
-    });
-});
 
 app.post("/login", (req, res) => {
     var name = req.body.utente;
