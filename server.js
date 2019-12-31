@@ -157,7 +157,7 @@ app.post("/allNote", function (req, res) {
                         resFind.forEach(element => {
                             decrittato = crypto
                                 .createDecipher("aes-256-ctr", key)
-                                .update(element.Text.toString(), "hex", "utf-8");
+                                .update(element.Text, "hex", "utf-8");
                             tutti.push({ IDNota: element._id, nome: element.Name, testo: decrittato })
                         });
 
@@ -175,7 +175,13 @@ app.post("/modificaNota", function (req, res) {
     var IDNota = req.body.IDNota;
     var titoloNuovo = req.body.titoloNuovo;
     var testoNuovo = req.body.testoNuovo;
+
     if (sessioni[sessid]) {
+
+        let testoCrittato = crypto
+            .createCipher("aes-256-ctr", sessioni[sessid].chiave)
+            .update(testoNuovo.toString(), "utf-8", "hex");
+            
         MongoClient.connect(uri, { useNewUrlParser: true }, (err, db) => {
             if (err) {
                 res.sendStatus(401);
@@ -187,7 +193,7 @@ app.post("/modificaNota", function (req, res) {
             var dbo = db.db("trello");
             dbo
                 .collection("dati")
-                .updateOne({ _id: ObjectId(IDNota) }, { $set: { Text: testoNuovo, Name: titoloNuovo } }, (error, result) => {
+                .updateOne({ _id: ObjectId(IDNota) }, { $set: { Text: testoCrittato, Name: titoloNuovo } }, (error, result) => {
                     // console.log(`result`, result);
                     assert.equal(err, null)
                     res.sendStatus(200)

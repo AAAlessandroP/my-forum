@@ -9,11 +9,12 @@ $(function () {
 
         $.post("/allNote", { sessid: m_sessid }).always((note) => {
             console.log(`note`, note);
-            note.forEach(nota => {
-                $(".row:eq(2)").append(proto(nota.nome, nota.testo, nota.IDNota));
-                $(`#${nota.IDNota}`)[0].onclick = () => { modifica($(`#${nota.IDNota}`)[0]) }
+            if (note != "nulla salvato")
+                note.forEach(nota => {
+                    $(".row:eq(2)").append(proto(nota.nome, nota.testo, nota.IDNota));
+                    $(`#${nota.IDNota}`)[0].onclick = () => { modifica($(`#${nota.IDNota}`)[0]) }
 
-            });
+                });
         });
     }
 
