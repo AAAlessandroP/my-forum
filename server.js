@@ -188,7 +188,6 @@ app.post("/modificaNota", function (req, res) {
                 db.close();
                 throw err;
             }
-            console.log(`IDNota`, IDNota);
 
             var dbo = db.db("trello");
             dbo

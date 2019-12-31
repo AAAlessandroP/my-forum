@@ -35,8 +35,10 @@ $(function () {
                     <textarea class="form-control" rows="3">${txt}</textarea>
                 </div>
 
-                <input class="modifica btn btn-dark" type="button" value="modifica" class="modifica">
-            </fieldset>
+                <input class="modifica btn btn-dark" type="button" value="modifica" >
+                <input class="cancella btn btn-dark" type="button" value="cancella" class="cancella">
+
+                </fieldset>
         </div>`;
     }
 
@@ -136,7 +138,7 @@ function modifica(chi) {
                 setTimeout(() => {
                     console.log(`chi`, chi);
                     $(chi).children().filter(":last").remove()
-                },1000);
+                }, 1000);
             }
             else alert("ops")
         });
