@@ -134,7 +134,8 @@ function modifica(chi) {
             if (status == "success") {
                 $(chi).append("<span style='background-color:green'>OK</span>")
                 setTimeout(() => {
-                    $(chi).remove("span")
+                    console.log(`chi`, chi);
+                    $(chi).children().filter(":last").remove()
                 },1000);
             }
             else alert("ops")
