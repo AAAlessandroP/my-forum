@@ -186,9 +186,9 @@ app.post("/modificaNota", function (req, res) {
             var dbo = db.db("trello");
             dbo
                 .collection("dati")
-                .findOneAndUpdate({ _id: ObjectId(IDNota) }, { Text: testoNuovo, Name: titoloNuovo } , (error, result) => {
+                .findOneAndUpdate({ _id: ObjectId(IDNota) }, { Text: testoNuovo, Name: titoloNuovo }, (error, result) => {
                     console.log(`result`, result);
-                    if (result.upsertedCount == 1)
+                    if (result && result.upsertedCount == 1)
                         res.sendStatus(200)
                     else res.sendStatus(503)
                 })
