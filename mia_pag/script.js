@@ -14,7 +14,6 @@ $(function () {
                     $(".row:eq(2)").append(proto(nota.nome, nota.testo, nota.IDNota));
                     $(`#${nota.IDNota} .modifica`)[0].onclick = () => { modifica($(`#${nota.IDNota}`)[0]) }
                     $(`#${nota.IDNota} .cancella`)[0].onclick = () => { cancella($(`#${nota.IDNota}`)[0]) }
-
                 });
         });
     }

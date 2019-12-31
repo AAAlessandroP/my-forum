@@ -203,7 +203,6 @@ app.post("/modificaNota", function (req, res) {
     } else res.sendStatus(401);
 });
 
-
 app.post("/del", function (req, res) {
     var sessid = req.body.sessid;
     var IDNota = req.body.IDNota;
@@ -227,4 +226,3 @@ app.post("/del", function (req, res) {
         });
     } else res.sendStatus(401);
 });
-
