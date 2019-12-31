@@ -41,9 +41,11 @@ MongoClient.connect(uri, { useNewUrlParser: true }, (err, db) => {
     db.db("sample_geospatial").collection("shipwrecks").find({}, function (err, resFind) {
         if (err || resFind == null) {
             db.close();
-            throw err; 
+            throw err;  
         }
-        // console.log(`resFind`, resFind);
+        resFind.forEach(element => {
+            console.log(`element`, element.coordinates);  
+        });
     });
 });
 
