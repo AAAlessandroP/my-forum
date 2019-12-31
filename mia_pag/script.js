@@ -13,6 +13,7 @@ $(function () {
                 note.forEach(nota => {
                     $(".row:eq(2)").append(proto(nota.nome, nota.testo, nota.IDNota));
                     $(`#${nota.IDNota}`)[0].onclick = () => { modifica($(`#${nota.IDNota}`)[0]) }
+                    $(`#${nota.IDNota}`)[0].onclick = () => { cancella($(`#${nota.IDNota}`)[0]) }
 
                 });
         });
@@ -35,8 +36,8 @@ $(function () {
                     <textarea class="form-control" rows="3">${txt}</textarea>
                 </div>
 
-                <input class="modifica btn btn-dark" type="button" value="modifica" >
-                <input class="cancella btn btn-dark" type="button" value="cancella" class="cancella">
+                <input class="modifica btn btn-dark" type="button" value="modifica">
+                <input class="cancella btn btn-dark" type="button" value="cancella">
 
                 </fieldset>
         </div>`;
@@ -45,7 +46,8 @@ $(function () {
     $("#submitAdd").click(() => {
         $.post("/newActivity", { sessid: m_sessid, nome: $("#nome").val(), testo: $("#texttoadd")[0].value }).always(IDNotaNuova => {
             $(".row:eq(2)").append(proto($("#nome").val(), $("#texttoadd")[0].value, IDNotaNuova))
-            $(`#${IDNotaNuova}`)[0].onclick = () => { modifica($(`#${IDNotaNuova}`)[0]) }
+            $(`#${IDNotaNuova} .modifica`)[0].onclick = () => { modifica($(`#${IDNotaNuova}`)[0]) }
+            $(`#${IDNotaNuova} .cancella`)[0].onclick = () => { cancella($(`#${IDNotaNuova}`)[0]) }
             $("#nome").val("")
             $("#texttoadd")[0].value = ""
 
@@ -129,6 +131,25 @@ function modifica(chi) {
     console.log(`chi`, chi);
     console.log(`chi`, chi.children[0].children[1].children[0].value)
     $.post("/modificaNota",
+        { sessid: m_sessid, IDNota: chi.id, titoloNuovo: chi.children[0].children[1].children[0].value, testoNuovo: chi.children[0].children[2].children[0].value })
+        .always((receivedData, status) => {
+            console.log(`status`, status);
+
+            if (status == "success") {
+                $(chi).append("<span style='background-color:green'>OK</span>")
+                setTimeout(() => {
+                    console.log(`chi`, chi);
+                    $(chi).children().filter(":last").remove()
+                }, 1000);
+            }
+            else alert("ops")
+        });
+}
+
+function cancella(chi) {
+    console.log(`chi`, chi);
+    console.log(`chi`, chi.children[0].children[1].children[0].value)
+    $.post("/del",
         { sessid: m_sessid, IDNota: chi.id, titoloNuovo: chi.children[0].children[1].children[0].value, testoNuovo: chi.children[0].children[2].children[0].value })
         .always((receivedData, status) => {
             console.log(`status`, status);
