@@ -111,8 +111,11 @@ app.post("/newActivity", (req, res) => {
             let testoCrittato = crypto
                 .createCipher("aes-256-ctr", key)
                 .update(testo.toString(), "utf-8", "hex");
+            let nomeCrittato = crypto
+                .createCipher("aes-256-ctr", key)
+                .update(n.toString(), "utf-8", "hex");
             var nuovaAttivita = {
-                Name: nome,
+                Name: nomeCrittato,
                 Text: testoCrittato,
                 AppartenenteA: sessioni[sessid].IDUtente
             };
