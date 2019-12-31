@@ -1,4 +1,5 @@
 var express = require("express");
+var assert = require("assert");
 var bodyParser = require("body-parser");
 const crypto = require("crypto");
 var cors = require("cors"); // se volgio accettare req anche non provenienti da questa pag
@@ -186,11 +187,10 @@ app.post("/modificaNota", function (req, res) {
             var dbo = db.db("trello");
             dbo
                 .collection("dati")
-                .findOneAndUpdate({ _id: ObjectId(IDNota) }, { Text: testoNuovo, Name: titoloNuovo }, (error, result) => {
-                    console.log(`result`, result);
-                    if (result && result.upsertedCount == 1)
-                        res.sendStatus(200)
-                    else res.sendStatus(503)
+                .updateOne({ _id: ObjectId(IDNota) }, { $set: { Text: testoNuovo, Name: titoloNuovo } }, (error, result) => {
+                    // console.log(`result`, result);
+                    assert.equal(err, null)
+                    res.sendStatus(200)
                 })
             // .findOne({ _id: ObjectId(IDNota) }, (error, result) => {
             //         console.log(`result`, result);
