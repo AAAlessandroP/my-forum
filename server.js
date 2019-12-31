@@ -181,7 +181,7 @@ app.post("/modificaNota", function (req, res) {
         let testoCrittato = crypto
             .createCipher("aes-256-ctr", sessioni[sessid].chiave)
             .update(testoNuovo.toString(), "utf-8", "hex");
-            
+
         MongoClient.connect(uri, { useNewUrlParser: true }, (err, db) => {
             if (err) {
                 res.sendStatus(401);
@@ -194,16 +194,9 @@ app.post("/modificaNota", function (req, res) {
             dbo
                 .collection("dati")
                 .updateOne({ _id: ObjectId(IDNota) }, { $set: { Text: testoCrittato, Name: titoloNuovo } }, (error, result) => {
-                    // console.log(`result`, result);
                     assert.equal(err, null)
                     res.sendStatus(200)
                 })
-            // .findOne({ _id: ObjectId(IDNota) }, (error, result) => {
-            //         console.log(`result`, result);
-            //     //     if (result.upsertedCount == 1)
-            //     //         res.sendStatus(200)
-            //     //     else res.sendStatus(503)
-            // })
         });
     } else res.sendStatus(401);
 });

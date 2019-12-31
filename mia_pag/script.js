@@ -128,4 +128,15 @@ function modifica(chi) {
     console.log(`chi`, chi.children[0].children[1].children[0].value)
     $.post("/modificaNota",
         { sessid: m_sessid, IDNota: chi.id, titoloNuovo: chi.children[0].children[1].children[0].value, testoNuovo: chi.children[0].children[2].children[0].value })
+        .always((receivedData, status) => {
+            console.log(`status`, status);
+
+            if (status == "success") {
+                $(chi).append("<span style='background-color:green'>OK</span>")
+                setTimeout(() => {
+                    $(chi).remove("span")
+                },1000);
+            }
+            else alert("ops")
+        });
 }
