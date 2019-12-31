@@ -199,3 +199,28 @@ app.post("/modificaNota", function (req, res) {
         });
     } else res.sendStatus(401);
 });
+
+
+app.post("/del", function (req, res) {
+    var sessid = req.body.sessid;
+    var IDNota = req.body.IDNota;
+
+    if (sessioni[sessid]) {
+
+        MongoClient.connect(uri, { useNewUrlParser: true }, (err, db) => {
+            if (err) {
+                res.sendStatus(401);
+                db.close();
+                throw err;
+            }
+
+            var dbo = db.db("trello");
+            dbo
+                .collection("dati")
+                .deleteOne({ _id: ObjectId(IDNota) }, (error, result) => {
+                    assert.equal(err, null)
+                    res.sendStatus(200)
+                })
+        });
+    } else res.sendStatus(401);
+});

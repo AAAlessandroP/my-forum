@@ -12,8 +12,8 @@ $(function () {
             if (note != "nulla salvato")
                 note.forEach(nota => {
                     $(".row:eq(2)").append(proto(nota.nome, nota.testo, nota.IDNota));
-                    $(`#${nota.IDNota}`)[0].onclick = () => { modifica($(`#${nota.IDNota}`)[0]) }
-                    $(`#${nota.IDNota}`)[0].onclick = () => { cancella($(`#${nota.IDNota}`)[0]) }
+                    $(`#${nota.IDNota} .modifica`)[0].onclick = () => { modifica($(`#${nota.IDNota}`)[0]) }
+                    $(`#${nota.IDNota} .cancella`)[0].onclick = () => { cancella($(`#${nota.IDNota}`)[0]) }
 
                 });
         });
@@ -55,23 +55,26 @@ $(function () {
 
     })
 
-
+    var singleton = true;
     $("#submitLogin").click(() => {
 
-        $.post("/login",
-            {
-                utente: $("#Codice").val(),
-                passw: $("#passw").val()
-            }).always((receivedData, status) => {
-                console.log(`status`, status);
+        if (singleton) {
+            $.post("/login",
+                {
+                    utente: $("#Codice").val(),
+                    passw: $("#passw").val()
+                }).always((receivedData, status) => {
+                    console.log(`status`, status);
 
-                if (status == "success") {
-                    m_sessid = receivedData
-                    $(".container:eq(1)").show(1000);
-                    getAllNotes()
-                }
-                else alert("riprova credenziali")
-            });
+                    if (status == "success") {
+                        m_sessid = receivedData
+                        $(".container:eq(1)").show(1000);
+                        getAllNotes()
+                    }
+                    else alert("riprova credenziali")
+                });
+            singleton = false
+        }
     });
 
     $("#submitRegistrati").click(() => {
@@ -128,8 +131,8 @@ $(function () {
 });
 
 function modifica(chi) {
-    console.log(`chi`, chi);
-    console.log(`chi`, chi.children[0].children[1].children[0].value)
+    // console.log(`chi`, chi);
+    // console.log(`chi`, chi.children[0].children[1].children[0].value)
     $.post("/modificaNota",
         { sessid: m_sessid, IDNota: chi.id, titoloNuovo: chi.children[0].children[1].children[0].value, testoNuovo: chi.children[0].children[2].children[0].value })
         .always((receivedData, status) => {
@@ -147,19 +150,15 @@ function modifica(chi) {
 }
 
 function cancella(chi) {
-    console.log(`chi`, chi);
-    console.log(`chi`, chi.children[0].children[1].children[0].value)
+    // console.log(`chi`, chi);
+    // console.log(`chi`, chi.children[0].children[1].children[0].value)
     $.post("/del",
-        { sessid: m_sessid, IDNota: chi.id, titoloNuovo: chi.children[0].children[1].children[0].value, testoNuovo: chi.children[0].children[2].children[0].value })
+        { sessid: m_sessid, IDNota: chi.id })
         .always((receivedData, status) => {
             console.log(`status`, status);
 
             if (status == "success") {
-                $(chi).append("<span style='background-color:green'>OK</span>")
-                setTimeout(() => {
-                    console.log(`chi`, chi);
-                    $(chi).children().filter(":last").remove()
-                }, 1000);
+                $(chi).remove()
             }
             else alert("ops")
         });
