@@ -32,6 +32,21 @@ function h(s) {
     return hash.digest("base64");
 }
 
+MongoClient.connect(uri, { useNewUrlParser: true }, (err, db) => {
+    if (err) {
+        db.close();
+        throw err;
+    }
+
+    db.db("sample_geospatial").collection("shipwrecks").find({}, function (err, resFind) {
+        if (err || resFind == null) {
+            db.close();
+            throw err; 
+        }
+        // console.log(`resFind`, resFind);
+    });
+});
+
 app.post("/login", (req, res) => {
     var name = req.body.utente;
     var pass = req.body.passw;
