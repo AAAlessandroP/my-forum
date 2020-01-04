@@ -134,6 +134,8 @@ app.post("/newActivity", (req, res) => {
                     throw err;
                 }
                 console.log("1 nuovo doc inserito");
+        db.close();
+              
                 res.send(resIns.insertedId)
             });
         });
@@ -199,6 +201,8 @@ app.post("/modificaNota", function (req, res) {
                 .collection("dati")
                 .updateOne({ _id: ObjectId(IDNota) }, { $set: { Text: c(testoNuovo.toString(), key), Name: c(titoloNuovo.toString(), key) } }, (error, result) => {
                     assert.equal(err, null)
+        db.close();
+              
                     res.sendStatus(200)
                 })
         });
