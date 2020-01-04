@@ -14,7 +14,7 @@ app.use(express.static("mia_pag")); // include con USE
 app.listen(3000);
 
 console.log("* app in funzione *");
-const uri = `mongodb+srv://trello:${process.env.PASS}@miocluster2-igwb8.mongodb.net/test?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://ms-teams:${process.env.PASS}@miocluster2-igwb8.mongodb.net/test?retryWrites=true&w=majority`;
 
 var sessioni = {};
 
