@@ -2,11 +2,11 @@ var express = require("express");
 var assert = require("assert");
 var bodyParser = require("body-parser");
 const crypto = require("crypto");
-var cors = require("cors"); // se volgio accettare req anche non provenienti da questa pag
+// var cors = require("cors"); // se volgio accettare req anche non provenienti da questa pag
 const MongoClient = require("mongodb").MongoClient;
 var app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cors())// ok richieste get/post da pagine diverse da una di questo sitoson
+// app.use(cors())// ok richieste get/post da pagine diverse da una di questo sitoson
 app.use(bodyParser.json());
 const { ObjectId } = require('mongodb');
 app.use(express.static("mia_pag")); // include con USE
@@ -209,7 +209,7 @@ app.post("/modificaNota", function (req, res) {
     } else res.sendStatus(401);
 });
 
-app.post("/del", function (req, res) {
+app.post("/delNota", function (req, res) {
     var sessid = req.body.sessid;
     var IDNota = req.body.IDNota;
 

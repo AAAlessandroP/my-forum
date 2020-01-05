@@ -151,7 +151,7 @@ function modifica(chi) {
 function cancella(chi) {
     // console.log(`chi`, chi);
     // console.log(`chi`, chi.children[0].children[1].children[0].value)
-    $.post("/del",
+    $.post("/delNota",
         { sessid: m_sessid, IDNota: chi.id })
         .always((receivedData, status) => {
             console.log(`status`, status);
