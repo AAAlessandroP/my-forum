@@ -111,7 +111,7 @@ app.post("/addUser", (req, res) => {
       .collection("utenti")
       .updateOne(
         {},
-        { $push: { dom: nuovo_utente } },
+        { $push: { `k`: nuovo_utente } },
         { safe: true, upsert: true },
         function(err, doc) {
           if (err) {
