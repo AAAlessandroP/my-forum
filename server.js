@@ -81,15 +81,14 @@ app.post("/addUser", (req, res) => {
             throw err;
         }
         var query = {}
-        query[dom]={}
-        query[dom]["Name"] = name
+        query[dom+".Name"]=name
         console.log(`query`, query);
         db.db("ms-teams")
             .collection("utenti")
             .findOne(query, function (err, doc) {
 
                 console.log(`doc`, doc);
-                if (doc) {
+                if (doc!=null) {
 
                     var nuovo_utente = {
                         Name: name,
