@@ -106,32 +106,31 @@ app.post("/addUser", (req, res) => {
     //             res.send(sessId);
     //             db.close();
     //         });
-
+    // {}["$push"] = {}[dom] = nuovo_utente
+    var obj = {};
+    obj["$push"] = {};
+    obj["$push"][dom] = nuovo_utente;
+    //     {$push:{dom:nuovo_utente}} ma con dom non hard-coded ma il valore suo
+    // console.log("obj: ",obj)
     db.db("ms-teams")
       .collection("utenti")
-      .updateOne(
-        {},
-        // { $push: { dom: nuovo_utente } },
-        ({}["$push"] = {}[dom] = nuovo_utente),
-        { safe: true, upsert: true },
-        function(err, doc) {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log(doc.nModified);
+      .updateOne({}, obj, { safe: true, upsert: true }, function(err, doc) {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log(doc.nModified);
 
-            // var sessId = crypto.randomBytes(32).toString("hex");
-            //             sessioni[sessId] = {
-            //                 IDUtente: doc.insertedId,
-            //                 Utente: name,
-            //                 chiave: pass
-            //             };
-            console.log("1 nuovo utente inserito");
-            res.send("sessId");
-            db.close();
-          }
+          var sessId = crypto.randomBytes(32).toString("hex");
+                      sessioni[sessId] = {
+                          IDUtente: doc.insertedId,
+                          Utente: name,
+                          chiave: pass
+                      };
+          console.log("1 nuovo utente inserito");
+          res.send(sessId);
+          db.close();
         }
-      );
+      });
   });
 });
 
