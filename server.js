@@ -81,37 +81,45 @@ app.post("/addUser", (req, res) => {
             throw err;
         }
 
+        db.db("ms-teams")
+            .collection("utenti")
+            .findOne({ dom+: name }, function (err, doc) {
 
-    var nuovo_utente = {
-        Name: name,
-        Salt: salt,
-        HashedPwd: h(salt + pass)
-    };
+                console.log(`doc`, doc);
 
-    var obj = {};
-    obj["$push"] = {};
-    obj["$push"][dom] = nuovo_utente;
-    //     {$push:{dom:nuovo_utente}} ma con dom non hard-coded ma il valore suo
-    db.db("ms-teams")
-        .collection("utenti")
-        .updateOne({}, obj, { safe: true, upsert: true }, function (err, doc) {
-            if (err) {
-                res.sendStatus(401);
-                db.close();
-                throw err;
-            }
+                var nuovo_utente = {
+                    Name: name,
+                    Salt: salt,
+                    HashedPwd: h(salt + pass)
+                };
 
-            var sessId = crypto.randomBytes(32).toString("hex");
-            sessioni[sessId] = {
-                IDUtente: doc.insertedId,
-                Utente: name,
-                chiave: pass
-            };
-            console.log("1 nuovo utente inserito");
-            res.send(sessId);
-            db.close();
-        });
-});
+                var obj = {};
+                obj["$push"] = {};
+                obj["$push"][dom] = nuovo_utente;
+                //     {$push:{dom:nuovo_utente}} ma con dom non hard-coded ma il valore suo
+                db.db("ms-teams")
+                    .collection("utenti")
+                    .updateOne({}, obj, { safe: true, upsert: true }, function (err, doc) {
+                        if (err) {
+                            res.sendStatus(401);
+                            db.close();
+                            throw err;
+                        }
+
+                        var sessId = crypto.randomBytes(32).toString("hex");
+                        sessioni[sessId] = {
+                            IDUtente: doc.insertedId,
+                            Utente: name,
+                            chiave: pass
+                        };
+                        console.log("1 nuovo utente inserito");
+                        res.send(sessId);
+                        db.close();
+                    });
+
+            });
+
+    });
 });
 
 app.post("/newActivity", (req, res) => {
@@ -126,12 +134,8 @@ app.post("/newActivity", (req, res) => {
                 db.close();
                 throw err;
             }
-
-            db.db("ms-teams")
-                .collection("dati")
-                .findOne({ AppartenenteA: sessioni[sessid].IDUtente }, function (err, res) )
-
             let key = sessioni[sessid].chiave;
+
             var nuovaAttivita = {
                 Name: c(nome.toString(), key),
                 Text: c(testo.toString(), key),
