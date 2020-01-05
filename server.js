@@ -75,43 +75,31 @@ app.post("/addUser", async (req, res) => {
     var dom = req.body.dom;
     var salt = crypto.randomBytes(32).toString("hex");
 
-    var db = await MongoClient.connect(uri, { useNewUrlParser: true });
+    try {
+        var db = await MongoClient.connect(uri, { useNewUrlParser: true });
 
-    var resFind = await db.db("ms-teams").collection("domini").findOne({ Name: dom });
-
-    console.log(`resFind`, resFind);
-    if (resFind != null) {
+        var dominio = await db.db("ms-teams").collection("domini").findOne({ Name: dom });
 
         var nuovo_utente = {
             Name: name,
             Salt: salt,
             HashedPwd: h(salt + pass),
-            Dominio: resFind._id
+            Dominio: dominio._id
         };
 
-        
-        db.db("ms-teams")
-            .collection("utenti")
-            .insertOne( nuovo_utente, { safe: true, upsert: true }, function (err, doc) {
-                if (err) {
-                    resFind.sendStatus(401);
-                    db.close();
-                    throw err;
-                }
+        var resIns = await db.db("ms-teams").collection("utenti").insertOne(nuovo_utente, { safe: true, upsert: true });
 
-                var sessId = crypto.randomBytes(32).toString("hex");
-                sessioni[sessId] = {
-                    IDUtente: doc.insertedId,
-                    Utente: name,
-                    chiave: pass
-                };
-                console.log("1 nuovo utente inserito");
-        res.send("sessId");
+        var sessId = crypto.randomBytes(32).toString("hex");
+        sessioni[sessId] = {
+            IDUtente: resIns.insertedId,
+            Utente: name,
+            chiave: pass
+        };
+
+        res.send(sessId);
         db.close();
-        // });
-    } else {
-        res.send("dom non presente");
-        db.close();
+    } catch (error) {
+        res.sendStatus(500)
     }
 
 });
