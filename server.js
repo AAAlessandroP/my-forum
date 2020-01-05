@@ -34,38 +34,58 @@ function h(s) {
     return hash.digest("base64");
 }
 
-app.post("/login", (req, res) => {
+app.post("/login", async (req, res) => {
     var name = req.body.utente;
     var pass = req.body.passw;
 
-    MongoClient.connect(uri, { useNewUrlParser: true }, (err, db) => {
-        if (err) {
-            res.sendStatus(401);
-            db.close();
-            throw err;
-        }
+    // MongoClient.connect(uri, { useNewUrlParser: true }, (err, db) => {
+    //     if (err) {
+    //         res.sendStatus(401);
+    //         db.close();
+    //         throw err;
+    //     }
 
-        db.db("ms-teams")
-            .collection("utenti")
-            .findOne({ Name: name }, function (err, resFind) {
-                if (err || resFind == null) {
-                    res.sendStatus(401);
-                    db.close();
-                    return;
-                }
+    //     db.db("ms-teams")
+    //         .collection("utenti")
+    //         .findOne({ Name: name }, function (err, resFind) {
+    //             if (err || resFind == null) {
+    //                 res.sendStatus(401);
+    //                 db.close();
+    //                 return;
+    //             }
 
-                if (resFind.HashedPwd === h(resFind.Salt + pass)) {
-                    var sessId = crypto.randomBytes(32).toString("hex");
-                    sessioni[sessId] = {
-                        IDUtente: resFind._id,
-                        Utente: resFind.Name,
-                        chiave: pass
-                    };
-                    res.send(sessId);
-                } else res.sendStatus(401);
-                db.close();
-            });
-    });
+    //             if (resFind.HashedPwd === h(resFind.Salt + pass)) {
+    //                 var sessId = crypto.randomBytes(32).toString("hex");
+    //                 sessioni[sessId] = {
+    //                     IDUtente: resFind._id,
+    //                     Utente: resFind.Name,
+    //                     chiave: pass
+    //                 };
+    //                 res.send(sessId);
+    //             } else res.sendStatus(401);
+    //             db.close();
+    //         });
+    // });
+
+    try {
+
+        var db = await MongoClient.connect(uri, { useNewUrlParser: true });
+        var user = await db.db("ms-teams").collection("utenti").findOne({ Name: name });
+
+        if (user && user.HashedPwd === h(user.Salt + pass)) {
+
+            var sessId = crypto.randomBytes(32).toString("hex");
+            sessioni[sessId] = {
+                IDUtente: user._id,
+                Utente: user.Name,
+                chiave: pass
+            };
+            res.send(sessId);
+        } else res.sendStatus(401);
+
+    } catch (error) {
+        res.sendStatus(500)
+    }
 });
 
 app.post("/addUser", async (req, res) => {
@@ -82,14 +102,11 @@ app.post("/addUser", async (req, res) => {
 
         if (!dominio) {//il dominio non c'era
             var newDom = await db.db("ms-teams").collection("domini").insertOne({ Name: dom });
-            console.log(`newDom`, newDom);
-            dominio = newDom.ops._id
+            dominio = newDom.insertedId
         }
 
-        console.log(`dominio`, dominio);
-
         var giaPresente = await db.db("ms-teams").collection("utenti").findOne({ Name: name });
-        console.log(`giaPresente`, giaPresente);
+
         if (!giaPresente) {//il dominio non c'era
 
             var nuovo_utente = {
@@ -111,6 +128,8 @@ app.post("/addUser", async (req, res) => {
             res.send(sessId);
         } else
             res.send("username already taken")
+
+
         db.close();
     } catch (error) {
         res.sendStatus(500)
