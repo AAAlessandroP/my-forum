@@ -5,7 +5,7 @@ $(function() {
   $(".container:eq(1)").hide();
 
   function getAllNotes() {
-    $.post("/allNote", { sessid: m_sessid }).always(note => {
+    $.post("/allNoteDominio", { sessid: m_sessid }).always(note => {
       console.log(`note`, note);
       if (note != "nulla salvato")
         note.forEach(nota => {
