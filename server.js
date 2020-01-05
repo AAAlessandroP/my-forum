@@ -107,18 +107,30 @@ app.post("/addUser", (req, res) => {
     //             db.close();
     //         });
 
-    db.db("ms-teams").collection("utenti").updateOne(
-      {},
-      { $push: { dom: nuovo_utente } },
-      { safe: true, upsert: true },
-      function(err, doc) {
-        if (err) {
-          console.log(err);
-        } else {
-          //do stuff
+    db.db("ms-teams")
+      .collection("utenti")
+      .updateOne(
+        {},
+        { $push: { dom: nuovo_utente } },
+        { safe: true, upsert: true },
+        function(err, doc) {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log(doc.nModified);
+            
+            // var sessId = crypto.randomBytes(32).toString("hex");
+            //             sessioni[sessId] = {
+            //                 IDUtente: doc.insertedId,
+            //                 Utente: name,
+            //                 chiave: pass
+            //             };
+                        console.log("1 nuovo utente inserito");
+                        res.send("sessId");
+                        db.close();
+          }
         }
-      }
-    );
+      );
   });
 });
 
