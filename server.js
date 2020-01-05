@@ -80,23 +80,37 @@ app.post("/addUser", async (req, res) => {
 
         var dominio = await db.db("ms-teams").collection("domini").findOne({ Name: dom });
 
-        var nuovo_utente = {
-            Name: name,
-            Salt: salt,
-            HashedPwd: h(salt + pass),
-            Dominio: dominio._id
-        };
+        if (!dominio) {//il dominio non c'era
+            var newDom = await db.db("ms-teams").collection("domini").insertOne({ Name: dom });
+            console.log(`newDom`, newDom);
+            dominio = newDom.ops._id
+        }
 
-        var resIns = await db.db("ms-teams").collection("utenti").insertOne(nuovo_utente, { safe: true, upsert: true });
+        console.log(`dominio`, dominio);
 
-        var sessId = crypto.randomBytes(32).toString("hex");
-        sessioni[sessId] = {
-            IDUtente: resIns.insertedId,
-            Utente: name,
-            chiave: pass
-        };
+        var giaPresente = await db.db("ms-teams").collection("utenti").findOne({ Name: name });
+        console.log(`giaPresente`, giaPresente);
+        if (!giaPresente) {//il dominio non c'era
 
-        res.send(sessId);
+            var nuovo_utente = {
+                Name: name,
+                Salt: salt,
+                HashedPwd: h(salt + pass),
+                Dominio: dominio._id
+            };
+
+            var resIns = await db.db("ms-teams").collection("utenti").insertOne(nuovo_utente, { safe: true, upsert: true });
+
+            var sessId = crypto.randomBytes(32).toString("hex");
+            sessioni[sessId] = {
+                IDUtente: resIns.insertedId,
+                Utente: name,
+                chiave: pass
+            };
+
+            res.send(sessId);
+        } else
+            res.send("username already taken")
         db.close();
     } catch (error) {
         res.sendStatus(500)
