@@ -80,10 +80,11 @@ app.post("/addUser", (req, res) => {
             db.close();
             throw err;
         }
-
+        var query = {}
+        query[dom]=name
         db.db("ms-teams")
             .collection("utenti")
-            .findOne({ dom+: name }, function (err, doc) {
+            .findOne(query, function (err, doc) {
 
                 console.log(`doc`, doc);
 
