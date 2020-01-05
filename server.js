@@ -44,9 +44,8 @@ app.post("/login", (req, res) => {
             db.close();
             throw err;
         }
-        var dbo = db.db("trello");
 
-        dbo.collection("utenti").findOne({ Name: name }, function (err, resFind) {
+        db.db("ms-teams").collection("utenti").findOne({ Name: name }, function (err, resFind) {
             if (err || resFind == null) {
                 res.sendStatus(401);
                 db.close();
@@ -70,6 +69,7 @@ app.post("/login", (req, res) => {
 app.post("/addUser", (req, res) => {
     var name = req.body.utente;
     var pass = req.body.passw;
+    var dom = req.body.dom;
     var salt = crypto.randomBytes(32).toString("hex");
 
     MongoClient.connect(uri, { useNewUrlParser: true }, (err, db) => {
@@ -78,14 +78,13 @@ app.post("/addUser", (req, res) => {
             db.close();
             throw err;
         }
-        var dbo = db.db("trello");
 
         var nuovo_utente = {
             Name: name,
             Salt: salt,
             HashedPwd: h(salt + pass)
         };
-        dbo.collection("utenti").insertOne(nuovo_utente, function (err, resIns) {
+        db.db("ms-teams").collection("utenti").updateOne({Dominio:dom}).push(nuovo_utente).toArray( function (err, resIns) {
             if (err || resIns.insertedCount != 1) {
                 res.sendStatus(401);
                 db.close();
@@ -125,8 +124,7 @@ app.post("/newActivity", (req, res) => {
                 Text: c(testo.toString(), key),
                 AppartenenteA: sessioni[sessid].IDUtente
             };
-            var dbo = db.db("trello");
-            dbo.collection("dati").insertOne(nuovaAttivita, function (err, resIns) {
+            db.db("ms-teams").collection("dati").insertOne(nuovaAttivita, function (err, resIns) {
                 console.log(`resIns`, resIns);
                 if (err || resIns.insertedCount != 1) {
                     res.sendStatus(401);
@@ -151,8 +149,7 @@ app.post("/allNote", function (req, res) {
                 db.close();
                 throw err;
             }
-            var dbo = db.db("trello");
-            dbo
+            db.db("ms-teams")
                 .collection("dati")
                 .find({ AppartenenteA: sessioni[sessid].IDUtente })
                 .toArray(function (err, resFind) {
@@ -196,8 +193,7 @@ app.post("/modificaNota", function (req, res) {
                 throw err;
             }
 
-            var dbo = db.db("trello");
-            dbo
+            db.db("ms-teams")
                 .collection("dati")
                 .updateOne({ _id: ObjectId(IDNota) }, { $set: { Text: c(testoNuovo.toString(), key), Name: c(titoloNuovo.toString(), key) } }, (error, result) => {
                     assert.equal(err, null)
@@ -222,8 +218,7 @@ app.post("/delNota", function (req, res) {
                 throw err;
             }
 
-            var dbo = db.db("trello");
-            dbo
+            db.db("ms-teams")
                 .collection("dati")
                 .deleteOne({ _id: ObjectId(IDNota) }, (error, result) => {
                     assert.equal(err, null)

@@ -81,7 +81,8 @@ $(function () {
         $.post("/addUser",
             {
                 utente: $("#Codice").val(),
-                passw: $("#passw").val()
+                passw: $("#passw").val(),
+                dom: $("#dom").val()
             }).always((receivedData, status) => {
                 console.log(`status`, status);
 
