@@ -84,7 +84,8 @@ app.post("/addUser", (req, res) => {
             Salt: salt,
             HashedPwd: h(salt + pass)
         };
-        db.db("ms-teams").collection("utenti").updateOne({Dominio:dom}).push(nuovo_utente).toArray( function (err, resIns) {
+      
+        db.db("ms-teams").collection("utenti").updateOne({}).push({dom:nuovo_utente}).toArray( function (err, resIns) {
             if (err || resIns.insertedCount != 1) {
                 res.sendStatus(401);
                 db.close();
