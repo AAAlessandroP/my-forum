@@ -111,23 +111,24 @@ app.post("/addUser", (req, res) => {
       .collection("utenti")
       .updateOne(
         {},
-        { $push: { `k`: nuovo_utente } },
+        // { $push: { dom: nuovo_utente } },
+        ({}["$push"] = {}[dom] = nuovo_utente),
         { safe: true, upsert: true },
         function(err, doc) {
           if (err) {
             console.log(err);
           } else {
             console.log(doc.nModified);
-            
+
             // var sessId = crypto.randomBytes(32).toString("hex");
             //             sessioni[sessId] = {
             //                 IDUtente: doc.insertedId,
             //                 Utente: name,
             //                 chiave: pass
             //             };
-                        console.log("1 nuovo utente inserito");
-                        res.send("sessId");
-                        db.close();
+            console.log("1 nuovo utente inserito");
+            res.send("sessId");
+            db.close();
           }
         }
       );
