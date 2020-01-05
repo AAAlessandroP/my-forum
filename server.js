@@ -42,14 +42,19 @@ app.post("/login", async (req, res) => {
 
     try {
         var db = await MongoClient.connect(uri, { useNewUrlParser: true });
-        var user = await db.db("ms-teams").collection("utenti").findOne({ Name: name, Dominio: dom });
+        var dominio = await db.db("ms-teams").collection("domini").findOne({ Name: dom });
+        if (!dominio) {//il dominio non c'era
+            res.sendStatus(401)
+            return;
+        }
 
+        var user = await db.db("ms-teams").collection("utenti").findOne({ Name: name, Dominio: dominio._id });
         if (user && user.HashedPwd === h(user.Salt + pass)) {
 
             var sessId = crypto.randomBytes(32).toString("hex");
             sessioni[sessId] = {
                 IDUtente: user._id,
-                IDSuoDominio: user._id,
+                IDSuoDominio: user.Dominio,
                 Utente: user.Name,
                 chiave: pass
             };
@@ -95,7 +100,8 @@ app.post("/addUser", async (req, res) => {
             sessioni[sessId] = {
                 IDUtente: resIns.insertedId,
                 Utente: name,
-                chiave: pass
+                chiave: pass,
+                IDSuoDominio: nuovo_utente.Dominio
             };
 
             res.send(sessId);
@@ -186,18 +192,20 @@ app.post("/allNoteDominio", async (req, res) => {
 
     try {
         var db = await MongoClient.connect(uri, { useNewUrlParser: true });
-        var user = await db.db("ms-teams").collection("dati").find({ Name: name }).toArray();
+        var dati = await db.db("ms-teams").collection("dati").find({ Dominio: sessioni[sessid].IDSuoDominio }).toArray();
 
-        if (user && user.HashedPwd === h(user.Salt + pass)) {
+        let tutti = [];
+        let key = sessioni[sessid].chiave;
 
-            var sessId = crypto.randomBytes(32).toString("hex");
-            sessioni[sessId] = {
-                IDUtente: user._id,
-                Utente: user.Name,
-                chiave: pass
-            };
-            res.send(sessId);
-        } else res.sendStatus(401);
+        dati.forEach(element => {
+            tutti.push({
+                IDNota: element._id,
+                nome: d(element.Name, key),
+                testo: d(element.Text, key)
+            });
+        });
+
+        res.json(tutti);
 
     } catch (error) {
         res.sendStatus(500)
