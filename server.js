@@ -93,7 +93,8 @@ app.post("/addUser", (req, res) => {
                     var nuovo_utente = {
                         Name: name,
                         Salt: salt,
-                        HashedPwd: h(salt + pass)
+                        HashedPwd: h(salt + pass),
+                        Dominio: 
                     };
 
                     var obj = {};
@@ -102,7 +103,7 @@ app.post("/addUser", (req, res) => {
                     //     {$push:{dom:nuovo_utente}} ma con dom non hard-coded ma il valore suo
                     db.db("ms-teams")
                         .collection("utenti")
-                        .updateOne({}, obj, { safe: true, upsert: true }, function (err, doc) {
+                        .insertOne( nuovo_utente, { safe: true, upsert: true }, function (err, doc) {
                             if (err) {
                                 res.sendStatus(401);
                                 db.close();
