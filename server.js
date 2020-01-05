@@ -68,66 +68,52 @@ app.post("/login", (req, res) => {
     });
 });
 
-app.post("/addUser", (req, res) => {
+app.post("/addUser", async (req, res) => {
+
     var name = req.body.utente;
     var pass = req.body.passw;
     var dom = req.body.dom;
     var salt = crypto.randomBytes(32).toString("hex");
 
-    MongoClient.connect(uri, { useNewUrlParser: true }, (err, db) => {
-        if (err) {
-            res.sendStatus(401);
-            db.close();
-            throw err;
-        }
-        var query = {}
-        query[dom+".Name"]=name
-        console.log(`query`, query);
+    var db = await MongoClient.connect(uri, { useNewUrlParser: true });
+
+    var resFind = await db.db("ms-teams").collection("domini").findOne({ Name: dom });
+
+    console.log(`resFind`, resFind);
+    if (resFind != null) {
+
+        var nuovo_utente = {
+            Name: name,
+            Salt: salt,
+            HashedPwd: h(salt + pass),
+            Dominio: resFind._id
+        };
+
+        
         db.db("ms-teams")
             .collection("utenti")
-            .findOne(query, function (err, doc) {
-
-                console.log(`doc`, doc);
-                if (doc!=null) {
-
-                    var nuovo_utente = {
-                        Name: name,
-                        Salt: salt,
-                        HashedPwd: h(salt + pass),
-                        Dominio: 
-                    };
-
-                    var obj = {};
-                    obj["$push"] = {};
-                    obj["$push"][dom] = nuovo_utente;
-                    //     {$push:{dom:nuovo_utente}} ma con dom non hard-coded ma il valore suo
-                    db.db("ms-teams")
-                        .collection("utenti")
-                        .insertOne( nuovo_utente, { safe: true, upsert: true }, function (err, doc) {
-                            if (err) {
-                                res.sendStatus(401);
-                                db.close();
-                                throw err;
-                            }
-
-                            var sessId = crypto.randomBytes(32).toString("hex");
-                            sessioni[sessId] = {
-                                IDUtente: doc.insertedId,
-                                Utente: name,
-                                chiave: pass
-                            };
-                            console.log("1 nuovo utente inserito");
-                            res.send(sessId);
-                            db.close();
-                        });
-                } else {
-                    res.send("user già presente");
+            .insertOne( nuovo_utente, { safe: true, upsert: true }, function (err, doc) {
+                if (err) {
+                    resFind.sendStatus(401);
                     db.close();
+                    throw err;
                 }
 
-            });
+                var sessId = crypto.randomBytes(32).toString("hex");
+                sessioni[sessId] = {
+                    IDUtente: doc.insertedId,
+                    Utente: name,
+                    chiave: pass
+                };
+                console.log("1 nuovo utente inserito");
+        res.send("sessId");
+        db.close();
+        // });
+    } else {
+        res.send("dom non presente");
+        db.close();
+    }
 
-    });
 });
 
 app.post("/newActivity", (req, res) => {
