@@ -130,23 +130,26 @@ app.post("/newActivity", (req, res) => {
                 throw err;
             }
             let key = sessioni[sessid].chiave;
-
+            var nuovaAttivita;
             if (tipo == "scheda semplice")
-                var nuovaAttivita = {
+                nuovaAttivita = {
                     Name: c(nome.toString(), key),
                     Text: c(testo.toString(), key),
                     Tipo: tipo,
                     AppartenenteA: sessioni[sessid].IDUtente
                 };
             else if (tipo == "scheda con scadenza")
-                var nuovaAttivita = {
+                nuovaAttivita = {
                     Name: c(nome.toString(), key),
                     Text: c(testo.toString(), key),
                     ScadeIL: c(ScadeIL.toString(), key),
                     Tipo: tipo,
                     AppartenenteA: sessioni[sessid].IDUtente
                 };
-            else res.sendStatus(500);
+            else {
+                res.sendStatus(500);
+                return;
+            }
 
             db.db("ms-teams")
                 .collection("dati")

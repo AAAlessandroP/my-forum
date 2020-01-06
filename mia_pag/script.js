@@ -9,7 +9,7 @@ $(function () {
             console.log(`note`, note);
             if (note != "nulla salvato")
                 note.forEach(nota => {
-                    $(".row:eq(2)").append(proto(nota.nome, nota.testo, nota.IDNota));
+                    $(".row:eq(2)").append(protoNotaSemplice(nota.nome, nota.testo, nota.IDNota));
                     $(`#${nota.IDNota} .modifica`)[0].onclick = () => {
                         modifica($(`#${nota.IDNota}`)[0]);
                     };
@@ -29,7 +29,7 @@ $(function () {
         "DarkSeaGreen "
     ];
 
-    function proto(nome, txt, _id) {
+    function protoNotaSemplice(nome, txt, _id) {
         let randColor = arr[Math.floor(Math.random() * arr.length)];
         return `
         <div class="col-3" id="${_id}" style="background-color:${randColor}">
@@ -50,14 +50,35 @@ $(function () {
         </div>`;
     }
 
-    $("#submitAdd").click(() => {
+    function protoNotaConScadenza(nome, txt, _id) {
+        let randColor = arr[Math.floor(Math.random() * arr.length)];
+        return `
+        <div class="col-3" id="${_id}" style="background-color:${randColor}">
+            <fieldset>
+                <legend>nota</legend>
+                <div class="input-group mt-2 mb-2">
+                    <input type="text" class="form-control" value="${nome}">
+                </div>
+                <div class="input-group mt-2 mb-2">
+
+                    <textarea class="form-control" rows="3">${txt}</textarea>
+                </div>
+
+                <input class="modifica btn btn-dark" type="button" value="modifica">
+                <input class="cancella btn btn-dark" type="button" value="cancella">
+
+                </fieldset>
+        </div>`;
+    }
+
+    $("#submitAddSemplice").click(() => {
         $.post("/newActivity", {
             sessid: m_sessid,
             nome: $("#nome").val(),
             testo: $("#texttoadd")[0].value
         }).always(IDNotaNuova => {
             $(".row:eq(2)").append(
-                proto($("#nome").val(), $("#texttoadd")[0].value, IDNotaNuova)
+                protoNotaSemplice($("#nome").val(), $("#texttoadd")[0].value, IDNotaNuova)
             );
             $(`#${IDNotaNuova} .modifica`)[0].onclick = () => {
                 modifica($(`#${IDNotaNuova}`)[0]);
