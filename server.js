@@ -131,12 +131,23 @@ app.post("/newActivity", (req, res) => {
             }
             let key = sessioni[sessid].chiave;
 
-            var nuovaAttivita = {
-                Name: c(nome.toString(), key),
-                Text: c(testo.toString(), key),
-                Tipo: tipo,
-                AppartenenteA: sessioni[sessid].IDUtente
-            };
+            if (tipo == "scheda semplice")
+                var nuovaAttivita = {
+                    Name: c(nome.toString(), key),
+                    Text: c(testo.toString(), key),
+                    Tipo: tipo,
+                    AppartenenteA: sessioni[sessid].IDUtente
+                };
+            else if (tipo == "scheda con scadenza")
+                var nuovaAttivita = {
+                    Name: c(nome.toString(), key),
+                    Text: c(testo.toString(), key),
+                    ScadeIL: c(testo.toString(), key),
+                    Tipo: tipo,
+                    AppartenenteA: sessioni[sessid].IDUtente
+                };
+            else res.sendStatus(500);
+
             db.db("ms-teams")
                 .collection("dati")
                 .insertOne(nuovaAttivita, function (err, resIns) {
