@@ -142,7 +142,7 @@ app.post("/newActivity", (req, res) => {
                 var nuovaAttivita = {
                     Name: c(nome.toString(), key),
                     Text: c(testo.toString(), key),
-                    ScadeIL: c(testo.toString(), key),
+                    ScadeIL: c(ScadeIL.toString(), key),
                     Tipo: tipo,
                     AppartenenteA: sessioni[sessid].IDUtente
                 };
