@@ -119,6 +119,7 @@ app.post("/addUser", async (req, res) => {
 app.post("/newActivity", (req, res) => {
     var nome = req.body.nome;
     var testo = req.body.testo;
+    var tipo = req.body.tipo;
     var sessid = req.body.sessid;
 
     if (sessioni[sessid])
@@ -133,6 +134,7 @@ app.post("/newActivity", (req, res) => {
             var nuovaAttivita = {
                 Name: c(nome.toString(), key),
                 Text: c(testo.toString(), key),
+                Tipo: tipo,
                 AppartenenteA: sessioni[sessid].IDUtente
             };
             db.db("ms-teams")
@@ -154,41 +156,6 @@ app.post("/newActivity", (req, res) => {
 });
 
 app.post("/allNoteDominio", async (req, res) => {
-    // var sessid = req.body.sessid;
-    // if (sessioni[sessid]) {
-    //     MongoClient.connect(uri, { useNewUrlParser: true }, (err, db) => {
-    //         if (err) {
-    //             res.sendStatus(401);
-    //             db.close();
-    //             throw err;
-    //         }
-    //         db.db("ms-teams")
-    //             .collection("dati")
-    //             .find({ AppartenenteA: sessioni[sessid].IDUtente })
-    //             .toArray(function (err, resFind) {
-    //                 if (err) {
-    //                     res.sendStatus(401);
-    //                     db.close();
-    //                     throw err;
-    //                 }
-    //                 if (resFind.length != 0) {
-    //                     let tutti = [];
-    //                     let key = sessioni[sessid].chiave;
-
-    //                     resFind.forEach(element => {
-    //                         tutti.push({
-    //                             IDNota: element._id,
-    //                             nome: d(element.Name, key),
-    //                             testo: d(element.Text, key)
-    //                         });
-    //                     });
-
-    //                     res.json(tutti);
-    //                 } else res.send("nulla salvato");
-    //                 db.close();
-    //             });
-    //     });
-    // } else res.sendStatus(401);
 
     try {
         var db = await MongoClient.connect(uri, { useNewUrlParser: true });
