@@ -117,6 +117,7 @@ app.post("/addUser", async (req, res) => {
 });
 //sarebbe bello avere n domini(sottogruppi)
 app.post("/newActivity", (req, res) => {
+
     var nome = req.body.nome;
     var testo = req.body.testo;
     var tipo = req.body.tipo;
@@ -131,7 +132,7 @@ app.post("/newActivity", (req, res) => {
             }
             let key = sessioni[sessid].chiave;
             var nuovaAttivita;
-            if (tipo == "scheda semplice")
+            if (tipo == "Semplice")
                 nuovaAttivita = {
                     Name: c(nome.toString(), key),
                     Text: c(testo.toString(), key),
@@ -142,7 +143,7 @@ app.post("/newActivity", (req, res) => {
                 nuovaAttivita = {
                     Name: c(nome.toString(), key),
                     Text: c(testo.toString(), key),
-                    ScadeIL: c(ScadeIL.toString(), key),
+                    ScadeIL: c(req.body.scadenza.toString(), key),
                     Tipo: tipo,
                     AppartenenteA: sessioni[sessid].IDUtente
                 };
@@ -154,7 +155,7 @@ app.post("/newActivity", (req, res) => {
             db.db("ms-teams")
                 .collection("dati")
                 .insertOne(nuovaAttivita, function (err, resIns) {
-                    console.log(`resIns`, resIns);
+                    // console.log(`resIns`, resIns);
                     if (err || resIns.insertedCount != 1) {
                         res.sendStatus(401);
                         db.close();

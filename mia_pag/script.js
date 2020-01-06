@@ -72,24 +72,39 @@ $(function () {
     }
 
     $("#submitAddSemplice").click(() => {
-        $.post("/newActivity", {
-            sessid: m_sessid,
-            nome: $("#nome").val(),
-            testo: $("#texttoadd")[0].value
-        }).always(IDNotaNuova => {
-            $(".row:eq(2)").append(
-                protoNotaSemplice($("#nome").val(), $("#texttoadd")[0].value, IDNotaNuova)
-            );
-            $(`#${IDNotaNuova} .modifica`)[0].onclick = () => {
-                modifica($(`#${IDNotaNuova}`)[0]);
-            };
-            $(`#${IDNotaNuova} .cancella`)[0].onclick = () => {
-                cancella($(`#${IDNotaNuova}`)[0]);
-            };
-            $("#nome").val("");
-            $("#texttoadd")[0].value = "";
-        });
+        add("Semplice");
     });
+
+    $("#submitAddATempo").click(() => {
+        add("scheda con scadenza");
+    });
+
+    function add(type) {
+
+        var route = ""
+        var params = { sessid: m_sessid, nome: $("#nome").val(), testo: $("#texttoadd")[0].value }
+        params["tipo"] = type
+
+        if (type == "scheda con scadenza") {
+            params["scadenza"] = $("#scadenzaAddATempo").val()
+        }
+
+        $.post("/newActivity", params)
+            .always(IDNotaNuova => {
+
+                $(".row:eq(2)").append(
+                    protoNotaSemplice($("#nome").val(), $("#texttoadd")[0].value, IDNotaNuova)
+                );
+                $(`#${IDNotaNuova} .modifica`)[0].onclick = () => {
+                    modifica($(`#${IDNotaNuova}`)[0]);
+                };
+                $(`#${IDNotaNuova} .cancella`)[0].onclick = () => {
+                    cancella($(`#${IDNotaNuova}`)[0]);
+                };
+                $("#nome").val("");
+                $("#texttoadd")[0].value = "";
+            });
+    }
 
     var singleton = true;
     $("#submitLogin").click(() => {
@@ -107,7 +122,10 @@ $(function () {
                     getAllNotes();
                 } else alert("riprova credenziali");
             });
-            singleton = false;
+            // singleton = false;
+            // PRODUCTION MODE ONLY
+            // PRODUCTION MODE ONLY
+            // PRODUCTION MODE ONLY
         }
     });
 
