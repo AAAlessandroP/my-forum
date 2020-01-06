@@ -22,8 +22,8 @@
         </div>
         <div class="row">
             <div class="col-lg" style="background-color:yellowgreen">
-                Dominio:<input type="text" id="dom"><br>              
-                Utenza:<input type="text" id="Codice"><br>              
+                Dominio:<input type="text" id="dom"><br>
+                Utenza:<input type="text" id="Codice"><br>
                 Codice d'accesso:<input type="password" id="passw">
                 <input type="button" value="Fai l'accesso" id="submitLogin">
                 <input type="button" value="registrati" id="submitRegistrati">
@@ -37,11 +37,11 @@
                 <fieldset>
                     <legend> Aggiungi:</legend>
                     <div class="input-group mt-2 mb-2">
-                        <input type="text" class="form-control" name="nomefile" id="nome" placeholder="nome del file">
+                        <input type="text" class="form-control" name="nomefile" id="nome" placeholder="titolo">
                     </div>
                     <div class="input-group mt-2 mb-2">
 
-                        <textarea class="form-control" placeholder="testo da aggiungere" rows="3"
+                        <textarea class="form-control" placeholder="testo della nota" rows="3"
                             id="texttoadd"></textarea>
                     </div>
 
@@ -52,12 +52,18 @@
                 <fieldset>
                     <legend> Aggiungi:</legend>
                     <div class="input-group mt-2 mb-2">
-                        <input type="text" class="form-control" name="nomefile" id="nome" placeholder="nome del file">
+                        <input type="text" class="form-control" name="nome" id="nomeAddATempo" placeholder="titolo">
                     </div>
                     <div class="input-group mt-2 mb-2">
 
-                        <textarea class="form-control" placeholder="testo da aggiungere" rows="3"
+                        <textarea class="form-control" placeholder="testo della nota" rows="3"
                             id="txtAddATempo"></textarea>
+                    </div>
+                    <div class="input-group mt-2 mb-2">
+                        <label for="scadenzaAddATempo">
+                            scadenza:
+                        </label>
+                        <input type="date" class="form-control" id="scadenzaAddATempo">
                     </div>
 
                     <input class="btn btn-dark" type="button" value="add" id="submitAddATempo">
