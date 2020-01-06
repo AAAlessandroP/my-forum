@@ -167,7 +167,7 @@ app.post("/newActivity", (req, res) => {
 });
 
 app.post("/allNoteDominio", async (req, res) => {
-
+    var sessid = req.body.sessid;
     try {
         var db = await MongoClient.connect(uri, { useNewUrlParser: true });
         var dati = await db.db("ms-teams").collection("dati").find({ Dominio: sessioni[sessid].IDSuoDominio }).toArray();
@@ -175,18 +175,19 @@ app.post("/allNoteDominio", async (req, res) => {
         let tutti = [];
         let key = sessioni[sessid].chiave;
 
-        dati.forEach(element => {
-            tutti.push({
-                IDNota: element._id,
-                Tipo: element.Tipo,
-                nome: d(element.Name, key),
-                testo: d(element.Text, key)
-            });
+        dati.forEach(ele => {
+            eleModificato = ele
+            eleModificato.IDNota = ele._id
+            eleModificato._id = undefined
+            eleModificato.nome = d(ele.Name, key),
+                eleModificato.testo = d(ele.Text, key),
+                tutti.push(eleModificato);
         });
 
         res.json(tutti);
 
     } catch (error) {
+        console.log(`error`, error);
         res.sendStatus(500)
     }
 
