@@ -200,6 +200,7 @@ app.post("/allNoteDominio", async (req, res) => {
         dati.forEach(element => {
             tutti.push({
                 IDNota: element._id,
+                Tipo: element.Tipo,
                 nome: d(element.Name, key),
                 testo: d(element.Text, key)
             });
