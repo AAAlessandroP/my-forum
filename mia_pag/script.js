@@ -1,19 +1,21 @@
 var m_sessid = "dummy";
 
 $(function () {
+
     $("#output").val(""); // pulisco per f5
-    $(".container:eq(1)").hide();
 
     function getAllNotes() {
+
         $.post("/allNoteDominio", { sessid: m_sessid }).always(note => {
             console.log(`note`, note);
             if (note != "nulla salvato")
                 note.forEach(nota => {
-                    if (nota.tipo == "Semplice")
-                        $(".row:eq(2)").append(protoNotaSemplice(nota.nome, nota.testo, nota.IDNota));
-                    else if (nota.tipo == "scheda con scadenza")
-                        $(".row:eq(2)").append(protoNotaConScadenza(nota.nome, nota.testo, nota.IDNota, nota.Scadenza));
 
+                    if (nota.Tipo == "Semplice")
+                        $(".row:eq(2)").append(protoNotaSemplice(nota.nome, nota.testo, nota.IDNota));
+                    else if (nota.Tipo == "scheda con scadenza")
+                        $(".row:eq(2)").append(protoNotaConScadenza(nota.nome, nota.testo, nota.IDNota, nota.Scadenza));
+                    else alert("ops")
                     $(`#${nota.IDNota} .modifica`)[0].onclick = () => {
                         modifica($(`#${nota.IDNota}`)[0]);
                     };
