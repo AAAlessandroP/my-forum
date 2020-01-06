@@ -137,7 +137,8 @@ app.post("/newActivity", (req, res) => {
                     Name: c(nome.toString(), key),
                     Text: c(testo.toString(), key),
                     Tipo: tipo,
-                    AppartenenteA: sessioni[sessid].IDUtente
+                    AppartenenteA: sessioni[sessid].IDUtente,
+                    BroadcastDelDom: sessioni[sessid].IDSuoDominio
                 };
             else if (tipo == "scheda con scadenza")
                 nuovaAttivita = {
@@ -145,7 +146,8 @@ app.post("/newActivity", (req, res) => {
                     Text: c(testo.toString(), key),
                     ScadeIL: c(req.body.scadenza.toString(), key),
                     Tipo: tipo,
-                    AppartenenteA: sessioni[sessid].IDUtente
+                    AppartenenteA: sessioni[sessid].IDUtente,
+                    BroadcastDelDom: sessioni[sessid].IDSuoDominio
                 };
             else {
                 res.sendStatus(500);
@@ -174,20 +176,22 @@ app.post("/allNoteDominio", async (req, res) => {
     var sessid = req.body.sessid;
     try {
         var db = await MongoClient.connect(uri, { useNewUrlParser: true });
-        var dati = await db.db("ms-teams").collection("dati").find({ Dominio: sessioni[sessid].IDSuoDominio }).toArray();
+        var dati = await db.db("ms-teams").collection("dati").find({ BroadcastDelDom: sessioni[sessid].IDSuoDominio }).toArray();
 
         let tutti = [];
         let key = sessioni[sessid].chiave;
 
         dati.forEach(ele => {
+            console.log(`ele`, ele);
             eleModificato = ele
             eleModificato.IDNota = ele._id
             eleModificato._id = undefined
-            eleModificato.nome = d(ele.Name, key),
-                eleModificato.testo = d(ele.Text, key),
-                tutti.push(eleModificato);
-        });
+            eleModificato.nome = d(ele.Name, key)
+            eleModificato.testo = d(ele.Text, key)
 
+            tutti.push(eleModificato);
+        });
+        console.log(`tutti`, tutti);
         res.json(tutti);
 
     } catch (error) {
