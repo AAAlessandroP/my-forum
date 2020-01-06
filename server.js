@@ -180,16 +180,16 @@ app.post("/allNoteDominio", async (req, res) => {
 
         let tutti = [];
         let key = sessioni[sessid].chiave;
-
+        let eleDecrittato;
         dati.forEach(ele => {
             console.log(`ele`, ele);
-            eleModificato = ele
-            eleModificato.IDNota = ele._id
-            eleModificato._id = undefined
-            eleModificato.nome = d(ele.Name, key)
-            eleModificato.testo = d(ele.Text, key)
-
-            tutti.push(eleModificato);
+            eleDecrittato = ele
+            eleDecrittato.IDNota = ele._id
+            eleDecrittato._id = undefined
+            eleDecrittato.nome = d(ele.Name, key)
+            eleDecrittato.testo = d(ele.Text, key)
+            eleDecrittato.ScadeIL = d(ele.ScadeIL, key)
+            tutti.push(eleDecrittato);
         });
         console.log(`tutti`, tutti);
         res.json(tutti);

@@ -9,7 +9,11 @@ $(function () {
             console.log(`note`, note);
             if (note != "nulla salvato")
                 note.forEach(nota => {
-                    $(".row:eq(2)").append(protoNotaSemplice(nota.nome, nota.testo, nota.IDNota));
+                    if (nota.tipo == "Semplice")
+                        $(".row:eq(2)").append(protoNotaSemplice(nota.nome, nota.testo, nota.IDNota));
+                    else if (nota.tipo == "scheda con scadenza")
+                        $(".row:eq(2)").append(protoNotaConScadenza(nota.nome, nota.testo, nota.IDNota, nota.Scadenza));
+
                     $(`#${nota.IDNota} .modifica`)[0].onclick = () => {
                         modifica($(`#${nota.IDNota}`)[0]);
                     };
@@ -50,7 +54,7 @@ $(function () {
         </div>`;
     }
 
-    function protoNotaConScadenza(nome, txt, _id) {
+    function protoNotaConScadenza(nome, txt, _id, data) {
         let randColor = arr[Math.floor(Math.random() * arr.length)];
         return `
         <div class="col-3" id="${_id}" style="background-color:${randColor}">
@@ -60,10 +64,14 @@ $(function () {
                     <input type="text" class="form-control" value="${nome}">
                 </div>
                 <div class="input-group mt-2 mb-2">
-
                     <textarea class="form-control" rows="3">${txt}</textarea>
                 </div>
-
+                <div class="input-group mt-2 mb-2">
+                    <label>scadenza:</label>
+                </div>
+                <div class="input-group mt-2 mb-2">
+                    <input type="date" class="form-control" value="${data}">
+                </div>
                 <input class="modifica btn btn-dark" type="button" value="modifica">
                 <input class="cancella btn btn-dark" type="button" value="cancella">
 
@@ -81,7 +89,6 @@ $(function () {
 
     function add(type) {
 
-        var route = ""
         var params = { sessid: m_sessid, nome: $("#nome").val(), testo: $("#texttoadd")[0].value }
         params["tipo"] = type
 
@@ -146,17 +153,7 @@ $(function () {
         });
     });
 
-    $("fieldset #submitCerca").click(() => {
-        var str = $("fieldset #tosearch").val();
-        $.post(
-            "/decritta",
-            {
-                cosa: str,
-                sessid: m_sessid
-            },
-            whenGetDone
-        );
-    });
+
 
     $("fieldset #submitAll").click(() => {
         $.post("/all", {
@@ -172,12 +169,6 @@ $(function () {
         });
     });
 
-    function whenGetDone(receivedData, status) {
-        // scrivo il ricevuto da GET "/search/foo"
-        $("fieldset:eq(3) div textarea").val(
-            $("fieldset:eq(3) div textarea").val() + receivedData + "\n"
-        );
-    }
 });
 
 function modifica(chi) {
@@ -205,8 +196,6 @@ function modifica(chi) {
 }
 
 function cancella(chi) {
-    // console.log(`chi`, chi);
-    // console.log(`chi`, chi.children[0].children[1].children[0].value)
     $.post("/delNota", { sessid: m_sessid, IDNota: chi.id }).always(
         (receivedData, status) => {
             console.log(`status`, status);
