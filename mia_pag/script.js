@@ -13,7 +13,7 @@ $(function () {
                     if (nota.Tipo == "Semplice")
                         $(".row:eq(2)").append(protoNotaSemplice(nota.nome, nota.testo, nota.IDNota));
                     else if (nota.Tipo == "scheda con scadenza")
-                        $(".row:eq(2)").append(protoNotaConScadenza(nota.nome, nota.testo, nota.IDNota, nota.Scadenza));
+                        $(".row:eq(2)").append(protoNotaConScadenza(nota.nome, nota.testo, nota.IDNota, nota.ScadeIL));
                     else alert("ops")
                     $(`#${nota.IDNota} .modifica`)[0].onclick = () => {
                         modifica($(`#${nota.IDNota}`)[0]);
