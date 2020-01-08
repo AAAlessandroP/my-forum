@@ -168,6 +168,54 @@ app.post("/newActivity", (req, res) => {
     else res.sendStatus(401);
 });
 
+app.post("/newDom", async (req, res) => {
+    var sessid = req.body.sessid;
+    var name = req.body.name;
+
+    if (sessioni[sessid]) {
+        var db = await MongoClient.connect(uri, { useNewUrlParser: true });
+        var dominio = await db.db("ms-teams").collection("domini").findOne({ Name: name });
+
+        if (!dominio) {//il dominio non c'era
+            try {
+                var newDom = await db.db("ms-teams").collection("domini").insertOne({ Name: name });
+                console.log(`newDom`, newDom);
+            } catch (error) {
+                console.log(`error`, error);
+                throw error;
+            }
+        }
+
+    } else res.sendStatus(401);
+});
+
+
+app.post("/allDomUsers", async (req, res) => {
+    console.log(`allDomUsers`, allDomUsers);
+    var sessid = req.body.sessid;
+    try {
+        var db = await MongoClient.connect(uri, { useNewUrlParser: true });
+        var dati = await db.db("ms-teams").collection("dati").find({ Dominio: sessioni[sessid].IDSuoDominio }).project({ Name: 1 }).toArray();
+        let tutti = [];
+        dati.forEach(ele => {
+            console.log(`ele`, ele);
+
+            tutti.push({
+                name: ele.Name,
+                _id: ele._id
+            });
+        });
+        console.log(`tutti`, tutti);
+        res.json(tutti);
+
+    } catch (error) {
+        console.log(`error`, error);
+        res.sendStatus(500)
+    }
+
+});
+
+
 app.post("/allNoteDominio", async (req, res) => {
     var sessid = req.body.sessid;
     try {

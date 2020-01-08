@@ -3,7 +3,7 @@ var m_sessid = "dummy";
 $(function () {
 
 
-    function getAllNotes() {
+    function getAllNotes() {//solo dopo login ok
 
         $.post("/allNoteDominio", { sessid: m_sessid }).always(note => {
             console.log(`note`, note);
@@ -21,6 +21,28 @@ $(function () {
                     $(`#${nota.IDNota} .cancella`)[0].onclick = () => {
                         cancella($(`#${nota.IDNota}`)[0]);
                     };
+                });
+        });
+    }
+
+    function getAllDomUser() {//solo dopo login ok
+
+        $.post("/allDomUsers", { sessid: m_sessid }).always(utenti => {
+            console.log(`utenti`, utenti);
+            if (utenti)
+                utenti.forEach(nota => {
+
+                    // if (nota.Tipo == "Semplice")
+                    //     $(".row:eq(2)").append(protoNotaSemplice(nota.nome, nota.testo, nota.IDNota));
+                    // else if (nota.Tipo == "scheda con scadenza")
+                    //     $(".row:eq(2)").append(protoNotaConScadenza(nota.nome, nota.testo, nota.IDNota, nota.ScadeIL));
+                    // else alert("ops")
+                    // $(`#${nota.IDNota} .modifica`)[0].onclick = () => {
+                    //     modifica($(`#${nota.IDNota}`)[0]);
+                    // };
+                    // $(`#${nota.IDNota} .cancella`)[0].onclick = () => {
+                    //     cancella($(`#${nota.IDNota}`)[0]);
+                    // };
                 });
         });
     }
@@ -128,6 +150,7 @@ $(function () {
                     m_sessid = receivedData;
                     $(".container:eq(1)").show(1000);
                     getAllNotes();
+                    getAllDomUser();
                 } else alert("riprova credenziali");
             });
             // singleton = false;
