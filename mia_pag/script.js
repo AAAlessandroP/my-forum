@@ -2,7 +2,6 @@ var m_sessid = "dummy";
 
 $(function () {
 
-    $("#output").val(""); // pulisco per f5
 
     function getAllNotes() {
 
