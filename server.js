@@ -17,15 +17,11 @@ const uri = `mongodb+srv://ms-teams:${process.env.PASS}@miocluster2-igwb8.mongod
 var sessioni = {};
 
 function c(s, key) {
-    return crypto
-        .createCipher("aes-256-ctr", key)
-        .update(s.toString(), "utf-8", "hex");
+    return crypto.createCipher("aes-256-ctr", key).update(s.toString(), "utf-8", "hex");
 }
 
 function d(s, key) {
-    return crypto
-        .createDecipher("aes-256-ctr", key)
-        .update(s.toString(), "utf-8", "hex");
+    return crypto.createDecipher("aes-256-ctr", key).update(s, "hex", "utf-8");
 }
 
 function h(s) {
