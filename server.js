@@ -168,7 +168,7 @@ app.post("/newActivity", (req, res) => {
     else res.sendStatus(401);
 });
 
-app.post("/newDom", async (req, res) => {
+app.post("/newDom", async (req, res) => {//nuovo
     var sessid = req.body.sessid;
     var name = req.body.name;
 
@@ -191,30 +191,21 @@ app.post("/newDom", async (req, res) => {
 
 
 app.post("/allDomUsers", async (req, res) => {
-    console.log(`allDomUsers`, allDomUsers);
+
     var sessid = req.body.sessid;
     try {
         var db = await MongoClient.connect(uri, { useNewUrlParser: true });
-        var dati = await db.db("ms-teams").collection("dati").find({ Dominio: sessioni[sessid].IDSuoDominio }).project({ Name: 1 }).toArray();
+        var dati = await db.db("ms-teams").collection("utenti").find({ Dominio: sessioni[sessid].IDSuoDominio }).project({ Name: 1 }).toArray();
         let tutti = [];
-        dati.forEach(ele => {
-            console.log(`ele`, ele);
-
-            tutti.push({
-                name: ele.Name,
-                _id: ele._id
-            });
+        await dati.forEach(ele => {
+            tutti.push(ele);
         });
-        console.log(`tutti`, tutti);
         res.json(tutti);
-
     } catch (error) {
         console.log(`error`, error);
         res.sendStatus(500)
     }
-
 });
-
 
 app.post("/allNoteDominio", async (req, res) => {
     var sessid = req.body.sessid;
@@ -226,7 +217,7 @@ app.post("/allNoteDominio", async (req, res) => {
         let key = sessioni[sessid].chiave;
         let eleDecrittato;
         dati.forEach(ele => {
-            console.log(`ele`, ele);
+            // console.log(`ele`, ele);
             eleDecrittato = ele
             eleDecrittato.IDNota = ele._id
             delete eleDecrittato._id
