@@ -168,7 +168,7 @@ app.post("/newActivity", (req, res) => {
     else res.sendStatus(401);
 });
 
-app.post("/newDom", async (req, res) => {//nuovo
+app.post("/newDom", async (req, res) => {//nuovo gruppo di utenti)
     var sessid = req.body.sessid;
     var name = req.body.name;
 
