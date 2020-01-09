@@ -136,7 +136,7 @@ app.post("/newActivity", (req, res) => {
                     AppartenenteA: sessioni[sessid].IDUtente,
                     BroadcastDelDom: sessioni[sessid].IDSuoDominio
                 };
-            else if (tipo == "scheda con scadenza")
+            else if (tipo == "scheda con scadenza") {
                 nuovaAttivita = {
                     Name: c(nome.toString(), key),
                     Text: c(testo.toString(), key),
@@ -145,6 +145,10 @@ app.post("/newActivity", (req, res) => {
                     AppartenenteA: sessioni[sessid].IDUtente,
                     BroadcastDelDom: sessioni[sessid].IDSuoDominio
                 };
+
+                console.log('nuovaAttivita', nuovaAttivita);
+            }
+
             else {
                 res.sendStatus(500);
                 return;
@@ -188,7 +192,6 @@ app.post("/newDom", async (req, res) => {/*nuovo gruppo di utenti*/
 
     } else res.sendStatus(401);
 });
-
 
 app.post("/allDomUsers", async (req, res) => {
 
