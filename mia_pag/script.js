@@ -119,7 +119,7 @@ $(function () {
                     );
                 else if (type == "scheda con scadenza")
                     $(".row:eq(2)").append(
-                        protoNotaConScadenza($("#nome").val(), $("#txtAddATempo")[0].value, IDNotaNuova, )
+                        protoNotaConScadenza($("#nomeAddATempo").val(), $("#txtAddATempo")[0].value, IDNotaNuova, $("#scadenzaAddATempo").value)
                     );
 
                 $(`#${IDNotaNuova} .modifica`)[0].onclick = () => {
