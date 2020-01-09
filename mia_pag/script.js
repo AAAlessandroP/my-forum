@@ -11,9 +11,9 @@ $(function () {
                 note.forEach(nota => {
 
                     if (nota.Tipo == "Semplice")
-                        $(".row:eq(2)").append(protoNotaSemplice(nota.nome, nota.testo, nota.IDNota));
+                        $("#appendino").append(protoNotaSemplice(nota.nome, nota.testo, nota.IDNota));
                     else if (nota.Tipo == "scheda con scadenza")
-                        $(".row:eq(2)").append(protoNotaConScadenza(nota.nome, nota.testo, nota.IDNota, nota.ScadeIL));
+                        $("#appendino").append(protoNotaConScadenza(nota.nome, nota.testo, nota.IDNota, nota.ScadeIL));
                     else alert("ops")
                     $(`#${nota.IDNota} .modifica`)[0].onclick = () => {
                         modifica($(`#${nota.IDNota}`)[0]);
@@ -111,14 +111,13 @@ $(function () {
 
         $.post("/newActivity", params)
             .always(IDNotaNuova => {
-                console.log("asd");
 
                 if (type == "Semplice")
-                    $(".row:eq(2)").append(
+                    $("#appendino").append(
                         protoNotaSemplice($("#nome").val(), $("#texttoadd")[0].value, IDNotaNuova)
                     );
                 else if (type == "scheda con scadenza")
-                    $(".row:eq(2)").append(
+                    $("#appendino").append(
                         protoNotaConScadenza($("#nomeAddATempo").val(), $("#txtAddATempo")[0].value, IDNotaNuova, $("#scadenzaAddATempo")[0].value)
                     );
 
@@ -129,7 +128,10 @@ $(function () {
                     cancella($(`#${IDNotaNuova}`)[0]);
                 };
                 $("#nome").val("");
-                $("#texttoadd")[0].value = "";
+                $("#nomeAddATempo").val("");
+                $("#nome").val("");
+                $("#txtAddATempo")[0].value = "";
+                $("#scadenzaAddATempo")[0].value = "";
             });
     }
 
@@ -176,19 +178,7 @@ $(function () {
 
 
 
-    $("fieldset #submitAll").click(() => {
-        $.post("/all", {
-            sessid: m_sessid
-        }).always((receivedData, status) => {
-            console.log(`status`, status);
-
-            if (status == "success") {
-                $("fieldset:eq(3) div textarea").val(
-                    $("fieldset:eq(3) div textarea").val() + receivedData + "\n"
-                );
-            } else alert("ops");
-        });
-    });
+    
 
 });
 
