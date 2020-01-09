@@ -193,50 +193,58 @@ app.post("/newDom", async (req, res) => {/*nuovo gruppo di utenti*/
     } else res.sendStatus(401);
 });
 
-app.post("/allDomUsers", async (req, res) => {
+app.post("/allDomUsers", async (req, res) => {//tranne il chiedente
 
     var sessid = req.body.sessid;
-    try {
-        var db = await MongoClient.connect(uri, { useNewUrlParser: true });
-        var dati = await db.db("ms-teams").collection("utenti").find({ Dominio: sessioni[sessid].IDSuoDominio }).project({ Name: 1 }).toArray();
-        let tutti = [];
-        await dati.forEach(ele => {
-            tutti.push(ele);
-        });
-        res.json(tutti);
-    } catch (error) {
-        console.log(`error`, error);
-        res.sendStatus(500)
-    }
+    if (sessioni[sessid]) {
+
+        try {
+            var db = await MongoClient.connect(uri, { useNewUrlParser: true });
+            var dati = await db.db("ms-teams").collection("utenti").find({ Dominio: sessioni[sessid].IDSuoDominio, _id: { $nin: [sessioni[sessid].IDUtente] } }).project({ Name: 1 }).toArray();
+            let tutti = [];
+            await dati.forEach(ele => {
+                tutti.push(ele);
+            });
+            res.json(tutti);
+        } catch (error) {
+            console.log(`error`, error);
+            res.sendStatus(500)
+        }
+    } else res.sendStatus(401);
+
 });
 
 app.post("/allNoteDominio", async (req, res) => {
     var sessid = req.body.sessid;
-    try {
-        var db = await MongoClient.connect(uri, { useNewUrlParser: true });
-        var dati = await db.db("ms-teams").collection("dati").find({ BroadcastDelDom: sessioni[sessid].IDSuoDominio }).toArray();
+    if (sessioni[sessid]) {
 
-        let tutti = [];
-        let key = sessioni[sessid].chiave;
-        let eleDecrittato;
-        dati.forEach(ele => {
-            // console.log(`ele`, ele);
-            eleDecrittato = ele
-            eleDecrittato.IDNota = ele._id
-            delete eleDecrittato._id
-            eleDecrittato.nome = d(ele.Name, key)
-            eleDecrittato.testo = d(ele.Text, key)
-            if (ele.ScadeIL)//le semplici non l'hanno
-                eleDecrittato.ScadeIL = d(ele.ScadeIL, key)
-            tutti.push(eleDecrittato);
-        });
-        // console.log(`tutti`, tutti);
-        res.json(tutti);
+        try {
+            var db = await MongoClient.connect(uri, { useNewUrlParser: true });
+            var dati = await db.db("ms-teams").collection("dati").find({ BroadcastDelDom: sessioni[sessid].IDSuoDominio }).toArray();
 
-    } catch (error) {
-        console.log(`error`, error);
-        res.sendStatus(500)
-    }
+            let tutti = [];
+            let key = sessioni[sessid].chiave;
+            let eleDecrittato;
+            dati.forEach(ele => {
+                // console.log(`ele`, ele);
+                eleDecrittato = ele
+                eleDecrittato.IDNota = ele._id
+                delete eleDecrittato._id
+                eleDecrittato.nome = d(ele.Name, key)
+                eleDecrittato.testo = d(ele.Text, key)
+                if (ele.ScadeIL)//le semplici non l'hanno
+                    eleDecrittato.ScadeIL = d(ele.ScadeIL, key)
+                tutti.push(eleDecrittato);
+            });
+            // console.log(`tutti`, tutti);
+            res.json(tutti);
+
+        } catch (error) {
+            console.log(`error`, error);
+            res.sendStatus(500)
+        }
+    } else res.sendStatus(401);
+
 
 });
 

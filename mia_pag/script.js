@@ -31,7 +31,7 @@ $(function () {
             console.log(`utenti`, utenti);
             if (utenti)
                 utenti.forEach(nota => {
-                    $(".row:eq(2)").append(`<div class="btn-dark">${nota.Name}`)
+                    $(".row:eq(2)").append(`<input class="btn btn-dark" type="button" value="${nota.Name}">`)
 
                 });
         });
