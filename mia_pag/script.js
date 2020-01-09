@@ -207,8 +207,6 @@ function modifica(chi) {
 
         if (status == "success") {
             $(chi).append("<span style='background-color:green'>OK</span>");
-            console.log("append");
-            
             setTimeout(() => {
                 $(chi)
                     .children()
