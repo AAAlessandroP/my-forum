@@ -61,7 +61,7 @@ $(function () {
                 </div>
 
                 <input class="modifica btn btn-dark" type="button" value="modifica">
-                <input class="btn btn-dark" type="button" value="carica allegato">
+                <input class="carica btn btn-dark" type="button" value="carica allegato">
                 <input class="cancella btn btn-dark" type="button" value="cancella">
 
                 </fieldset>
@@ -87,7 +87,7 @@ $(function () {
                     <input type="date" class="form-control" value="${data}">
                 </div>
                 <input class="modifica btn btn-dark" type="button" value="modifica">
-                <input class="btn btn-dark" type="button" value="carica allegato">
+                <input class="carica btn btn-dark" type="button" value="carica allegato">
 
                 <input class="cancella btn btn-dark" type="button" value="cancella">
 
@@ -129,6 +129,9 @@ $(function () {
                 };
                 $(`#${IDNotaNuova} .cancella`)[0].onclick = () => {
                     cancella($(`#${IDNotaNuova}`)[0]);
+                };
+                $(`#${IDNotaNuova} .carica`)[0].onclick = () => {
+                    uploadAttachedTo($(`#${IDNotaNuova}`)[0]);
                 };
                 $("#nome").val("");
                 $("#nomeAddATempo").val("");
@@ -208,6 +211,18 @@ function modifica(chi) {
             }, 1000);
         } else alert("ops");
     });
+}
+
+function uploadAttachedTo(chi) {
+    $.post("/uploadAttachedTo", { sessid: m_sessid, IDNota: chi.id, files: chi. }).always(
+        (receivedData, status) => {
+            console.log(`status`, status);
+
+            if (status == "success") {
+                $(chi).remove();
+            } else alert("ops");
+        }
+    );
 }
 
 function cancella(chi) {
