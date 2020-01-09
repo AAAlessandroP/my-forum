@@ -8,6 +8,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 const { ObjectId } = require("mongodb");
 app.use(express.static("mia_pag")); // include con USE
+const fileUpload = require('express-fileupload');
+app.use(fileUpload());
+
 
 app.listen(3000);
 
