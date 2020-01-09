@@ -261,7 +261,9 @@ app.post("/modificaNota", function (req, res) {
                     Name: c(titoloNuovo.toString(), key)
                 }
             };
-            // if()
+            if (req.body.dataNuova)
+                whatSet.$set.ScadeIL = c(req.body.dataNuova, key)
+
             db.db("ms-teams")
                 .collection("dati")
                 .updateOne(

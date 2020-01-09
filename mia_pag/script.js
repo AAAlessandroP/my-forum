@@ -193,14 +193,17 @@ $(function () {
 });
 
 function modifica(chi) {
-    
-    $.post("/modificaNota", {
+
+    var newObj = {
         sessid: m_sessid,
         IDNota: chi.id,
         titoloNuovo: chi.children[0].children[1].children[0].value,
-        testoNuovo: chi.children[0].children[2].children[0].value,
-        dataNuova: chi.children[0].children[2].children[0].value
-    }).always((receivedData, status) => {
+        testoNuovo: chi.children[0].children[2].children[0].value
+    };
+    if (chi.children[0].children[4].children[0].value)
+        newObj.dataNuova = chi.children[0].children[4].children[0].value
+
+    $.post("/modificaNota", newObj).always((receivedData, status) => {
 
         if (status == "success") {
             $(chi).append("<span style='background-color:green'>OK</span>");
