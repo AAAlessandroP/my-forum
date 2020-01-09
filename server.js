@@ -255,17 +255,18 @@ app.post("/modificaNota", function (req, res) {
                 db.close();
                 throw err;
             }
-
+            var whatSet = {
+                $set: {
+                    Text: c(testoNuovo.toString(), key),
+                    Name: c(titoloNuovo.toString(), key)
+                }
+            };
+            // if()
             db.db("ms-teams")
                 .collection("dati")
                 .updateOne(
                     { _id: ObjectId(IDNota) },
-                    {
-                        $set: {
-                            Text: c(testoNuovo.toString(), key),
-                            Name: c(titoloNuovo.toString(), key)
-                        }
-                    },
+                    whatSet,
                     (error, result) => {
                         assert.equal(err, null);
                         db.close();

@@ -119,7 +119,7 @@ $(function () {
                     );
                 else if (type == "scheda con scadenza")
                     $(".row:eq(2)").append(
-                        protoNotaConScadenza($("#nomeAddATempo").val(), $("#txtAddATempo")[0].value, IDNotaNuova, $("#scadenzaAddATempo").value)
+                        protoNotaConScadenza($("#nomeAddATempo").val(), $("#txtAddATempo")[0].value, IDNotaNuova, $("#scadenzaAddATempo")[0].value)
                     );
 
                 $(`#${IDNotaNuova} .modifica`)[0].onclick = () => {
@@ -193,20 +193,18 @@ $(function () {
 });
 
 function modifica(chi) {
-    // console.log(`chi`, chi);
-    // console.log(`chi`, chi.children[0].children[1].children[0].value)
+    
     $.post("/modificaNota", {
         sessid: m_sessid,
         IDNota: chi.id,
         titoloNuovo: chi.children[0].children[1].children[0].value,
-        testoNuovo: chi.children[0].children[2].children[0].value
+        testoNuovo: chi.children[0].children[2].children[0].value,
+        dataNuova: chi.children[0].children[2].children[0].value
     }).always((receivedData, status) => {
-        console.log(`status`, status);
 
         if (status == "success") {
             $(chi).append("<span style='background-color:green'>OK</span>");
             setTimeout(() => {
-                console.log(`chi`, chi);
                 $(chi)
                     .children()
                     .filter(":last")
