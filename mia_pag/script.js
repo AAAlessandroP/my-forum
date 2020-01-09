@@ -32,7 +32,7 @@ $(function () {
             if (utenti)
                 utenti.forEach(nota => {
 
-                    
+
                 });
         });
     }
@@ -111,10 +111,17 @@ $(function () {
 
         $.post("/newActivity", params)
             .always(IDNotaNuova => {
+                console.log("asd");
 
-                $(".row:eq(2)").append(
-                    protoNotaSemplice($("#nome").val(), $("#texttoadd")[0].value, IDNotaNuova)
-                );
+                if (type == "Semplice")
+                    $(".row:eq(2)").append(
+                        protoNotaSemplice($("#nome").val(), $("#texttoadd")[0].value, IDNotaNuova)
+                    );
+                else if (type == "scheda con scadenza")
+                    $(".row:eq(2)").append(
+                        protoNotaConScadenza($("#nome").val(), $("#txtAddATempo")[0].value, IDNotaNuova, )
+                    );
+
                 $(`#${IDNotaNuova} .modifica`)[0].onclick = () => {
                     modifica($(`#${IDNotaNuova}`)[0]);
                 };
