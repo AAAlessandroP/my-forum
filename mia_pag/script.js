@@ -61,6 +61,7 @@ $(function () {
                 </div>
 
                 <input class="modifica btn btn-dark" type="button" value="modifica">
+                <input class="btn btn-dark" type="button" value="carica allegato">
                 <input class="cancella btn btn-dark" type="button" value="cancella">
 
                 </fieldset>
@@ -86,6 +87,8 @@ $(function () {
                     <input type="date" class="form-control" value="${data}">
                 </div>
                 <input class="modifica btn btn-dark" type="button" value="modifica">
+                <input class="btn btn-dark" type="button" value="carica allegato">
+
                 <input class="cancella btn btn-dark" type="button" value="cancella">
 
                 </fieldset>
