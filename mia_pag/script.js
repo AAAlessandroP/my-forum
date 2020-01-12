@@ -61,7 +61,7 @@ $(function () {
                 </div>
 
                 <input class="modifica btn btn-dark" type="button" value="modifica">
-                <input class="carica btn btn-dark" type="button" value="carica allegato">
+                carica allegato: <input class="carica btn btn-dark" name="foo" type="file" />
                 <input class="cancella btn btn-dark" type="button" value="cancella">
 
                 </fieldset>
@@ -87,8 +87,7 @@ $(function () {
                     <input type="date" class="form-control" value="${data}">
                 </div>
                 <input class="modifica btn btn-dark" type="button" value="modifica">
-                <input class="carica btn btn-dark" type="button" value="carica allegato">
-
+                carica allegato: <input class="carica btn btn-dark" name="foo" type="file" />
                 <input class="cancella btn btn-dark" type="button" value="cancella">
 
                 </fieldset>
