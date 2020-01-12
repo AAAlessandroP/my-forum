@@ -55,7 +55,7 @@ $(function () {
                 </div>
 
                 <input class="modifica btn btn-dark" type="button" value="modifica">
-                carica allegato: <input class="carica btn btn-dark" name="foo" type="file" />
+                carica allegato: <input class="carica btn btn-dark" name="files" type="file" />
                 <input class="cancella btn btn-dark" type="button" value="cancella">
 
                 <input type="hidden" name="tipo" value="Semplice">
@@ -90,7 +90,7 @@ $(function () {
                 </div>
                 <input name="data" type="date" class="form-control" value="${data}">
                 <input class="modifica btn btn-dark" type="button" value="modifica">
-                carica allegato: <input class="carica btn btn-dark" name="foo" type="file" />
+                carica allegato: <input class="carica btn btn-dark" name="files" type="file" />
                 <input class="cancella btn btn-dark" type="button" value="cancella">
 
                 <input type="hidden" name="tipo" value="scheda con scadenza">
@@ -191,35 +191,38 @@ $(function () {
 
 function modifica(chi) {
     console.log(`chi`, chi);
+
     var newObj = {
         sessid: m_sessid,
         IDNota: chi.id,
         titoloNuovo: chi.children[0].children[1].children[0].value,
         testoNuovo: chi.children[0].children[2].children[0].value
     };
+
     if (chi.children[0].children["tipo"].value == "scheda con scadenza")
         newObj.dataNuova = chi.children[0].children["data"].value
 
     var fileReader = new FileReader();
     fileReader.onload = function () {
-        newObj["foo"] = fileReader.result;
+
+        newObj["files"] = fileReader.result;
+        console.log(`newObj`, newObj);
+
+        $.post("/modificaNota", newObj).always((receivedData, status) => {
+
+            if (status == "success") {
+                $(chi).append("<span style='background-color:green'>OK</span>");
+                setTimeout(() => {
+                    $(chi)
+                        .children()
+                        .filter(":last")
+                        .remove();
+                }, 1000);
+            } else alert("ops");
+        });
     };
     fileReader.readAsDataURL($(`#${chi.id} input[type=file]`).prop('files')[0]);
 
-    console.log(`newObj`, newObj);
-
-    $.post("/modificaNota", newObj).always((receivedData, status) => {
-
-        if (status == "success") {
-            $(chi).append("<span style='background-color:green'>OK</span>");
-            setTimeout(() => {
-                $(chi)
-                    .children()
-                    .filter(":last")
-                    .remove();
-            }, 1000);
-        } else alert("ops");
-    });
 }
 
 function cancella(chi) {
