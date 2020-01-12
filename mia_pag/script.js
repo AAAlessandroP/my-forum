@@ -116,10 +116,13 @@ $(function () {
         var params = { sessid: m_sessid, nome: $("#nome").val(), testo: $("#texttoadd")[0].value }
         params["tipo"] = type
 
-        if (type == "scheda con scadenza") {
+        if (type == "Semplice") {
             params["scadenza"] = $("#scadenzaAddATempo").val()
-        }
-
+        } else
+            if (type == "scheda con scadenza") {
+                params["scadenza"] = $("#scadenzaAddATempo").val()
+            }
+        console.log(`params`, params);
         $.post("/newActivity", params)
             .always(IDNotaNuova => {
 
@@ -216,15 +219,15 @@ function modifica(chi) {
 
 function uploadAttachedTo(chi) {
 
-    $.post("/uploadAttachedTo", { sessid: m_sessid, IDNota: chi.id, foo: $(`#${chi.id} input[type=file]`)[0].prop('files') }).always(
-        (receivedData, status) => {
-            console.log(`status`, status);
+    // $.post("/uploadAttachedTo", { sessid: m_sessid, IDNota: chi.id, foo: $(`#${chi.id} input[type=file]`)[0].prop('files') }).always(
+    //     (receivedData, status) => {
+    //         console.log(`status`, status);
 
-            if (status == "success") {
-                $(chi).remove();
-            } else alert("ops");
-        }
-    );
+    //         if (status == "success") {
+    //             $(chi).remove();
+    //         } else alert("ops");
+    //     }
+    // );
 }
 
 function cancella(chi) {
