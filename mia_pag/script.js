@@ -182,11 +182,8 @@ $(function () {
         });
     });
 
-
-
-
-
 });
+
 
 function modifica(chi) {
     console.log(`chi`, chi);
@@ -198,7 +195,11 @@ function modifica(chi) {
     };
     if (chi.children[0].children[6])//il 4o c'è anche nelle semplici, è del
         newObj.dataNuova = chi.children[0].children[4].children[0].value
-
+    // TODO input nascosto che mi dice il tipo
+    // TODO input nascosto che mi dice il tipo
+    // TODO input nascosto che mi dice il tipo
+    // TODO input nascosto che mi dice il tipo
+    // TODO input nascosto che mi dice il tipo
     $.post("/modificaNota", newObj).always((receivedData, status) => {
 
         if (status == "success") {
@@ -214,7 +215,8 @@ function modifica(chi) {
 }
 
 function uploadAttachedTo(chi) {
-    $.post("/uploadAttachedTo", { sessid: m_sessid, IDNota: chi.id, foo:  }).always(
+
+    $.post("/uploadAttachedTo", { sessid: m_sessid, IDNota: chi.id, foo: $(`#${chi.id} input[type=file]`)[0].prop('files') }).always(
         (receivedData, status) => {
             console.log(`status`, status);
 
