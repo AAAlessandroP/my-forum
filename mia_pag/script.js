@@ -113,34 +113,39 @@ $(function () {
 
     function add(type) {
 
-        var params = { sessid: m_sessid, nome: $("#nome").val(), testo: $("#texttoadd")[0].value }
-        params["tipo"] = type
+        var params = { sessid: m_sessid, tipo: type }
 
         if (type == "Semplice") {
-            params["scadenza"] = $("#scadenzaAddATempo").val()
+            params["nome"] = $("#nome").val()
+            params["testo"] = $("#texttoadd")[0].value
         } else
             if (type == "scheda con scadenza") {
+                params["nome"] = $("#nomeAddATempo").val()
+                params["testo"] = $("#txtAddATempo")[0].value
                 params["scadenza"] = $("#scadenzaAddATempo").val()
             }
+
         console.log(`params`, params);
+
         $.post("/newActivity", params)
             .always(IDNotaNuova => {
 
-                if (type == "Semplice")
+                if (type == "Semplice") {
                     $("#appendino").append(
                         protoNotaSemplice($("#nome").val(), $("#texttoadd")[0].value, IDNotaNuova)
                     );
-                else if (type == "scheda con scadenza")
+                    $("#nome").val("");
+                    $("#texttoadd").val("");
+                }
+                else if (type == "scheda con scadenza") {
                     $("#appendino").append(
                         protoNotaConScadenza($("#nomeAddATempo").val(), $("#txtAddATempo")[0].value, IDNotaNuova, $("#scadenzaAddATempo")[0].value)
                     );
+                    $("#scadenzaAddATempo")[0].value = "";
+                    $("#txtAddATempo")[0].value = "";
+                    $("#nomeAddATempo").val("");
+                }
                 attachHandlersTo(IDNotaNuova)
-
-                $("#nome").val("");
-                $("#nomeAddATempo").val("");
-                $("#nome").val("");
-                $("#txtAddATempo")[0].value = "";
-                $("#scadenzaAddATempo")[0].value = "";
             });
     }
 
