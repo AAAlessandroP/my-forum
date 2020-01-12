@@ -88,9 +88,7 @@ $(function () {
                 <div class="input-group mt-2 mb-2">
                     <label>scadenza:</label>
                 </div>
-                <div class="input-group mt-2 mb-2">
-                    <input type="date" class="form-control" value="${data}">
-                </div>
+                <input name="data" type="date" class="form-control" value="${data}">
                 <input class="modifica btn btn-dark" type="button" value="modifica">
                 carica allegato: <input class="carica btn btn-dark" name="foo" type="file" />
                 <input class="cancella btn btn-dark" type="button" value="cancella">
@@ -199,16 +197,17 @@ function modifica(chi) {
         titoloNuovo: chi.children[0].children[1].children[0].value,
         testoNuovo: chi.children[0].children[2].children[0].value
     };
-    if (chi.children[0].children["tipo"].val() == "scheda con scadenza")
-        newObj.dataNuova = chi.children[0].children[4].children[0].value
+    if (chi.children[0].children["tipo"].value == "scheda con scadenza")
+        newObj.dataNuova = chi.children[0].children["data"].value
 
-    newObj["foo"] = $(`#${chi.id} input[type=file]`).prop('files')[0]
+    var fileReader = new FileReader();
+    fileReader.onload = function () {
+        newObj["foo"] = fileReader.result;
+    };
+    fileReader.readAsDataURL($(`#${chi.id} input[type=file]`).prop('files')[0]);
 
-    // TODO input nascosto che mi dice il tipo
-    // TODO input nascosto che mi dice il tipo
-    // TODO input nascosto che mi dice il tipo
-    // TODO input nascosto che mi dice il tipo
-    // TODO input nascosto che mi dice il tipo
+    console.log(`newObj`, newObj);
+
     $.post("/modificaNota", newObj).always((receivedData, status) => {
 
         if (status == "success") {
