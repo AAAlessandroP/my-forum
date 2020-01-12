@@ -106,6 +106,11 @@ $(function () {
         add("scheda con scadenza");
     });
 
+    $("#formAddSemplice").submit((event)=>{
+        console.log($("#formAddSemplice").serialize())
+        event.preventDefault()
+        // $("#formAddSemplice").submit()
+    })
 
     function add(type) {
 
