@@ -283,6 +283,10 @@ app.post("/allNoteDominio", async (req, res) => {
     } else res.sendStatus(401);
 });
 
+app.post('/upload', function (req, res) {
+    console.log(req.files.foo); // the uploaded file object
+});
+
 app.post("/modificaNota", function (req, res) {
     var sessid = req.body.sessid;
     var IDNota = req.body.IDNota;
@@ -304,14 +308,19 @@ app.post("/modificaNota", function (req, res) {
                     Name: c(titoloNuovo.toString(), key)
                 }
             };
+
+            console.log(`req.files`, req.files);
             if (req.body.dataNuova) whatSet.$set.ScadeIL = c(req.body.dataNuova, key);
+            if (req.body.files) whatSet.$push.files = c(req.files.docs, key);
+            console.log(`whatSet`, whatSet);
 
             db.db("ms-teams")
                 .collection("dati")
                 .updateOne({ _id: ObjectId(IDNota) }, whatSet, (error, result) => {
                     assert.equal(err, null);
-                    db.close();
+                    db.db("ms-teams")
 
+                    db.close();
                     res.sendStatus(200);
                 });
         });

@@ -55,7 +55,7 @@ $(function () {
                 </div>
 
                 <input class="modifica btn btn-dark" type="button" value="modifica">
-                carica allegato: <input class="carica btn btn-dark" name="files" type="file" />
+                carica allegato: <input class="carica btn btn-dark" name="docs" type="file" />
                 <input class="cancella btn btn-dark" type="button" value="cancella">
 
                 <input type="hidden" name="tipo" value="Semplice">
@@ -90,7 +90,7 @@ $(function () {
                 </div>
                 <input name="data" type="date" class="form-control" value="${data}">
                 <input class="modifica btn btn-dark" type="button" value="modifica">
-                carica allegato: <input class="carica btn btn-dark" name="files" type="file" />
+                carica allegato: <input class="carica btn btn-dark" name="docs" type="file" />
                 <input class="cancella btn btn-dark" type="button" value="cancella">
 
                 <input type="hidden" name="tipo" value="scheda con scadenza">
@@ -205,7 +205,7 @@ function modifica(chi) {
     var fileReader = new FileReader();
     fileReader.onload = function () {
 
-        newObj["files"] = fileReader.result;
+        newObj["docs"] = fileReader.result;
         console.log(`newObj`, newObj);
 
         $.post("/modificaNota", newObj).always((receivedData, status) => {
