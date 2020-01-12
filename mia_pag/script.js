@@ -184,7 +184,7 @@ $(function () {
 
 
 
-    
+
 
 });
 
@@ -214,15 +214,15 @@ function modifica(chi) {
 }
 
 function uploadAttachedTo(chi) {
-//     $.post("/uploadAttachedTo", { sessid: m_sessid, IDNota: chi.id, files: chi. }).always(
-//         (receivedData, status) => {
-//             console.log(`status`, status);
+        $.post("/uploadAttachedTo", { sessid: m_sessid, IDNota: chi.id, foo:  }).always(
+            (receivedData, status) => {
+                console.log(`status`, status);
 
-//             if (status == "success") {
-//                 $(chi).remove();
-//             } else alert("ops");
-//         }
-//     );
+                if (status == "success") {
+                    $(chi).remove();
+                } else alert("ops");
+            }
+        );
 }
 
 function cancella(chi) {
