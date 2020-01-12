@@ -51,7 +51,6 @@ $(function () {
                     <input type="text" class="form-control" value="${nome}">
                 </div>
                 <div class="input-group mt-2 mb-2">
-
                     <textarea class="form-control" rows="3">${txt}</textarea>
                 </div>
 
@@ -59,6 +58,7 @@ $(function () {
                 carica allegato: <input class="carica btn btn-dark" name="foo" type="file" />
                 <input class="cancella btn btn-dark" type="button" value="cancella">
 
+                <input type="hidden" name="tipo" value="Semplice">
                 </fieldset>
         </div>`;
     }
@@ -70,9 +70,6 @@ $(function () {
         };
         $(`#${IDNotaNuova} .cancella`)[0].onclick = () => {
             cancella($(`#${IDNotaNuova}`)[0]);
-        };
-        $(`#${IDNotaNuova} .carica`)[0].onclick = () => {
-            uploadAttachedTo($(`#${IDNotaNuova}`)[0]);
         };
     }
 
@@ -98,6 +95,7 @@ $(function () {
                 carica allegato: <input class="carica btn btn-dark" name="foo" type="file" />
                 <input class="cancella btn btn-dark" type="button" value="cancella">
 
+                <input type="hidden" name="tipo" value="scheda con scadenza">
                 </fieldset>
         </div>`;
     }
@@ -201,8 +199,11 @@ function modifica(chi) {
         titoloNuovo: chi.children[0].children[1].children[0].value,
         testoNuovo: chi.children[0].children[2].children[0].value
     };
-    if (chi.children[0].children[6])//il 4o c'è anche nelle semplici, è del
+    if (chi.children[0].children["tipo"].val() == "scheda con scadenza")
         newObj.dataNuova = chi.children[0].children[4].children[0].value
+
+    newObj["foo"] = $(`#${chi.id} input[type=file]`).prop('files')[0]
+
     // TODO input nascosto che mi dice il tipo
     // TODO input nascosto che mi dice il tipo
     // TODO input nascosto che mi dice il tipo
@@ -220,19 +221,6 @@ function modifica(chi) {
             }, 1000);
         } else alert("ops");
     });
-}
-
-function uploadAttachedTo(chi) {
-
-    $.post("/uploadAttachedTo", { sessid: m_sessid, IDNota: chi.id, foo: $(`#${chi.id} input[type=file]`).prop('files')[0] }).always(
-        (receivedData, status) => {
-            console.log(`status`, status);
-
-            if (status == "success") {
-                $(chi).remove();
-            } else alert("ops");
-        }
-    );
 }
 
 function cancella(chi) {
