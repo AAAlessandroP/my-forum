@@ -15,12 +15,7 @@ $(function () {
                     else if (nota.Tipo == "scheda con scadenza")
                         $("#appendino").append(protoNotaConScadenza(nota.nome, nota.testo, nota.IDNota, nota.ScadeIL));
                     else alert("ops")
-                    $(`#${nota.IDNota} .modifica`)[0].onclick = () => {
-                        modifica($(`#${nota.IDNota}`)[0]);
-                    };
-                    $(`#${nota.IDNota} .cancella`)[0].onclick = () => {
-                        cancella($(`#${nota.IDNota}`)[0]);
-                    };
+                    attachHandlersTo(nota.IDNota)
                 });
         });
     }
@@ -68,6 +63,19 @@ $(function () {
         </div>`;
     }
 
+    function attachHandlersTo(IDNotaNuova) {
+
+        $(`#${IDNotaNuova} .modifica`)[0].onclick = () => {
+            modifica($(`#${IDNotaNuova}`)[0]);
+        };
+        $(`#${IDNotaNuova} .cancella`)[0].onclick = () => {
+            cancella($(`#${IDNotaNuova}`)[0]);
+        };
+        $(`#${IDNotaNuova} .carica`)[0].onclick = () => {
+            uploadAttachedTo($(`#${IDNotaNuova}`)[0]);
+        };
+    }
+
     function protoNotaConScadenza(nome, txt, _id, data) {
         let randColor = arr[Math.floor(Math.random() * arr.length)];
         return `
@@ -102,6 +110,7 @@ $(function () {
         add("scheda con scadenza");
     });
 
+
     function add(type) {
 
         var params = { sessid: m_sessid, nome: $("#nome").val(), testo: $("#texttoadd")[0].value }
@@ -122,16 +131,8 @@ $(function () {
                     $("#appendino").append(
                         protoNotaConScadenza($("#nomeAddATempo").val(), $("#txtAddATempo")[0].value, IDNotaNuova, $("#scadenzaAddATempo")[0].value)
                     );
+                attachHandlersTo(IDNotaNuova)
 
-                $(`#${IDNotaNuova} .modifica`)[0].onclick = () => {
-                    modifica($(`#${IDNotaNuova}`)[0]);
-                };
-                $(`#${IDNotaNuova} .cancella`)[0].onclick = () => {
-                    cancella($(`#${IDNotaNuova}`)[0]);
-                };
-                $(`#${IDNotaNuova} .carica`)[0].onclick = () => {
-                    uploadAttachedTo($(`#${IDNotaNuova}`)[0]);
-                };
                 $("#nome").val("");
                 $("#nomeAddATempo").val("");
                 $("#nome").val("");
@@ -213,15 +214,15 @@ function modifica(chi) {
 }
 
 function uploadAttachedTo(chi) {
-        $.post("/uploadAttachedTo", { sessid: m_sessid, IDNota: chi.id, foo:  }).always(
-            (receivedData, status) => {
-                console.log(`status`, status);
+    $.post("/uploadAttachedTo", { sessid: m_sessid, IDNota: chi.id, foo:  }).always(
+        (receivedData, status) => {
+            console.log(`status`, status);
 
-                if (status == "success") {
-                    $(chi).remove();
-                } else alert("ops");
-            }
-        );
+            if (status == "success") {
+                $(chi).remove();
+            } else alert("ops");
+        }
+    );
 }
 
 function cancella(chi) {
