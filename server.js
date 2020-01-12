@@ -16,7 +16,9 @@ app.use(fileUpload({
 }));
 
 app.listen(3000);
-
+// RIFARLO CON WEBSOCKET
+// RIFARLO CON WEBSOCKET
+// RIFARLO CON WEBSOCKET
 console.log("* app in funzione *");
 const uri = `mongodb+srv://ms-teams:${process.env.PASS}@miocluster2-igwb8.mongodb.net/test?retryWrites=true&w=majority`;
 
@@ -283,9 +285,10 @@ app.post("/allNoteDominio", async (req, res) => {
     } else res.sendStatus(401);
 });
 
-// app.post('/upload', function (req, res) {
-//     console.log(req.files.foo); // the uploaded file object
-// });
+app.post('/upload', function (req, res) {
+    console.log(req.files); // the uploaded file object
+    req.sond("OK")
+});
 
 app.post("/modificaNota", function (req, res) {
     var sessid = req.body.sessid;

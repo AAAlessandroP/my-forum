@@ -106,10 +106,24 @@ $(function () {
         add("scheda con scadenza");
     });
 
-    $("#formAddSemplice").submit((event)=>{
-        console.log($("#formAddSemplice").serialize())
-        event.preventDefault()
-        // $("#formAddSemplice").submit()
+    $("#formAddSemplice").submit((event) => {
+
+        formdata = new FormData($("#formAddSemplice")[0]);
+        console.log(`formdata`, formdata);
+        formdata.append("sessid", m_sessid)
+        // var formAction = form.attr('action');
+        $.ajax({
+            url: '/upload',
+            data: formdata ? formdata : form.serialize(),
+            cache: false,
+            contentType: false,
+            processData: false,
+            type: 'POST',
+            success: function (data, textStatus, jqXHR) {
+                // Callback code
+                console.log("success");
+            }
+        });
     })
 
     function add(type) {
