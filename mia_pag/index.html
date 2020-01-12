@@ -40,7 +40,7 @@
 
     <div class="container" style="display: none;">
         <div class="row" id="appendino">
-            <div class="col-3" style="background-color:coral">
+            <!-- <div class="col-3" style="background-color:coral">
                 <fieldset>
                     <legend> Aggiungi:</legend>
                     <div class="input-group mt-2 mb-2">
@@ -56,7 +56,21 @@
 
                     <input class="btn btn-dark" type="button" value="add" id="submitAddSemplice">
                 </fieldset>
+            </div> VECCHIO add semplice-->
+            <div class="col-3" style="background-color:coral">
+                <fieldset>
+                    <legend> Aggiungi:</legend>
+                    <form action="newActivity" method="post" encType="multipart/form-data">
+                        <input type="text" class="form-control" name="nomefile" id="nome" placeholder="titolo">
+                        <textarea class="form-control" placeholder="testo della nota" rows="3"
+                            id="texttoadd"></textarea>
+                        carica allegato: <input class="carica" id="allegato1" name="allegato1" type="file" />
+                        <input class="btn btn-dark" type="submit" value="add">
+
+                    </form>
+                </fieldset>
             </div>
+
             <div class="col-3" style="background-color:coral">
                 <fieldset>
                     <legend> Aggiungi:</legend>
