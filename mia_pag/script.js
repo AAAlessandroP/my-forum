@@ -106,11 +106,10 @@ $(function () {
         add("scheda con scadenza");
     });
 
-    $("#formAddSemplice").submit((event) => {
+    $("form").submit((event) => {
         event.preventDefault()
         console.log(event)
-        formdata = new FormData($("#formAddSemplice")[0]);
-        console.log(`formdata`, formdata);
+        formdata = new FormData(event.currentTarget);
         formdata.append("sessid", m_sessid)
         // formdata.append("tipo", "Semplice")
         // var formAction = form.attr('action');
@@ -137,6 +136,7 @@ $(function () {
                     // $("#txtAddATempo")[0].value = "";
                     // $("#nomeAddATempo").val("");
                 }
+                log
                 attachHandlersTo(IDNotaNuova)
             }
         });
