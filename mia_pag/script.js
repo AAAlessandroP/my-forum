@@ -108,10 +108,11 @@ $(function () {
 
     $("#formAddSemplice").submit((event) => {
         event.preventDefault()
+        console.log(this)
         formdata = new FormData($("#formAddSemplice")[0]);
         console.log(`formdata`, formdata);
         formdata.append("sessid", m_sessid)
-        formdata.append("tipo", "Semplice")
+        // formdata.append("tipo", "Semplice")
         // var formAction = form.attr('action');
         $.ajax({
             url: '/newActivity',
@@ -130,56 +131,56 @@ $(function () {
                 }
                 else if (formdata.get("tipo") == "scheda con scadenza") {
                     $("#appendino").append(
-                        protoNotaConScadenza($("#nomeAddATempo").val(), $("#txtAddATempo")[0].value, IDNotaNuova, $("#scadenzaAddATempo")[0].value)
+                        protoNotaConScadenza(formdata.get("nome"), formdata.get("testo"), formdata.get("scadenza"))
                     );
-                    $("#scadenzaAddATempo")[0].value = "";
-                    $("#txtAddATempo")[0].value = "";
-                    $("#nomeAddATempo").val("");
+                    // $("#scadenzaAddATempo")[0].value = "";
+                    // $("#txtAddATempo")[0].value = "";
+                    // $("#nomeAddATempo").val("");
                 }
                 attachHandlersTo(IDNotaNuova)
             }
         });
     })
-{
-    // function add(type) {
+    {
+        // function add(type) {
 
-    //     var params = { sessid: m_sessid, tipo: type }
+        //     var params = { sessid: m_sessid, tipo: type }
 
-    //     if (type == "Semplice") {
-    //         params["nome"] = $("#nome").val()
-    //         params["testo"] = $("#texttoadd")[0].value
-    //     } else
-    //         if (type == "scheda con scadenza") {
-    //             params["nome"] = $("#nomeAddATempo").val()
-    //             params["testo"] = $("#txtAddATempo")[0].value
-    //             params["scadenza"] = $("#scadenzaAddATempo").val()
-    //         }
+        //     if (type == "Semplice") {
+        //         params["nome"] = $("#nome").val()
+        //         params["testo"] = $("#texttoadd")[0].value
+        //     } else
+        //         if (type == "scheda con scadenza") {
+        //             params["nome"] = $("#nomeAddATempo").val()
+        //             params["testo"] = $("#txtAddATempo")[0].value
+        //             params["scadenza"] = $("#scadenzaAddATempo").val()
+        //         }
 
-    //     console.log(`params`, params);
+        //     console.log(`params`, params);
 
-    //     $.post("/newActivity", params)
-    //         .always(IDNotaNuova => {
+        //     $.post("/newActivity", params)
+        //         .always(IDNotaNuova => {
 
-    //             if (type == "Semplice") {
-    //                 $("#appendino").append(
-    //                     protoNotaSemplice($("#nome").val(), $("#texttoadd")[0].value, IDNotaNuova)
-    //                 );
-    //                 $("#nome").val("");
-    //                 $("#texttoadd").val("");
-    //             }
-    //             else if (type == "scheda con scadenza") {
-    //                 $("#appendino").append(
-    //                     protoNotaConScadenza($("#nomeAddATempo").val(), $("#txtAddATempo")[0].value, IDNotaNuova, $("#scadenzaAddATempo")[0].value)
-    //                 );
-    //                 $("#scadenzaAddATempo")[0].value = "";
-    //                 $("#txtAddATempo")[0].value = "";
-    //                 $("#nomeAddATempo").val("");
-    //             }
-    //             attachHandlersTo(IDNotaNuova)
-    //         });
+        //             if (type == "Semplice") {
+        //                 $("#appendino").append(
+        //                     protoNotaSemplice($("#nome").val(), $("#texttoadd")[0].value, IDNotaNuova)
+        //                 );
+        //                 $("#nome").val("");
+        //                 $("#texttoadd").val("");
+        //             }
+        //             else if (type == "scheda con scadenza") {
+        //                 $("#appendino").append(
+        //                     protoNotaConScadenza($("#nomeAddATempo").val(), $("#txtAddATempo")[0].value, IDNotaNuova, $("#scadenzaAddATempo")[0].value)
+        //                 );
+        //                 $("#scadenzaAddATempo")[0].value = "";
+        //                 $("#txtAddATempo")[0].value = "";
+        //                 $("#nomeAddATempo").val("");
+        //             }
+        //             attachHandlersTo(IDNotaNuova)
+        //         });
 
-    // }
-}
+        // }
+    }
     var singleton = true;
     $("#submitLogin").click(() => {
         if (singleton) {
