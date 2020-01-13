@@ -188,7 +188,6 @@ app.post("/newActivity", (req, res) => {
                     }
                     console.log("1 nuovo doc inserito");
                     db.close();
-
                     res.send(resIns.insertedId);
                 });
         });

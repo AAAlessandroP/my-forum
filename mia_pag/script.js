@@ -132,11 +132,14 @@ $(function () {
                     $("#appendino").append(
                         protoNotaConScadenza(formdata.get("nome"), formdata.get("testo"), formdata.get("scadenza"))
                     );
+                    console.log(protoNotaConScadenza(formdata.get("nome"), formdata.get("testo"), formdata.get("scadenza")));
+                    
                     // $("#scadenzaAddATempo")[0].value = "";
                     // $("#txtAddATempo")[0].value = "";
                     // $("#nomeAddATempo").val("");
                 }
-                log
+                console.log(IDNotaNuova);
+                
                 attachHandlersTo(IDNotaNuova)
             }
         });
