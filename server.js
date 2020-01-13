@@ -283,10 +283,11 @@ app.post("/allNoteDominio", async (req, res) => {
     } else res.sendStatus(401);
 });
 
-app.post('/upload', function (req, res) {
-    console.log(req.files); // the uploaded file object
-    req.sond("OK")
-});
+// app.post('/upload', function (req, res) {
+//     console.log(req.files);
+//     console.log(req.body);
+//     res.send("OK")
+// });
 
 app.post("/modificaNota", function (req, res) {
     var sessid = req.body.sessid;

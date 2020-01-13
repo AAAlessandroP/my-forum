@@ -107,13 +107,13 @@ $(function () {
     });
 
     $("#formAddSemplice").submit((event) => {
-
+        event.preventDefault()
         formdata = new FormData($("#formAddSemplice")[0]);
         console.log(`formdata`, formdata);
         formdata.append("sessid", m_sessid)
         // var formAction = form.attr('action');
         $.ajax({
-            url: '/upload',
+            url: '/uploaad',
             data: formdata ? formdata : form.serialize(),
             cache: false,
             contentType: false,
