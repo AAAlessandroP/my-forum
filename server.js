@@ -136,6 +136,9 @@ app.post("/addUser", async (req, res) => {
 //sarebbe bello avere n domini(sottogruppi)
 
 app.post("/newActivity", (req, res) => {
+
+    console.log('req.body', req.body);
+
     var nome = req.body.nome;
     var testo = req.body.testo;
     var tipo = req.body.tipo;

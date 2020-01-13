@@ -61,18 +61,29 @@
                 <fieldset>
                     <legend> Aggiungi:</legend>
                     <form id="formAddSemplice" action="/upload" method="post" encType="multipart/form-data">
-                        
+
                         <input type="text" class="form-control" name="nome" placeholder="titolo">
-                        <textarea class="form-control" placeholder="testo della nota" rows="3"
-                            name="testo"></textarea>
+                        <textarea class="form-control" placeholder="testo della nota" rows="3" name="testo"></textarea>
                         seleziona allegati: <input class="carica" name="docs" type="file">
                         <input class="btn btn-dark" type="submit" value="add">
-
+                        <input type="hidden" name="tipo" value="Semplice">
                     </form>
                 </fieldset>
             </div>
+            <div class="col-3" style="background-color:plum">
+                <fieldset>
+                    <legend> Aggiungi:</legend>
+                    <form id="formAddSemplice" action="/upload" method="post" encType="multipart/form-data">
 
-            <div class="col-3" style="background-color:coral">
+                        <input type="text" class="form-control" name="nome" placeholder="titolo">
+                        <textarea class="form-control" placeholder="testo della nota" rows="3" name="testo"></textarea>
+                        seleziona allegati: <input class="carica" name="docs" type="file">
+                        <input class="btn btn-dark" type="submit" value="add">
+                        <input type="hidden" name="tipo" value="Semplice">
+                    </form>
+                </fieldset>
+            </div>
+            <!-- <div class="col-3" style="background-color:coral">
                 <fieldset>
                     <legend> Aggiungi:</legend>
                     <div class="input-group mt-2 mb-2">
@@ -95,7 +106,7 @@
 
                     <input class="btn btn-dark" type="button" value="add" id="submitAddATempo">
                 </fieldset>
-            </div>
+            </div> -->
             <div class="col-6"></div>
 
         </div>
