@@ -171,8 +171,9 @@ app.post("/newActivity", (req, res) => {
                     AppartenenteA: sessioni[sessid].IDUtente,
                     BroadcastDelDom: sessioni[sessid].IDSuoDominio
                 };
-                if (req.body.files.docs) 
-                    nuovaAttivita.$push  = {allegati: c(req.files.docs, key)};
+                
+                if (req.body.files) 
+                    nuovaAttivita.$push  = {allegati: c(JSON.stringify(req.files.docs), key)};
 
             } else {
                 res.sendStatus(500);
