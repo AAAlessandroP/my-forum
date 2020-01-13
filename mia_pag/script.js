@@ -125,21 +125,12 @@ $(function () {
                     $("#appendino").append(
                         protoNotaSemplice(formdata.get("nome"), formdata.get("testo"), IDNotaNuova)
                     );
-                    // $("#nome").val("");
-                    // $("#texttoadd").val("");
                 }
                 else if (formdata.get("tipo") == "scheda con scadenza") {
                     $("#appendino").append(
                         protoNotaConScadenza(formdata.get("nome"), formdata.get("testo"),IDNotaNuova, formdata.get("scadenza"))
                     );
-                    console.log(protoNotaConScadenza(formdata.get("nome"), formdata.get("testo"), IDNotaNuova, formdata.get("scadenza")));
-                    
-                    // $("#scadenzaAddATempo")[0].value = "";
-                    // $("#txtAddATempo")[0].value = "";
-                    // $("#nomeAddATempo").val("");
                 }
-                console.log(IDNotaNuova);
-                
                 attachHandlersTo(IDNotaNuova)
             }
         });
@@ -185,6 +176,7 @@ $(function () {
 
         // }
     }
+    
     var singleton = true;
     $("#submitLogin").click(() => {
         if (singleton) {

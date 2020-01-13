@@ -138,6 +138,7 @@ app.post("/addUser", async (req, res) => {
 app.post("/newActivity", (req, res) => {
 
     console.log('req.body', req.body);
+    console.log('req.files', req.files);
 
     var nome = req.body.nome;
     var testo = req.body.testo;
@@ -322,7 +323,6 @@ app.post("/modificaNota", function (req, res) {
                 .collection("dati")
                 .updateOne({ _id: ObjectId(IDNota) }, whatSet, (error, result) => {
                     assert.equal(err, null);
-                    db.db("ms-teams")
 
                     db.close();
                     res.sendStatus(200);
