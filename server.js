@@ -57,10 +57,7 @@ app.post("/login", async (req, res) => {
             return;
         }
 
-        var user = await db
-            .db("ms-teams")
-            .collection("utenti")
-            .findOne({ Name: name, Dominio: dominio._id });
+        var user = await db.db("ms-teams").collection("utenti").findOne({ Name: name, Dominio: dominio._id });
         if (user && user.HashedPwd === h(user.Salt + pass)) {
             var sessId = crypto.randomBytes(32).toString("hex");
             sessioni[sessId] = {
@@ -135,6 +132,7 @@ app.post("/addUser", async (req, res) => {
         res.sendStatus(500);
     }
 });
+
 //sarebbe bello avere n domini(sottogruppi)
 
 app.post("/newActivity", (req, res) => {
