@@ -108,7 +108,7 @@ $(function () {
 
     $("#formAddSemplice").submit((event) => {
         event.preventDefault()
-        console.log(this)
+        console.log(event)
         formdata = new FormData($("#formAddSemplice")[0]);
         console.log(`formdata`, formdata);
         formdata.append("sessid", m_sessid)
@@ -141,6 +141,7 @@ $(function () {
             }
         });
     })
+
     {
         // function add(type) {
 
