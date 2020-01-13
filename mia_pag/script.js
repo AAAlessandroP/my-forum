@@ -113,15 +113,29 @@ $(function () {
         formdata.append("sessid", m_sessid)
         // var formAction = form.attr('action');
         $.ajax({
-            url: '/uploaad',
+            url: '/newActivity',
             data: formdata ? formdata : form.serialize(),
             cache: false,
             contentType: false,
             processData: false,
             type: 'POST',
-            success: function (data, textStatus, jqXHR) {
-                // Callback code
-                console.log("success");
+            success: function (IDNotaNuova, textStatus, jqXHR) {
+                if (type == "Semplice") {
+                    $("#appendino").append(
+                        protoNotaSemplice(formdata.get("nome"), formdata.get("testo"), IDNotaNuova)
+                    );
+                    // $("#nome").val("");
+                    // $("#texttoadd").val("");
+                }
+                else if (type == "scheda con scadenza") {
+                    $("#appendino").append(
+                        protoNotaConScadenza($("#nomeAddATempo").val(), $("#txtAddATempo")[0].value, IDNotaNuova, $("#scadenzaAddATempo")[0].value)
+                    );
+                    $("#scadenzaAddATempo")[0].value = "";
+                    $("#txtAddATempo")[0].value = "";
+                    $("#nomeAddATempo").val("");
+                }
+                attachHandlersTo(IDNotaNuova)
             }
         });
     })
@@ -162,6 +176,7 @@ $(function () {
                 }
                 attachHandlersTo(IDNotaNuova)
             });
+
     }
 
     var singleton = true;

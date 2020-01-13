@@ -61,10 +61,11 @@
                 <fieldset>
                     <legend> Aggiungi:</legend>
                     <form id="formAddSemplice" action="/upload" method="post" encType="multipart/form-data">
-                        <input type="text" class="form-control" name="nomefile" placeholder="titolo">
+                        
+                        <input type="text" class="form-control" name="nome" placeholder="titolo">
                         <textarea class="form-control" placeholder="testo della nota" rows="3"
-                            name="texttoadd"></textarea>
-                        carica allegato: <input class="carica" name="docs" type="file">
+                            name="testo"></textarea>
+                        seleziona allegati: <input class="carica" name="docs" type="file">
                         <input class="btn btn-dark" type="submit" value="add">
 
                     </form>
