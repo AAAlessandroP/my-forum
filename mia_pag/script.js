@@ -253,6 +253,8 @@ function modifica(chi) {
             } else alert("ops");
         });
     };
+    console.log("asd", $(`#${chi.id} input[type=file]`).prop('files')[0]);
+
     fileReader.readAsDataURL($(`#${chi.id} input[type=file]`).prop('files')[0]);
 
 }
