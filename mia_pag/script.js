@@ -128,7 +128,7 @@ $(function () {
                 }
                 else if (formdata.get("tipo") == "scheda con scadenza") {
                     $("#appendino").append(
-                        protoNotaConScadenza(formdata.get("nome"), formdata.get("testo"),IDNotaNuova, formdata.get("scadenza"))
+                        protoNotaConScadenza(formdata.get("nome"), formdata.get("testo"), IDNotaNuova, formdata.get("scadenza"))
                     );
                 }
                 attachHandlersTo(IDNotaNuova)
@@ -176,7 +176,7 @@ $(function () {
 
         // }
     }
-    
+
     var singleton = true;
     $("#submitLogin").click(() => {
         if (singleton) {
@@ -221,42 +221,43 @@ $(function () {
 });
 
 
-function modifica(chi) {
+async function modifica(chi) {
     console.log(`chi`, chi);
 
     var newObj = {
         sessid: m_sessid,
         IDNota: chi.id,
         titoloNuovo: chi.children[0].children[1].children[0].value,
-        testoNuovo: chi.children[0].children[2].children[0].value
+        testoNuovo: chi.children[0].children[2].children[0].value,
+        docs: []
     };
-
     if (chi.children[0].children["tipo"].value == "scheda con scadenza")
         newObj.dataNuova = chi.children[0].children["data"].value
 
+
     var fileReader = new FileReader();
-    fileReader.onload = function () {
+    fileReader.onload = () => newObj["docs"].push(fileReader.result)
 
-        newObj["docs"] = fileReader.result;
-        console.log(`newObj`, newObj);
+    var files = $(`#${chi.id} input[type=file]`).prop('files');
+    for (let index = 0; index < files.length; index++) {
+        fileReader.readAsDataURL($(`#${chi.id} input[type=file]`)[index].prop('files'));
+        fileReader.readAsDataURL
+    }
 
-        $.post("/modificaNota", newObj).always((receivedData, status) => {
 
-            if (status == "success") {
-                $(chi).append("<span style='background-color:green'>OK</span>");
-                setTimeout(() => {
-                    $(chi)
-                        .children()
-                        .filter(":last")
-                        .remove();
-                }, 1000);
-            } else alert("ops");
-        });
-    };
-    console.log("asd", $(`#${chi.id} input[type=file]`).prop('files')[0]);
 
-    fileReader.readAsDataURL($(`#${chi.id} input[type=file]`).prop('files')[0]);
+    $.post("/modificaNota", newObj).always((receivedData, status) => {
 
+        if (status == "success") {
+            $(chi).append("<span style='background-color:green'>OK</span>");
+            setTimeout(() => {
+                $(chi)
+                    .children()
+                    .filter(":last")
+                    .remove();
+            }, 1000);
+        } else alert("ops");
+    });
 }
 
 function cancella(chi) {
