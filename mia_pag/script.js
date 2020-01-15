@@ -236,12 +236,15 @@ async function modifica(chi) {
 
     var files = $(`#${chi.id} input[type=file]`).prop('files');
     if (files.length > 0) {
-        await [].forEach.call(files, (file) => {
+        await [].forEach.call(files, async(file) => {
             console.log("fileReader");
-            
+
             var fileReader = new FileReader();
-            fileReader.onload = () => newObj["docs"].push(fileReader.result)
-            fileReader.readAsDataURL(file);
+            fileReader.onload = async () => {
+                await newObj["docs"].push(fileReader.result)
+                console.log(`fileReader.result`, fileReader.result);
+            }
+            await fileReader.readAsDataURL(file);
         });
     }
     console.log(`newObj`, newObj);
