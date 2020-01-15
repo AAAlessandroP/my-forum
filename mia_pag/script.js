@@ -222,7 +222,6 @@ $(function () {
 
 
 async function modifica(chi) {
-    console.log(`chi`, chi);
 
     var newObj = {
         sessid: m_sessid,
@@ -235,17 +234,17 @@ async function modifica(chi) {
         newObj.dataNuova = chi.children[0].children["data"].value
 
 
-    var fileReader = new FileReader();
-    fileReader.onload = () => newObj["docs"].push(fileReader.result)
-
     var files = $(`#${chi.id} input[type=file]`).prop('files');
-    for (let index = 0; index < files.length; index++) {
-        fileReader.readAsDataURL($(`#${chi.id} input[type=file]`)[index].prop('files'));
-        fileReader.readAsDataURL
+    if (files.length > 0) {
+        await [].forEach.call(files, (file) => {
+            console.log("fileReader");
+            
+            var fileReader = new FileReader();
+            fileReader.onload = () => newObj["docs"].push(fileReader.result)
+            fileReader.readAsDataURL(file);
+        });
     }
-
-
-
+    console.log(`newObj`, newObj);
     $.post("/modificaNota", newObj).always((receivedData, status) => {
 
         if (status == "success") {
