@@ -171,9 +171,9 @@ app.post("/newActivity", (req, res) => {
                     AppartenenteA: sessioni[sessid].IDUtente,
                     BroadcastDelDom: sessioni[sessid].IDSuoDominio
                 };
-                
-                if (req.body.files) 
-                    nuovaAttivita.$push  = {allegati: c(JSON.stringify(req.files.docs), key)};
+
+                if (req.body.files)
+                    nuovaAttivita.$push = { allegati: c(JSON.stringify(req.files.docs), key) };
 
             } else {
                 res.sendStatus(500);
@@ -312,7 +312,7 @@ app.post("/modificaNota", function (req, res) {
 
             console.log(`req.body`, req.body);
             if (req.body.dataNuova) whatSet.$set.ScadeIL = c(req.body.dataNuova, key);
-            if (req.body.files) whatSet.$push.files = c((req.files.docs), key);
+            if (req.body.files) whatSet.$push.files = c(JSON.stringify(req.files.docs), key);
             console.log(`whatSet`, whatSet);
 
             db.db("ms-teams")
