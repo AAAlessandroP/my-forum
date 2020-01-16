@@ -236,27 +236,17 @@ async function modifica(chi) {
 
     var files = $(`#${chi.id} input[type=file]`).prop('files');
     if (files.length > 0) {
-        await [].forEach.call(files, (file) => {
+        // await [].forEach.call(files, (file) => {
 
-            var fileReader = new FileReaderSync();
-            letto = fileReader.readAsDataURL(file);
-            newObj["docs"].push(letto)
-        });
+        //     var fileReader = new FileReaderSync();
+        //     letto = fileReader.readAsDataURL(file);
+        //     newObj["docs"].push(letto)
+        // });
+        var myWorker = new Worker('worker.js');
+        myWorker.postMessage(files);
     }
 
-    console.log(`newObj`, newObj);
-    $.post("/modificaNota", newObj).always((receivedData, status) => {
-
-        if (status == "success") {
-            $(chi).append("<span style='background-color:green'>OK</span>");
-            setTimeout(() => {
-                $(chi)
-                    .children()
-                    .filter(":last")
-                    .remove();
-            }, 1000);
-        } else alert("ops");
-    });
+    
 
 }
 
