@@ -233,21 +233,25 @@ async function modifica(chi) {
     if (chi.children[0].children["tipo"].value == "scheda con scadenza")
         newObj.dataNuova = chi.children[0].children["data"].value
 
-
+    let done = 0
     var files = $(`#${chi.id} input[type=file]`).prop('files');
     if (files.length > 0) {
-        await [].forEach.call(files, async(file) => {
+        await [].forEach.call(files, async (file) => {
             console.log("fileReader");
 
             var fileReader = new FileReader();
             fileReader.onload = async () => {
                 await newObj["docs"].push(fileReader.result)
                 console.log(`fileReader.result`, fileReader.result);
+                done++;
             }
             await fileReader.readAsDataURL(file);
         });
     }
-    
+    while (done < files.length) {
+        //attesa attiva
+        setTimeout()
+    }
     console.log(`newObj`, newObj);
     $.post("/modificaNota", newObj).always((receivedData, status) => {
 
