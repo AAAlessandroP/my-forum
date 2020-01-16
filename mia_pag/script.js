@@ -247,6 +247,7 @@ async function modifica(chi) {
             await fileReader.readAsDataURL(file);
         });
     }
+    
     console.log(`newObj`, newObj);
     $.post("/modificaNota", newObj).always((receivedData, status) => {
 
