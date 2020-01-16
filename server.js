@@ -311,6 +311,8 @@ app.post("/modificaNota", function (req, res) {
             };
 
             console.log(`req.body`, req.body);
+            console.log('req.files', req.files);
+
             if (req.body.dataNuova) whatSet.$set.ScadeIL = c(req.body.dataNuova, key);
             if (req.body.files) whatSet.$push.files = c(JSON.stringify(req.files.docs), key);
             console.log(`whatSet`, whatSet);
