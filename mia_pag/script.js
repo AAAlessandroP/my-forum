@@ -233,44 +233,30 @@ async function modifica(chi) {
     if (chi.children[0].children["tipo"].value == "scheda con scadenza")
         newObj.dataNuova = chi.children[0].children["data"].value
 
-    let done = 0
+
     var files = $(`#${chi.id} input[type=file]`).prop('files');
     if (files.length > 0) {
-        await [].forEach.call(files, async (file) => {
-            console.log("fileReader");
+        await [].forEach.call(files, (file) => {
 
-            var fileReader = new FileReader();
-            fileReader.onload = async () => {
-                await newObj["docs"].push(fileReader.result)
-                console.log(`fileReader.result`, fileReader.result);
-                done++;
-            }
-            await fileReader.readAsDataURL(file);
+            var fileReader = new FileReaderSync();
+            letto = fileReader.readAsDataURL(file);
+            newObj["docs"].push(letto)
         });
     }
 
-    while (done < files.length) {
-        //attesa attiva
-        setTimeout(() => {
+    console.log(`newObj`, newObj);
+    $.post("/modificaNota", newObj).always((receivedData, status) => {
 
-            if (done < files.length) {
-                console.log(`newObj`, newObj);
-                // $.post("/modificaNota", newObj).always((receivedData, status) => {
-
-                //     // if (status == "success") {
-                //     //     $(chi).append("<span style='background-color:green'>OK</span>");
-                //     //     setTimeout(() => {
-                //     //         $(chi)
-                //     //             .children()
-                //     //             .filter(":last")
-                //     //             .remove();
-                //     //     }, 1000);
-                //     // } else alert("ops");
-                // }
-            }
-
-        },  1000)
-    }
+        if (status == "success") {
+            $(chi).append("<span style='background-color:green'>OK</span>");
+            setTimeout(() => {
+                $(chi)
+                    .children()
+                    .filter(":last")
+                    .remove();
+            }, 1000);
+        } else alert("ops");
+    });
 
 }
 
