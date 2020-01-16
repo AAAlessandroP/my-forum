@@ -248,23 +248,30 @@ async function modifica(chi) {
             await fileReader.readAsDataURL(file);
         });
     }
+
     while (done < files.length) {
         //attesa attiva
-        setTimeout()
-    }
-    console.log(`newObj`, newObj);
-    $.post("/modificaNota", newObj).always((receivedData, status) => {
+        setTimeout(() => {
 
-        if (status == "success") {
-            $(chi).append("<span style='background-color:green'>OK</span>");
-            setTimeout(() => {
-                $(chi)
-                    .children()
-                    .filter(":last")
-                    .remove();
-            }, 1000);
-        } else alert("ops");
-    });
+            if (done < files.length) {
+                console.log(`newObj`, newObj);
+                // $.post("/modificaNota", newObj).always((receivedData, status) => {
+
+                //     // if (status == "success") {
+                //     //     $(chi).append("<span style='background-color:green'>OK</span>");
+                //     //     setTimeout(() => {
+                //     //         $(chi)
+                //     //             .children()
+                //     //             .filter(":last")
+                //     //             .remove();
+                //     //     }, 1000);
+                //     // } else alert("ops");
+                // }
+            }
+
+        },  1000)
+    }
+
 }
 
 function cancella(chi) {
