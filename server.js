@@ -133,12 +133,9 @@ app.post("/addUser", async (req, res) => {
     }
 });
 
-//sarebbe bello avere n domini(sottogruppi)
-
 app.post("/newActivity", (req, res) => {
 
-    console.log('req.body', req.body);
-    console.log('req.files', req.files);
+    // console.log('req.files', req.files);
 
     var nome = req.body.nome;
     var testo = req.body.testo;
@@ -161,7 +158,7 @@ app.post("/newActivity", (req, res) => {
                     Tipo: tipo,
                     AppartenenteA: sessioni[sessid].IDUtente,
                     BroadcastDelDom: sessioni[sessid].IDSuoDominio,
-                    allegati:[]
+                    allegati: []
                 };
             else if (tipo == "scheda con scadenza") {
                 nuovaAttivita = {
@@ -171,18 +168,16 @@ app.post("/newActivity", (req, res) => {
                     Tipo: tipo,
                     AppartenenteA: sessioni[sessid].IDUtente,
                     BroadcastDelDom: sessioni[sessid].IDSuoDominio,
-                    allegati:[]
-
+                    allegati: []
                 };
 
-                if (req.body.files)
+                if (req.files)
                     nuovaAttivita.$push = { allegati: c(JSON.stringify(req.files.docs), key) };
-
             } else {
                 res.sendStatus(500);
                 return;
             }
-
+            console.log(`nuovaAttivita`, nuovaAttivita);
             db.db("ms-teams")
                 .collection("dati")
                 .insertOne(nuovaAttivita, function (err, resIns) {
@@ -257,7 +252,7 @@ app.post("/allDomUsers", async (req, res) => {
 });
 
 app.post("/allNoteDominio", async (req, res) => {
-    
+
     var sessid = req.body.sessid;
     if (sessioni[sessid]) {
         try {
@@ -272,7 +267,7 @@ app.post("/allNoteDominio", async (req, res) => {
             let key = sessioni[sessid].chiave;
             let eleDecrittato;
             dati.forEach(ele => {
-                console.log(`ele`, ele);
+                // console.log(`ele`, ele);
                 eleDecrittato = ele;
                 eleDecrittato.IDNota = ele._id;
                 delete eleDecrittato._id;
@@ -283,7 +278,7 @@ app.post("/allNoteDominio", async (req, res) => {
                     eleDecrittato.ScadeIL = d(ele.ScadeIL, key);
                 tutti.push(eleDecrittato);
             });
-            console.log(`tutti`, tutti);
+            // console.log(`tutti`, tutti);
             res.json(tutti);
         } catch (error) {
             console.log(`error`, error);
