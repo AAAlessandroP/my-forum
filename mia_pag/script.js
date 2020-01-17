@@ -111,8 +111,6 @@ $(function () {
         console.log(event)
         formdata = new FormData(event.currentTarget);
         formdata.append("sessid", m_sessid)
-        // formdata.append("tipo", "Semplice")
-        // var formAction = form.attr('action');
         $.ajax({
             url: '/newActivity',
             data: formdata ? formdata : form.serialize(),
