@@ -157,8 +157,8 @@ app.post("/newActivity", (req, res) => {
                     Text: c(testo.toString(), key),
                     Tipo: tipo,
                     AppartenenteA: sessioni[sessid].IDUtente,
-                    BroadcastDelDom: sessioni[sessid].IDSuoDominio,
-                    allegati: []
+                    BroadcastDelDom: sessioni[sessid].IDSuoDominio
+                    // allegati: []
                 };
             else if (tipo == "scheda con scadenza") {
                 nuovaAttivita = {
@@ -167,8 +167,8 @@ app.post("/newActivity", (req, res) => {
                     ScadeIL: c(req.body.scadenza.toString(), key),
                     Tipo: tipo,
                     AppartenenteA: sessioni[sessid].IDUtente,
-                    BroadcastDelDom: sessioni[sessid].IDSuoDominio,
-                    allegati: []
+                    BroadcastDelDom: sessioni[sessid].IDSuoDominio
+                    // allegati: []
                 };
             } else {
                 res.sendStatus(500);
@@ -176,10 +176,9 @@ app.post("/newActivity", (req, res) => {
             }
 
             if (req.files) {
-                c(JSON.stringify(req.files.docs), key)
                 var docs = []
-                allegati.forEach(element => {
-                    docs.push(c(JSON.stringify(element)))
+                req.files.docs.forEach(element => {
+                    docs.push(c(JSON.stringify(element),key))
                 });
                 nuovaAttivita.allegati = docs;
             }
