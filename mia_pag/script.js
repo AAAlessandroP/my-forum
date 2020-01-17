@@ -249,7 +249,6 @@ async function modifica(chi) {
         );
     }
 
-
     Promise.all(promises).then((values) => {
         console.log(`newObj`, newObj);
         $.post("/modificaNota", newObj).always((receivedData, status) => {
