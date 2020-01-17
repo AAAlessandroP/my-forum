@@ -118,7 +118,7 @@ app.post("/addUser", async (req, res) => {
 
             var sessId = crypto.randomBytes(32).toString("hex");
             sessioni[sessId] = {
-                IDUtente: resIns.insertedId,
+                IDUtente: resIns.insertedId,//$conn->insert_iid
                 Utente: name,
                 chiave: pass,
                 IDSuoDominio: nuovo_utente.Dominio

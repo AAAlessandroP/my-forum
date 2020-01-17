@@ -55,7 +55,7 @@ $(function () {
                 </div>
 
                 <input class="modifica btn btn-dark" type="button" value="modifica">
-                carica allegato: <input class="carica btn btn-dark" name="docs" type="file" />
+                carica allegato: <input class="carica btn btn-dark" name="docs" type="file" multiple/>
                 <input class="cancella btn btn-dark" type="button" value="cancella">
 
                 <input type="hidden" name="tipo" value="Semplice">
@@ -90,7 +90,7 @@ $(function () {
                 </div>
                 <input name="data" type="date" class="form-control" value="${data}">
                 <input class="modifica btn btn-dark" type="button" value="modifica">
-                carica allegato: <input class="carica btn btn-dark" name="docs" type="file" />
+                carica allegato: <input class="carica btn btn-dark" name="docs" type="file" multiple/>
                 <input class="cancella btn btn-dark" type="button" value="cancella">
 
                 <input type="hidden" name="tipo" value="scheda con scadenza">
@@ -233,31 +233,35 @@ async function modifica(chi) {
 
 
     var files = $(`#${chi.id} input[type=file]`).prop('files');
+
+    function leggi(file) {
+        var fileReader = new FileReader();
+        fileReader.onload = async () => {
+            newObj["docs"].push(fileReader.result)
+            return "done";
+        }
+        fileReader.readAsDataURL(file);
+    }
+
     for (let i = 0; i < files.length; i++) {
-        // var fileReader = new FileReader();
-        // fileReader.onload = async () => {
-        //     newObj["docs"].push(fileReader.result)
-        // }
-        // fileReader.readAsDataURL(file);
+        leggi(files[i])
 
     }
 
-}
 
+    console.log(`newObj`, newObj);
+    $.post("/modificaNota", newObj).always((receivedData, status) => {
 
-console.log(`newObj`, newObj);
-$.post("/modificaNota", newObj).always((receivedData, status) => {
-
-    if (status == "success") {
-        $(chi).append("<span style='background-color:green'>OK</span>");
-        setTimeout(() => {
-            $(chi)
-                .children()
-                .filter(":last")
-                .remove();
-        }, 1000);
-    } else alert("ops");
-});
+        if (status == "success") {
+            $(chi).append("<span style='background-color:green'>OK</span>");
+            setTimeout(() => {
+                $(chi)
+                    .children()
+                    .filter(":last")
+                    .remove();
+            }, 1000);
+        } else alert("ops");
+    });
 }
 
 function cancella(chi) {
