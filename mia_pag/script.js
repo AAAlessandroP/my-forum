@@ -233,16 +233,8 @@ async function modifica(chi) {
 
 
     var files = $(`#${chi.id} input[type=file]`).prop('files');
-
-    // function leggi(file) {
-    //     var fileReader = new FileReader();
-    //     fileReader.onload = async () => {
-    //         newObj["docs"].push(fileReader.result)
-    //         return "done";
-    //     }
-    //     fileReader.readAsDataURL(file);
-    // }
     var promises = []
+
     for (let i = 0; i < files.length; i++) {
 
         promises.push(
@@ -252,28 +244,30 @@ async function modifica(chi) {
                     newObj["docs"].push(fileReader.result)
                     resolve("done")
                 }
-                fileReader.readAsDataURL(file);
+                fileReader.readAsDataURL(files[i]);
             })
         );
     }
-    Promise.all(promises).then(function (values) {
-        console.log(values);
+
+
+    Promise.all(promises).then((values) => {
+        console.log(`newObj`, newObj);
+        $.post("/modificaNota", newObj).always((receivedData, status) => {
+
+            if (status == "success") {
+                $(chi).append("<span style='background-color:green'>OK</span>");
+                setTimeout(() => {
+                    $(chi)
+                        .children()
+                        .filter(":last")
+                        .remove();
+                }, 1000);
+            } else alert("ops");
+        });
     });
 
 
-    console.log(`newObj`, newObj);
-    $.post("/modificaNota", newObj).always((receivedData, status) => {
 
-        if (status == "success") {
-            $(chi).append("<span style='background-color:green'>OK</span>");
-            setTimeout(() => {
-                $(chi)
-                    .children()
-                    .filter(":last")
-                    .remove();
-            }, 1000);
-        } else alert("ops");
-    });
 }
 
 function cancella(chi) {
