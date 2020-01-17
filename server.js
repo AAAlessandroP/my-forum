@@ -46,7 +46,7 @@ app.post("/login", async (req, res) => {
     var dom = req.body.dom;
 
     try {
-        var db = await MongoClient.connect(uri, { useNewUrlParser: true });
+        var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology:true });
         var dominio = await db
             .db("ms-teams")
             .collection("domini")
@@ -80,7 +80,7 @@ app.post("/addUser", async (req, res) => {
     var salt = crypto.randomBytes(32).toString("hex");
 
     try {
-        var db = await MongoClient.connect(uri, { useNewUrlParser: true });
+        var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology:true });
 
         var dominio = await db
             .db("ms-teams")
@@ -143,7 +143,7 @@ app.post("/newActivity", (req, res) => {
     var sessid = req.body.sessid;
 
     if (sessioni[sessid])
-        MongoClient.connect(uri, { useNewUrlParser: true }, (err, db) => {
+        MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology:true }, (err, db) => {
             if (err) {
                 res.sendStatus(401);
                 db.close();
@@ -202,7 +202,7 @@ app.post("/newDom", async (req, res) => {
     var name = req.body.name;
 
     if (sessioni[sessid]) {
-        var db = await MongoClient.connect(uri, { useNewUrlParser: true });
+        var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology:true });
         var dominio = await db
             .db("ms-teams")
             .collection("domini")
@@ -230,7 +230,7 @@ app.post("/allDomUsers", async (req, res) => {
     var sessid = req.body.sessid;
     if (sessioni[sessid]) {
         try {
-            var db = await MongoClient.connect(uri, { useNewUrlParser: true });
+            var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology:true });
             var dati = await db
                 .db("ms-teams")
                 .collection("utenti")
@@ -257,7 +257,7 @@ app.post("/allNoteDominio", async (req, res) => {
     var sessid = req.body.sessid;
     if (sessioni[sessid]) {
         try {
-            var db = await MongoClient.connect(uri, { useNewUrlParser: true });
+            var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology:true });
             var dati = await db
                 .db("ms-teams")
                 .collection("dati")
@@ -297,7 +297,7 @@ app.post("/modificaNota", function (req, res) {
     if (sessioni[sessid]) {
         let key = sessioni[sessid].chiave;
 
-        MongoClient.connect(uri, { useNewUrlParser: true }, (err, db) => {
+        MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology:true }, (err, db) => {
             if (err) {
                 res.sendStatus(401);
                 db.close();
@@ -334,7 +334,7 @@ app.post("/delNota", function (req, res) {
     var IDNota = req.body.IDNota;
 
     if (sessioni[sessid]) {
-        MongoClient.connect(uri, { useNewUrlParser: true }, (err, db) => {
+        MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology:true }, (err, db) => {
             if (err) {
                 res.sendStatus(401);
                 db.close();
