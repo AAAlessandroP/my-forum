@@ -160,7 +160,8 @@ app.post("/newActivity", (req, res) => {
                     Text: c(testo.toString(), key),
                     Tipo: tipo,
                     AppartenenteA: sessioni[sessid].IDUtente,
-                    BroadcastDelDom: sessioni[sessid].IDSuoDominio
+                    BroadcastDelDom: sessioni[sessid].IDSuoDominio,
+                    allegati:[]
                 };
             else if (tipo == "scheda con scadenza") {
                 nuovaAttivita = {
@@ -169,7 +170,9 @@ app.post("/newActivity", (req, res) => {
                     ScadeIL: c(req.body.scadenza.toString(), key),
                     Tipo: tipo,
                     AppartenenteA: sessioni[sessid].IDUtente,
-                    BroadcastDelDom: sessioni[sessid].IDSuoDominio
+                    BroadcastDelDom: sessioni[sessid].IDSuoDominio,
+                    allegati:[]
+
                 };
 
                 if (req.body.files)
@@ -254,6 +257,7 @@ app.post("/allDomUsers", async (req, res) => {
 });
 
 app.post("/allNoteDominio", async (req, res) => {
+    
     var sessid = req.body.sessid;
     if (sessioni[sessid]) {
         try {
@@ -268,7 +272,7 @@ app.post("/allNoteDominio", async (req, res) => {
             let key = sessioni[sessid].chiave;
             let eleDecrittato;
             dati.forEach(ele => {
-                // console.log(`ele`, ele);
+                console.log(`ele`, ele);
                 eleDecrittato = ele;
                 eleDecrittato.IDNota = ele._id;
                 delete eleDecrittato._id;
@@ -279,7 +283,7 @@ app.post("/allNoteDominio", async (req, res) => {
                     eleDecrittato.ScadeIL = d(ele.ScadeIL, key);
                 tutti.push(eleDecrittato);
             });
-            // console.log(`tutti`, tutti);
+            console.log(`tutti`, tutti);
             res.json(tutti);
         } catch (error) {
             console.log(`error`, error);
