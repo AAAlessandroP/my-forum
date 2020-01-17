@@ -170,13 +170,14 @@ app.post("/newActivity", (req, res) => {
                     BroadcastDelDom: sessioni[sessid].IDSuoDominio,
                     allegati: []
                 };
-
-                if (req.files)
-                    nuovaAttivita.$push = { allegati: c(JSON.stringify(req.files.docs), key) };
             } else {
                 res.sendStatus(500);
                 return;
             }
+
+            if (req.files)
+                nuovaAttivita["$push"] = { allegati: c(JSON.stringify(req.files.docs), key) };
+
             console.log(`nuovaAttivita`, nuovaAttivita);
             db.db("ms-teams")
                 .collection("dati")
