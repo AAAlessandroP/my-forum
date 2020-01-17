@@ -233,31 +233,31 @@ async function modifica(chi) {
 
 
     var files = $(`#${chi.id} input[type=file]`).prop('files');
-    if (files.length > 0) {
-        await [].forEach.call(files, async (file) => {
-            console.log("fileReader");
+    for (let i = 0; i < files.length; i++) {
+        // var fileReader = new FileReader();
+        // fileReader.onload = async () => {
+        //     newObj["docs"].push(fileReader.result)
+        // }
+        // fileReader.readAsDataURL(file);
 
-            var fileReader = new FileReader();
-            fileReader.onload = async () => {
-                await newObj["docs"].push(fileReader.result)
-                console.log(`fileReader.result`, fileReader.result);
-            }
-            await fileReader.readAsDataURL(file);
-        });
     }
-    console.log(`newObj`, newObj);
-    $.post("/modificaNota", newObj).always((receivedData, status) => {
 
-        if (status == "success") {
-            $(chi).append("<span style='background-color:green'>OK</span>");
-            setTimeout(() => {
-                $(chi)
-                    .children()
-                    .filter(":last")
-                    .remove();
-            }, 1000);
-        } else alert("ops");
-    });
+}
+
+
+console.log(`newObj`, newObj);
+$.post("/modificaNota", newObj).always((receivedData, status) => {
+
+    if (status == "success") {
+        $(chi).append("<span style='background-color:green'>OK</span>");
+        setTimeout(() => {
+            $(chi)
+                .children()
+                .filter(":last")
+                .remove();
+        }, 1000);
+    } else alert("ops");
+});
 }
 
 function cancella(chi) {
