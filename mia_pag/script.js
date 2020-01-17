@@ -234,19 +234,31 @@ async function modifica(chi) {
 
     var files = $(`#${chi.id} input[type=file]`).prop('files');
 
-    function leggi(file) {
-        var fileReader = new FileReader();
-        fileReader.onload = async () => {
-            newObj["docs"].push(fileReader.result)
-            return "done";
-        }
-        fileReader.readAsDataURL(file);
-    }
-
+    // function leggi(file) {
+    //     var fileReader = new FileReader();
+    //     fileReader.onload = async () => {
+    //         newObj["docs"].push(fileReader.result)
+    //         return "done";
+    //     }
+    //     fileReader.readAsDataURL(file);
+    // }
+    var promises = []
     for (let i = 0; i < files.length; i++) {
-        leggi(files[i])
 
+        promises.push(
+            new Promise(function (resolve, reject) {
+                var fileReader = new FileReader();
+                fileReader.onload = async () => {
+                    newObj["docs"].push(fileReader.result)
+                    resolve("done")
+                }
+                fileReader.readAsDataURL(file);
+            })
+        );
     }
+    Promise.all(promises).then(function (values) {
+        console.log(values);
+    });
 
 
     console.log(`newObj`, newObj);
