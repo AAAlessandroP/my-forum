@@ -158,7 +158,6 @@ app.post("/newActivity", (req, res) => {
                     Tipo: tipo,
                     AppartenenteA: sessioni[sessid].IDUtente,
                     BroadcastDelDom: sessioni[sessid].IDSuoDominio
-                    // allegati: []
                 };
             else if (tipo == "scheda con scadenza") {
                 nuovaAttivita = {
@@ -168,7 +167,6 @@ app.post("/newActivity", (req, res) => {
                     Tipo: tipo,
                     AppartenenteA: sessioni[sessid].IDUtente,
                     BroadcastDelDom: sessioni[sessid].IDSuoDominio
-                    // allegati: []
                 };
             } else {
                 res.sendStatus(500);
@@ -183,7 +181,7 @@ app.post("/newActivity", (req, res) => {
                 nuovaAttivita.allegati = docs;
             }
 
-            console.log(`nuovaAttivita`, nuovaAttivita);
+            // console.log(`nuovaAttivita`, nuovaAttivita);
             db.db("ms-teams")
                 .collection("dati")
                 .insertOne(nuovaAttivita, function (err, resIns) {
