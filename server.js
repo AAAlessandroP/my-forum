@@ -178,7 +178,7 @@ app.post("/newActivity", (req, res) => {
             if (req.files) {
                 var docs = []
                 req.files.docs.forEach(element => {
-                    docs.push(c(JSON.stringify(element),key))
+                    docs.push(c(JSON.stringify(element), key))
                 });
                 nuovaAttivita.allegati = docs;
             }
