@@ -41,9 +41,9 @@ $(function () {
         "DarkSeaGreen "
     ];
 
-    function protoNotaSemplice(nome, txt, _id) {
+    function protoNotaSemplice(nome, txt, _id,allegati) {
         let randColor = arr[Math.floor(Math.random() * arr.length)];
-        return `
+        let s = `
         <div class="col-3" id="${_id}" style="background-color:${randColor}">
             <fieldset>
                 <legend>nota</legend>
@@ -52,15 +52,21 @@ $(function () {
                 </div>
                 <div class="input-group mt-2 mb-2">
                     <textarea class="form-control" rows="3">${txt}</textarea>
-                </div>
+                </div>`;
 
-                <input class="modifica btn btn-dark" type="button" value="modifica">
+                allegati.forEach(element => {
+                    s += element
+                });
+
+        s += `
                 carica allegato: <input class="carica btn btn-dark" name="docs" type="file" multiple/>
+                <input class="modifica btn btn-dark" type="button" value="modifica">                
                 <input class="cancella btn btn-dark" type="button" value="cancella">
 
                 <input type="hidden" name="tipo" value="Semplice">
                 </fieldset>
         </div>`;
+        return s;
     }
 
     function attachHandlersTo(IDNotaNuova) {
@@ -89,8 +95,8 @@ $(function () {
                     <label>scadenza:</label>
                 </div>
                 <input name="data" type="date" class="form-control" value="${data}">
-                <input class="modifica btn btn-dark" type="button" value="modifica">
                 carica allegato: <input class="carica btn btn-dark" name="docs" type="file" multiple/>
+                <input class="modifica btn btn-dark" type="button" value="modifica">                
                 <input class="cancella btn btn-dark" type="button" value="cancella">
 
                 <input type="hidden" name="tipo" value="scheda con scadenza">
@@ -133,47 +139,6 @@ $(function () {
             }
         });
     })
-
-    {
-        // function add(type) {
-
-        //     var params = { sessid: m_sessid, tipo: type }
-
-        //     if (type == "Semplice") {
-        //         params["nome"] = $("#nome").val()
-        //         params["testo"] = $("#texttoadd")[0].value
-        //     } else
-        //         if (type == "scheda con scadenza") {
-        //             params["nome"] = $("#nomeAddATempo").val()
-        //             params["testo"] = $("#txtAddATempo")[0].value
-        //             params["scadenza"] = $("#scadenzaAddATempo").val()
-        //         }
-
-        //     console.log(`params`, params);
-
-        //     $.post("/newActivity", params)
-        //         .always(IDNotaNuova => {
-
-        //             if (type == "Semplice") {
-        //                 $("#appendino").append(
-        //                     protoNotaSemplice($("#nome").val(), $("#texttoadd")[0].value, IDNotaNuova)
-        //                 );
-        //                 $("#nome").val("");
-        //                 $("#texttoadd").val("");
-        //             }
-        //             else if (type == "scheda con scadenza") {
-        //                 $("#appendino").append(
-        //                     protoNotaConScadenza($("#nomeAddATempo").val(), $("#txtAddATempo")[0].value, IDNotaNuova, $("#scadenzaAddATempo")[0].value)
-        //                 );
-        //                 $("#scadenzaAddATempo")[0].value = "";
-        //                 $("#txtAddATempo")[0].value = "";
-        //                 $("#nomeAddATempo").val("");
-        //             }
-        //             attachHandlersTo(IDNotaNuova)
-        //         });
-
-        // }
-    }
 
     var singleton = true;
     $("#submitLogin").click(() => {
