@@ -11,9 +11,9 @@ $(function () {
                 note.forEach(nota => {
 
                     if (nota.Tipo == "Semplice")
-                        $("#appendino").append(protoNotaSemplice(nota.nome, nota.testo, nota.IDNota));
+                        $("#appendino").append(protoNotaSemplice(nota.nome, nota.testo, nota.IDNota, nota.allegati));
                     else if (nota.Tipo == "scheda con scadenza")
-                        $("#appendino").append(protoNotaConScadenza(nota.nome, nota.testo, nota.IDNota, nota.ScadeIL));
+                        $("#appendino").append(protoNotaConScadenza(nota.nome, nota.testo, nota.IDNota, nota.ScadeIL, nota.allegati));
                     else alert("ops")
                     attachHandlersTo(nota.IDNota)
                 });
@@ -41,7 +41,7 @@ $(function () {
         "DarkSeaGreen "
     ];
 
-    function protoNotaSemplice(nome, txt, _id,allegati) {
+    function protoNotaSemplice(nome, txt, _id, allegati) {
         let randColor = arr[Math.floor(Math.random() * arr.length)];
         let s = `
         <div class="col-3" id="${_id}" style="background-color:${randColor}">
@@ -53,10 +53,10 @@ $(function () {
                 <div class="input-group mt-2 mb-2">
                     <textarea class="form-control" rows="3">${txt}</textarea>
                 </div>`;
-
-                allegati.forEach(element => {
-                    s += element
-                });
+console.log(`allegati`, allegati);
+        allegati.forEach(element => {
+            s += JSON.parse(element).name
+        });
 
         s += `
                 carica allegato: <input class="carica btn btn-dark" name="docs" type="file" multiple/>
@@ -79,9 +79,9 @@ $(function () {
         };
     }
 
-    function protoNotaConScadenza(nome, txt, _id, data) {
+    function protoNotaConScadenza(nome, txt, _id, data, allegati) {
         let randColor = arr[Math.floor(Math.random() * arr.length)];
-        return `
+        let s = `
         <div class="col-3" id="${_id}" style="background-color:${randColor}">
             <fieldset>
                 <legend>nota</legend>
@@ -95,6 +95,14 @@ $(function () {
                     <label>scadenza:</label>
                 </div>
                 <input name="data" type="date" class="form-control" value="${data}">
+                `;
+                console.log(`allegati`, allegati);
+
+        allegati.forEach(element => {
+            s += JSON.parse(element).name
+        });
+
+        s += `
                 carica allegato: <input class="carica btn btn-dark" name="docs" type="file" multiple/>
                 <input class="modifica btn btn-dark" type="button" value="modifica">                
                 <input class="cancella btn btn-dark" type="button" value="cancella">
@@ -102,6 +110,7 @@ $(function () {
                 <input type="hidden" name="tipo" value="scheda con scadenza">
                 </fieldset>
         </div>`;
+        return s;
     }
 
     $("#submitAddSemplice").click(() => {
@@ -133,7 +142,9 @@ $(function () {
                 else if (formdata.get("tipo") == "scheda con scadenza") {
                     $("#appendino").append(
                         protoNotaConScadenza(formdata.get("nome"), formdata.get("testo"), IDNotaNuova, formdata.get("scadenza"))
-                    );
+                    );//TODO: vedo i nomi degli allegati appena appesi
+                    //TODO: vedo i nomi degli allegati appena appesi
+                    //TODO: vedo i nomi degli allegati appena appesi
                 }
                 attachHandlersTo(IDNotaNuova)
             }

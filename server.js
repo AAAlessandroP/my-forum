@@ -271,7 +271,7 @@ app.post("/allNoteDominio", async (req, res) => {
             let key = sessioni[sessid].chiave;
             let eleDecrittato;
             dati.forEach(ele => {
-                // console.log(`ele`, ele);
+                console.log(`ele`, ele);
                 eleDecrittato = ele;
                 eleDecrittato.IDNota = ele._id;
                 delete eleDecrittato._id;
@@ -280,6 +280,8 @@ app.post("/allNoteDominio", async (req, res) => {
                 if (ele.ScadeIL)
                     //le semplici non l'hanno
                     eleDecrittato.ScadeIL = d(ele.ScadeIL, key);
+                if (ele.allegati)
+                    eleDecrittato.allegati = ele.allegati.map(e => d(e, key))
                 tutti.push(eleDecrittato);
             });
             console.log(`tutti`, tutti);
