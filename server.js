@@ -282,7 +282,7 @@ app.post("/allNoteDominio", async (req, res) => {
                     eleDecrittato.ScadeIL = d(ele.ScadeIL, key);
                 tutti.push(eleDecrittato);
             });
-            // console.log(`tutti`, tutti);
+            console.log(`tutti`, tutti);
             res.json(tutti);
         } catch (error) {
             console.log(`error`, error);
