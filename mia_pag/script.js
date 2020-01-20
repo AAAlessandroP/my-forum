@@ -53,11 +53,11 @@ $(function () {
                 <div class="input-group mt-2 mb-2">
                     <textarea class="form-control" rows="3">${txt}</textarea>
                 </div>`;
-console.log(`allegati`, allegati);
-        allegati.forEach(element => {
-            s += JSON.parse(element).name
-        });
 
+        if (allegati)
+            allegati.forEach(element => {
+                s += "<p>" + JSON.parse(element).name +"</p>"
+            });
         s += `
                 carica allegato: <input class="carica btn btn-dark" name="docs" type="file" multiple/>
                 <input class="modifica btn btn-dark" type="button" value="modifica">                
@@ -96,12 +96,11 @@ console.log(`allegati`, allegati);
                 </div>
                 <input name="data" type="date" class="form-control" value="${data}">
                 `;
-                console.log(`allegati`, allegati);
 
-        allegati.forEach(element => {
-            s += JSON.parse(element).name
-        });
-
+        if (allegati)
+            allegati.forEach(element => {
+                s += "<p>" + JSON.parse(element).name +"</p>"
+            });
         s += `
                 carica allegato: <input class="carica btn btn-dark" name="docs" type="file" multiple/>
                 <input class="modifica btn btn-dark" type="button" value="modifica">                
