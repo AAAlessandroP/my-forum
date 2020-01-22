@@ -111,20 +111,26 @@ app.post("/addUser", async (req, res) => {
                 Dominio: dominio._id
             };
 
-            var resIns = await db
-                .db("ms-teams")
-                .collection("utenti")
-                .insertOne(nuovo_utente, { safe: true, upsert: true });
+            try {
+                var resIns = await db
+                    .db("ms-teams")
+                    .collection("utenti")
+                    .insertOne(nuovo_utente, { safe: true, upsert: true });
 
-            var sessId = crypto.randomBytes(32).toString("hex");
-            sessioni[sessId] = {
-                IDUtente: resIns.insertedId,//$conn->insert_iid
-                Utente: name,
-                chiave: pass,
-                IDSuoDominio: nuovo_utente.Dominio
-            };
+                assert.notEqual(resIns, null)
 
-            res.send(sessId);
+                var sessId = crypto.randomBytes(32).toString("hex");
+                sessioni[sessId] = {
+                    IDUtente: resIns.insertedId,//$conn->insert_iid
+                    Utente: name,
+                    chiave: pass,
+                    IDSuoDominio: nuovo_utente.Dominio
+                };
+                res.send(sessId);
+            } catch (error) {
+                console.log(`error`, error);
+                res.sendStatus(500);
+            }
         } else res.send("username already taken in this domain");
 
         db.close();
@@ -328,7 +334,7 @@ app.post("/modificaNota", function (req, res) {
 
             db.db("ms-teams")
                 .collection("dati")
-                .updateOne({ _id: ObjectId(IDNota), BroadcastDelDom: sessioni[sessid].Dominio, AppartenenteA: sessioni[sessid].IDUtente }, whatSet, (error, result) => {
+                .updateOne({ _id: ObjectId(IDNota), BroadcastDelDom: sessioni[sessid].IDSuoDominio, AppartenenteA: sessioni[sessid].IDUtente }, whatSet, (error, result) => {
                     assert.equal(err, null);
 
                     db.close();
@@ -352,7 +358,7 @@ app.post("/delNota", function (req, res) {
             console.log(`sessioni[sessid]`, sessioni[sessid]);
             db.db("ms-teams")
                 .collection("dati")
-                .deleteOne({ _id: ObjectId(IDNota), BroadcastDelDom: sessioni[sessid].Dominio, AppartenenteA: sessioni[sessid].IDUtente }, (error, result) => {
+                .deleteOne({ _id: ObjectId(IDNota), BroadcastDelDom: sessioni[sessid].IDSuoDominio, AppartenenteA: sessioni[sessid].IDUtente }, (error, result) => {
 
                     assert.equal(err, null);
                     if (result.deletedCount == 1)
