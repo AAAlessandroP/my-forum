@@ -133,7 +133,7 @@ app.post("/addUser", async (req, res) => {
 
 app.post("/newActivity", (req, res) => {
 
-    // console.log('req.files', req.files);
+    console.log('req.files', req.files);
 
     var nome = req.body.nome;
     var testo = req.body.testo;
@@ -322,7 +322,7 @@ app.post("/modificaNota", function (req, res) {
 
             db.db("ms-teams")
                 .collection("dati")
-                .updateOne({ _id: ObjectId(IDNota), AppartenenteA: sessioni[sessid].IDUtente }, whatSet, (error, result) => {
+                .updateOne({ _id: ObjectId(IDNota), BroadcastDelDom: sessioni[sessid].Dominio, AppartenenteA: sessioni[sessid].IDUtente }, whatSet, (error, result) => {
                     assert.equal(err, null);
 
                     db.close();
@@ -346,7 +346,7 @@ app.post("/delNota", function (req, res) {
 
             db.db("ms-teams")
                 .collection("dati")
-                .deleteOne({ _id: ObjectId(IDNota), AppartenenteA: sessioni[sessid].IDUtente }, (error, result) => {
+                .deleteOne({ _id: ObjectId(IDNota), BroadcastDelDom: sessioni[sessid].Dominio, AppartenenteA: sessioni[sessid].IDUtente }, (error, result) => {
                     assert.equal(err, null);
                     res.sendStatus(200);
                 });
