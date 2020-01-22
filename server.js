@@ -70,7 +70,9 @@ app.post("/login", async (req, res) => {
         res.sendStatus(500);
     }
 });
-
+// CRITTO CON H(KEY)
+// CRITTO CON H(KEY)
+// CRITTO CON H(KEY)
 app.post("/addUser", async (req, res) => {
     var name = req.body.utente;
     var pass = req.body.passw;
@@ -347,12 +349,16 @@ app.post("/delNota", function (req, res) {
                 db.close();
                 throw err;
             }
-
+            console.log(`sessioni[sessid]`, sessioni[sessid]);
             db.db("ms-teams")
                 .collection("dati")
                 .deleteOne({ _id: ObjectId(IDNota), BroadcastDelDom: sessioni[sessid].Dominio, AppartenenteA: sessioni[sessid].IDUtente }, (error, result) => {
+
                     assert.equal(err, null);
-                    res.sendStatus(200);
+                    if (result.deletedCount == 1)
+                        res.sendStatus(200);
+                    else
+                        res.sendStatus(500);
                 });
         });
     } else res.sendStatus(401);
