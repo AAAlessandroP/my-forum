@@ -134,7 +134,7 @@ app.post("/addUser", async (req, res) => {
 app.post("/newActivity", (req, res) => {
 
     console.log('req.files', req.files);
-    console.log(typeof req.files.docs);
+
 
     var nome = req.body.nome;
     var testo = req.body.testo;
@@ -174,9 +174,12 @@ app.post("/newActivity", (req, res) => {
 
             if (req.files) {
                 var docs = []
-                req.files.docs.forEach(element => {
-                    docs.push(c(JSON.stringify(element), key))
-                });
+                if (req.files.docs instanceof Array)
+                    req.files.docs.forEach(element => {
+                        docs.push(c(JSON.stringify(element), key))
+                    });
+                else
+                    docs.push(c(JSON.stringify(req.files.docs), key))
                 nuovaAttivita.allegati = docs;
             }
 
