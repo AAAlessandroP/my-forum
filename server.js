@@ -134,6 +134,7 @@ app.post("/addUser", async (req, res) => {
 app.post("/newActivity", (req, res) => {
 
     console.log('req.files', req.files);
+    console.log(typeof req.files.docs);
 
     var nome = req.body.nome;
     var testo = req.body.testo;
