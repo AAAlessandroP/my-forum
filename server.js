@@ -25,9 +25,7 @@ const uri = `mongodb+srv://ms-teams:${process.env.PASS}@miocluster2-igwb8.mongod
 var sessioni = {};
 
 function c(s, key) {
-    return crypto
-        .createCipher("aes-256-ctr", key)
-        .update(s.toString(), "utf-8", "hex");
+    return crypto.createCipher("aes-256-ctr", key).update(s.toString(), "utf-8", "hex");
 }
 
 function d(s, key) {
@@ -324,7 +322,7 @@ app.post("/modificaNota", function (req, res) {
 
             db.db("ms-teams")
                 .collection("dati")
-                .updateOne({ _id: ObjectId(IDNota) }, whatSet, (error, result) => {
+                .updateOne({ _id: ObjectId(IDNota), AppartenenteA: sessioni[sessid].IDUtente }, whatSet, (error, result) => {
                     assert.equal(err, null);
 
                     db.close();
@@ -348,7 +346,7 @@ app.post("/delNota", function (req, res) {
 
             db.db("ms-teams")
                 .collection("dati")
-                .deleteOne({ _id: ObjectId(IDNota) }, (error, result) => {
+                .deleteOne({ _id: ObjectId(IDNota), AppartenenteA: sessioni[sessid].IDUtente }, (error, result) => {
                     assert.equal(err, null);
                     res.sendStatus(200);
                 });
