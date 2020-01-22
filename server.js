@@ -324,19 +324,17 @@ app.post("/modificaNota", function (req, res) {
                     Name: c(titoloNuovo.toString(), key)
                 }
             };
-
-            console.log(`req.body`, req.body);
-            // console.log('req.files', req.files);
+            // console.log(`req.body`, req.body);
 
             if (req.body.dataNuova) whatSet.$set.ScadeIL = c(req.body.dataNuova, key);
-            if (req.body.files) whatSet.$push.files = c(JSON.stringify(req.files.docs), key);
-            console.log(`whatSet`, whatSet);
+            if (req.body["docs[]"]) whatSet.$push = { allegati: c(JSON.stringify(req.body["docs[]"]), key) };
+            // console.log(`whatSet`, whatSet);
 
             db.db("ms-teams")
                 .collection("dati")
                 .updateOne({ _id: ObjectId(IDNota), BroadcastDelDom: sessioni[sessid].IDSuoDominio, AppartenenteA: sessioni[sessid].IDUtente }, whatSet, (error, result) => {
                     assert.equal(err, null);
-
+                    assert.equal(result.modifiedCount, 1);
                     db.close();
                     res.sendStatus(200);
                 });
