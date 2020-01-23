@@ -44,79 +44,113 @@ $(function () {
         "DarkSeaGreen "
     ];
 
+
     function protoNotaSemplice(nome, txt, _id, allegati) {
         console.log('allegati', allegati);
 
         let randColor = arr[Math.floor(Math.random() * arr.length)];
         let s = `
-        <div class="col-3" id="${_id}" style="background-color:${randColor}">
-            <fieldset>
-                <legend>nota</legend>
-                <div class="input-group mt-2 mb-2">
+            <div class="col-3" style="background-color:${randColor}">
+                <fieldset>
+                    <legend>nota</legend>
+                    <form  id="${_id}" action="/modificaNota" method="post" encType="multipart/form-data">
+
                     <input type="text" class="form-control" value="${nome}">
-                </div>
-                <div class="input-group mt-2 mb-2">
                     <textarea class="form-control" rows="3">${txt}</textarea>
-                </div>`;
+                    <textarea class="form-control" rows="3">${txt}</textarea>
+                    `;
 
         if (allegati)
             allegati.forEach(element => {
                 s += "<p>" + element + "</p>"
             });
         s += `
-                carica allegato: <input class="carica btn btn-dark" name="docs" type="file" multiple/>
-                <input class="modifica btn btn-dark" type="button" value="modifica">                
-                <input class="cancella btn btn-dark" type="button" value="cancella">
+                    carica allegato: <input class="carica btn btn-dark" name="docs" type="file" multiple/>
+                    <input class="modifica btn btn-dark" type="button" value="modifica">                
+                    <input class="cancella btn btn-dark" type="button" value="cancella">
 
-                <input type="hidden" name="tipo" value="Semplice">
-                </fieldset>
-        </div>`;
+                    <input type="hidden" name="tipo" value="Semplice">
+                    </form>
+                    </fieldset>
+            </div>`;
         return s;
     }
 
-    function attachHandlersTo(IDNotaNuova) {
+    {
+        // function protoNotaSemplice(nome, txt, _id, allegati) {
+        //     console.log('allegati', allegati);
 
-        $(`#${IDNotaNuova} .modifica`)[0].onclick = () => {
-            modifica($(`#${IDNotaNuova}`)[0]);
-        };
-        $(`#${IDNotaNuova} .cancella`)[0].onclick = () => {
-            cancella($(`#${IDNotaNuova}`)[0]);
-        };
-    }
+        //     let randColor = arr[Math.floor(Math.random() * arr.length)];
+        //     let s = `
+        //     <div class="col-3" id="${_id}" style="background-color:${randColor}">
+        //         <fieldset>
+        //             <legend>nota</legend>
+        //             <div class="input-group mt-2 mb-2">
+        //                 <input type="text" class="form-control" value="${nome}">
+        //             </div>
+        //             <div class="input-group mt-2 mb-2">
+        //                 <textarea class="form-control" rows="3">${txt}</textarea>
+        //             </div>`;
 
-    function protoNotaConScadenza(nome, txt, _id, data, allegati) {
+        //     if (allegati)
+        //         allegati.forEach(element => {
+        //             s += "<p>" + element + "</p>"
+        //         });
+        //     s += `
+        //             carica allegato: <input class="carica btn btn-dark" name="docs" type="file" multiple/>
+        //             <input class="modifica btn btn-dark" type="button" value="modifica">                
+        //             <input class="cancella btn btn-dark" type="button" value="cancella">
 
-        console.log('allegati', allegati);
-        let randColor = arr[Math.floor(Math.random() * arr.length)];
-        let s = `
-        <div class="col-3" id="${_id}" style="background-color:${randColor}">
-            <fieldset>
-                <legend>nota</legend>
-                <div class="input-group mt-2 mb-2">
-                    <input type="text" class="form-control" value="${nome}">
-                </div>
-                <div class="input-group mt-2 mb-2">
-                    <textarea class="form-control" rows="3">${txt}</textarea>
-                </div>
-                <div class="input-group mt-2 mb-2">
-                    <label>scadenza:</label>
-                </div>
-                <input name="data" type="date" class="form-control" value="${data}">
-                `;
+        //             <input type="hidden" name="tipo" value="Semplice">
+        //             </fieldset>
+        //     </div>`;
+        //     return s;
+        // }
 
-        if (allegati)
-            allegati.forEach(element => {
-                s += "<p>" + element + "</p>"
-            });
-        s += `
-                carica allegato: <input class="carica btn btn-dark" name="docs" type="file" multiple/>
-                <input class="modifica btn btn-dark" type="button" value="modifica">
-                <input class="cancella btn btn-dark" type="button" value="cancella">
+        // function attachHandlersTo(IDNotaNuova) {
 
-                <input type="hidden" name="tipo" value="scheda con scadenza">
-                </fieldset>
-        </div>`;
-        return s;
+        //     $(`#${IDNotaNuova} .modifica`)[0].onclick = () => {
+        //         modifica($(`#${IDNotaNuova}`)[0]);
+        //     };
+        //     $(`#${IDNotaNuova} .cancella`)[0].onclick = () => {
+        //         cancella($(`#${IDNotaNuova}`)[0]);
+        //     };
+        // }
+
+        // function protoNotaConScadenza(nome, txt, _id, data, allegati) {
+
+        //     console.log('allegati', allegati);
+        //     let randColor = arr[Math.floor(Math.random() * arr.length)];
+        //     let s = `
+        //     <div class="col-3" id="${_id}" style="background-color:${randColor}">
+        //         <fieldset>
+        //             <legend>nota</legend>
+        //             <div class="input-group mt-2 mb-2">
+        //                 <input type="text" class="form-control" value="${nome}">
+        //             </div>
+        //             <div class="input-group mt-2 mb-2">
+        //                 <textarea class="form-control" rows="3">${txt}</textarea>
+        //             </div>
+        //             <div class="input-group mt-2 mb-2">
+        //                 <label>scadenza:</label>
+        //             </div>
+        //             <input name="data" type="date" class="form-control" value="${data}">
+        //             `;
+
+        //     if (allegati)
+        //         allegati.forEach(element => {
+        //             s += "<p>" + element + "</p>"
+        //         });
+        //     s += `
+        //             carica allegato: <input class="carica btn btn-dark" name="docs" type="file" multiple/>
+        //             <input class="modifica btn btn-dark" type="button" value="modifica">
+        //             <input class="cancella btn btn-dark" type="button" value="cancella">
+
+        //             <input type="hidden" name="tipo" value="scheda con scadenza">
+        //             </fieldset>
+        //     </div>`;
+        //     return s;
+        // }
     }
 
     $("#submitAddSemplice").click(() => {
