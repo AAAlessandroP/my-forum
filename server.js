@@ -324,7 +324,7 @@ app.post("/modificaNota", function (req, res) {
                     Name: c(titoloNuovo.toString(), key)
                 }
             };
-            // console.log(`req.body`, req.body);
+            console.log(`req.body`, req.body);
 
             if (req.body.dataNuova) whatSet.$set.ScadeIL = c(req.body.dataNuova, key);
             if (req.body["docs[]"]) whatSet.$push = { allegati: c(JSON.stringify(req.body["docs[]"]), key) };

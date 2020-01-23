@@ -139,7 +139,7 @@ $(function () {
             processData: false,
             type: 'POST',
             success: function (IDNotaNuova, textStatus, jqXHR) {
-                // console.log('formdata.get("docs")', formdata.get("docs"));
+                console.log('formdata.get("docs")', formdata.get("docs"));
                 if (formdata.get("tipo") == "Semplice") {
                     $("#appendino").append(
                         protoNotaSemplice(formdata.get("nome"), formdata.get("testo"), IDNotaNuova, Array.from(formdata.get("docs")).map(f => f.name))
