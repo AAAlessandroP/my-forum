@@ -10,6 +10,7 @@ $(function () {
             if (note != "nulla salvato")
                 note.forEach(nota => {
 
+                    console.log('nota.allegati', nota.allegati);
                     if (nota.Tipo == "Semplice")
                         $("#appendino").append(protoNotaSemplice(nota.nome, nota.testo, nota.IDNota, nota.allegati));
                     else if (nota.Tipo == "scheda con scadenza")
@@ -121,7 +122,6 @@ $(function () {
 
     $("form").submit((event) => {
         event.preventDefault()
-        console.log(event)
         formdata = new FormData(event.currentTarget);
         formdata.append("sessid", m_sessid)
         $.ajax({
@@ -132,6 +132,7 @@ $(function () {
             processData: false,
             type: 'POST',
             success: function (IDNotaNuova, textStatus, jqXHR) {
+                console.log('formdata.get("docs")', formdata.get("docs"));
                 if (formdata.get("tipo") == "Semplice") {
                     $("#appendino").append(
                         protoNotaSemplice(formdata.get("nome"), formdata.get("testo"), IDNotaNuova, formdata.get("docs"))
@@ -140,9 +141,7 @@ $(function () {
                 else if (formdata.get("tipo") == "scheda con scadenza") {
                     $("#appendino").append(
                         protoNotaConScadenza(formdata.get("nome"), formdata.get("testo"), IDNotaNuova, formdata.get("scadenza"), formdata.get("docs"))
-                    );//TODO: vedo i nomi degli allegati appena appesi
-                    //TODO: vedo i nomi degli allegati appena appesi
-                    //TODO: vedo i nomi degli allegati appena appesi
+                    );
                 }
                 attachHandlersTo(IDNotaNuova)
             }
