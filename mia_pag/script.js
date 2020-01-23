@@ -53,7 +53,7 @@ $(function () {
             <div class="col-3" style="background-color:${randColor}">
                 <fieldset>
                     <legend>nota</legend>
-                    <form  id="${_id}" action="/modificaNota" method="post" encType="multipart/form-data">
+                    <form id="${_id}" action="/modificaNota" method="post" encType="multipart/form-data">
 
                     <input type="text" class="form-control" value="${nome}">
                     <textarea class="form-control" rows="3">${txt}</textarea>
