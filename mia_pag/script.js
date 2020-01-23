@@ -27,7 +27,6 @@ $(function () {
             if (utenti)
                 utenti.forEach(nota => {
                     $(".row:eq(2) div").append(`<input class="btn btn-dark" type="button" value="${nota.Name}">`)
-
                 });
         });
     }
@@ -56,7 +55,7 @@ $(function () {
 
         if (allegati)
             allegati.forEach(element => {
-                s += "<p>" + JSON.parse(element).name +"</p>"
+                s += "<p>" + JSON.parse(element).name + "</p>"
             });
         s += `
                 carica allegato: <input class="carica btn btn-dark" name="docs" type="file" multiple/>
@@ -99,7 +98,7 @@ $(function () {
 
         if (allegati)
             allegati.forEach(element => {
-                s += "<p>" + JSON.parse(element).name +"</p>"
+                s += "<p>" + JSON.parse(element).name + "</p>"
             });
         s += `
                 carica allegato: <input class="carica btn btn-dark" name="docs" type="file" multiple/>
@@ -135,12 +134,12 @@ $(function () {
             success: function (IDNotaNuova, textStatus, jqXHR) {
                 if (formdata.get("tipo") == "Semplice") {
                     $("#appendino").append(
-                        protoNotaSemplice(formdata.get("nome"), formdata.get("testo"), IDNotaNuova)
+                        protoNotaSemplice(formdata.get("nome"), formdata.get("testo"), IDNotaNuova, formdata.get("docs"))
                     );
                 }
                 else if (formdata.get("tipo") == "scheda con scadenza") {
                     $("#appendino").append(
-                        protoNotaConScadenza(formdata.get("nome"), formdata.get("testo"), IDNotaNuova, formdata.get("scadenza"))
+                        protoNotaConScadenza(formdata.get("nome"), formdata.get("testo"), IDNotaNuova, formdata.get("scadenza"), formdata.get("docs"))
                     );//TODO: vedo i nomi degli allegati appena appesi
                     //TODO: vedo i nomi degli allegati appena appesi
                     //TODO: vedo i nomi degli allegati appena appesi
