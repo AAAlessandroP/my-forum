@@ -238,8 +238,6 @@ async function modifica(chi) {
         });
     });
 
-
-
 }
 
 function cancella(chi) {
