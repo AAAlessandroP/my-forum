@@ -149,6 +149,21 @@ $(function () {
                     </fieldset>
             </div>`;
         return s;
+
+        `<div class="col-3" id="${_id}" style="background-color:${randColor}">
+            <fieldset>
+                <legend> Aggiungi:</legend>
+                <form id="formAddConScadenza" action="/newActivity" method="post" encType="multipart/form-data">
+
+                    <input type="text" class="form-control" name="nome" placeholder="titolo">
+                        <textarea class="form-control" placeholder="testo della nota" rows="3" name="testo"></textarea>
+                        <input type="date" class="form-control" name="scadenza">
+                        seleziona allegati: <input class="carica" name="docs" type="file" multiple>
+                        <input class="btn btn-dark" type="submit" value="add">
+                        <input type="hidden" name="tipo" value="scheda con scadenza">
+                    </form>
+                </fieldset>
+            </div>`
     }
 
     function attachHandlersTo(IDNotaNuova) {
@@ -167,30 +182,30 @@ $(function () {
         let randColor = arr[Math.floor(Math.random() * arr.length)];
         let s = `
             <div class="col-3" id="${_id}" style="background-color:${randColor}">
-                <fieldset>
-                    <legend>nota</legend>
-                    <div class="input-group mt-2 mb-2">
-                        <input type="text" class="form-control" value="${nome}">
+                                <fieldset>
+                                    <legend>nota</legend>
+                                    <div class="input-group mt-2 mb-2">
+                                        <input type="text" class="form-control" value="${nome}">
                     </div>
-                    <div class="input-group mt-2 mb-2">
-                        <textarea class="form-control" rows="3">${txt}</textarea>
-                    </div>
-                    <div class="input-group mt-2 mb-2">
-                        <label>scadenza:</label>
-                    </div>
-                    <input name="data" type="date" class="form-control" value="${data}">
-                    `;
+                                        <div class="input-group mt-2 mb-2">
+                                            <textarea class="form-control" rows="3">${txt}</textarea>
+                                        </div>
+                                        <div class="input-group mt-2 mb-2">
+                                            <label>scadenza:</label>
+                                        </div>
+                                        <input name="data" type="date" class="form-control" value="${data}">
+                                            `;
 
         if (allegati)
             allegati.forEach(element => {
                 s += "<p>" + element + "</p>"
             });
         s += `
-                    carica allegato: <input class="carica btn btn-dark" name="docs" type="file" multiple/>
-                    <input class="modifica btn btn-dark" type="button" value="modifica">
-                    <input class="cancella btn btn-dark" type="button" value="cancella">
+                    carica allegato: <input class="carica btn btn-dark" name="docs" type="file" multiple />
+                                            <input class="modifica btn btn-dark" type="button" value="modifica">
+                                                <input class="cancella btn btn-dark" type="button" value="cancella">
 
-                    <input type="hidden" name="tipo" value="scheda con scadenza">
+                                                    <input type="hidden" name="tipo" value="scheda con scadenza">
                     </fieldset>
             </div>`;
         return s;
