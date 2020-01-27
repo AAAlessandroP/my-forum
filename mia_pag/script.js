@@ -149,7 +149,7 @@ $(function () {
         //             </fieldset>
         //     </div>`;
         // return s;
-
+        let randColor = arr[Math.floor(Math.random() * arr.length)];
         let s = `<div class="col-3" id="${_id}" style="background-color:${randColor}">
             <fieldset>
                 <legend> Aggiungi:</legend>
