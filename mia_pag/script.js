@@ -233,49 +233,49 @@ $(function () {
 
 async function modifica(chi) {
 
-    var newObj = {
-        sessid: m_sessid,
-        IDNota: chi.id,
-        titoloNuovo: chi.children[0].children[1].children[0].value,
-        testoNuovo: chi.children[0].children[2].children[0].value,
-        docs: []
-    };
-    if (chi.children[0].children["tipo"].value == "scheda con scadenza")
-        newObj.dataNuova = chi.children[0].children["data"].value
+    // var newObj = {
+    //     sessid: m_sessid,
+    //     IDNota: chi.id,
+    //     titoloNuovo: chi.children[0].children[1].children[0].value,
+    //     testoNuovo: chi.children[0].children[2].children[0].value,
+    //     docs: []
+    // };
+    // if (chi.children[0].children["tipo"].value == "scheda con scadenza")
+    //     newObj.dataNuova = chi.children[0].children["data"].value
 
 
-    var files = $(`#${chi.id} input[type=file]`).prop('files');
-    var promises = []
+    // var files = $(`#${chi.id} input[type=file]`).prop('files');
+    // var promises = []
 
-    for (let i = 0; i < files.length; i++) {
+    // for (let i = 0; i < files.length; i++) {
 
-        promises.push(
-            new Promise(function (resolve, reject) {
-                var fileReader = new FileReader();
-                fileReader.onload = async () => {
-                    newObj["docs"].push(fileReader.result)
-                    resolve("done")
-                }
-                fileReader.readAsDataURL(files[i]);
-            })
-        );
-    }
+    //     promises.push(
+    //         new Promise(function (resolve, reject) {
+    //             var fileReader = new FileReader();
+    //             fileReader.onload = async () => {
+    //                 newObj["docs"].push(fileReader.result)
+    //                 resolve("done")
+    //             }
+    //             fileReader.readAsDataURL(files[i]);
+    //         })
+    //     );
+    // }
 
-    Promise.all(promises).then((values) => {
-        console.log(`newObj`, newObj);
-        $.post("/modificaNota", newObj).always((receivedData, status) => {
+    // Promise.all(promises).then((values) => {
+    //     console.log(`newObj`, newObj);
+    //     $.post("/modificaNota", newObj).always((receivedData, status) => {
 
-            if (status == "success") {
-                $(chi).append("<span style='background-color:green'>OK</span>");
-                setTimeout(() => {
-                    $(chi)
-                        .children()
-                        .filter(":last")
-                        .remove();
-                }, 1000);
-            } else alert("ops");
-        });
-    });
+    //         if (status == "success") {
+    //             $(chi).append("<span style='background-color:green'>OK</span>");
+    //             setTimeout(() => {
+    //                 $(chi)
+    //                     .children()
+    //                     .filter(":last")
+    //                     .remove();
+    //             }, 1000);
+    //         } else alert("ops");
+    //     });
+    // });
 
 }
 
