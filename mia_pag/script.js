@@ -181,10 +181,9 @@ $(function () {
                 }
                 else if (formdata.get("tipo") == "scheda con scadenza") {
                     $("#appendino").append(
-                        protoNotaConScadenza(formdata.get("nome"), formdata.get("testo"), IDNotaNuova, formdata.get("scadenza"), Array.from(formdata.get("docs")).map(f => f.name))
+                        protoNotaConScadedenza(formdata.get("nome"), formdata.get("testo"), IDNotaNuova, formdata.get("scadenza"), Array.from(formdata.get("docs")).map(f => f.name))
                     );
                 }
-                attachHandlersTo(IDNotaNuova)
             }
         });
     })
