@@ -122,48 +122,57 @@ $(function () {
 
 
     function protoNotaSemplice(nome, txt, _id, allegati) {
-        console.log('allegati', allegati);
+        // console.log('allegati', allegati);
 
-        let randColor = arr[Math.floor(Math.random() * arr.length)];
-        let s = `
-            <div class="col-3" id="${_id}" style="background-color:${randColor}">
-                <fieldset>
-                    <legend>nota</legend>
-                    <div class="input-group mt-2 mb-2">
-                        <input type="text" class="form-control" value="${nome}">
-                    </div>
-                    <div class="input-group mt-2 mb-2">
-                        <textarea class="form-control" rows="3">${txt}</textarea>
-                    </div>`;
+        // let randColor = arr[Math.floor(Math.random() * arr.length)];
+        // let s = `
+        //     <div class="col-3" id="${_id}" style="background-color:${randColor}">
+        //         <fieldset>
+        //             <legend>nota</legend>
+        //             <div class="input-group mt-2 mb-2">
+        //                 <input type="text" class="form-control" value="${nome}">
+        //             </div>
+        //             <div class="input-group mt-2 mb-2">
+        //                 <textarea class="form-control" rows="3">${txt}</textarea>
+        //             </div>`;
+
+        // if (allegati)
+        //     allegati.forEach(element => {
+        //         s += "<p>" + element + "</p>"
+        //     });
+        // s += `
+        //             carica allegato: <input class="carica btn btn-dark" name="docs" type="file" multiple/>
+        //             <input class="modifica btn btn-dark" type="button" value="modifica">                
+        //             <input class="cancella btn btn-dark" type="button" value="cancella">
+
+        //             <input type="hidden" name="tipo" value="Semplice">
+        //             </fieldset>
+        //     </div>`;
+        // return s;
+
+        let s = `<div class="col-3" id="${_id}" style="background-color:${randColor}">
+            <fieldset>
+                <legend> Aggiungi:</legend>
+                <form action="/dummy" method="post" encType="multipart/form-data">
+
+                    <input type="text" class="form-control" name="nome" placeholder="titolo">
+                        <textarea class="form-control" placeholder="testo della nota" rows="3" name="testo"></textarea>
+                        `;
 
         if (allegati)
             allegati.forEach(element => {
                 s += "<p>" + element + "</p>"
             });
         s += `
-                    carica allegato: <input class="carica btn btn-dark" name="docs" type="file" multiple/>
-                    <input class="modifica btn btn-dark" type="button" value="modifica">                
-                    <input class="cancella btn btn-dark" type="button" value="cancella">
-
-                    <input type="hidden" name="tipo" value="Semplice">
-                    </fieldset>
-            </div>`;
-        return s;
-
-        `<div class="col-3" id="${_id}" style="background-color:${randColor}">
-            <fieldset>
-                <legend> Aggiungi:</legend>
-                <form id="formAddConScadenza" action="/newActivity" method="post" encType="multipart/form-data">
-
-                    <input type="text" class="form-control" name="nome" placeholder="titolo">
-                        <textarea class="form-control" placeholder="testo della nota" rows="3" name="testo"></textarea>
                         <input type="date" class="form-control" name="scadenza">
                         seleziona allegati: <input class="carica" name="docs" type="file" multiple>
-                        <input class="btn btn-dark" type="submit" value="add">
-                        <input type="hidden" name="tipo" value="scheda con scadenza">
+                        <input class="btn btn-dark" type="button" onclick="modifica(${_id})" value="modifica">
+                        <input class="btn btn-danger" onclick="cancella(${_id})" type="button" value="cancella">
+                        <input type="hidden" name="tipo" value="Semplice">
                     </form>
                 </fieldset>
-            </div>`
+            </div>`;
+        return s;
     }
 
     function attachHandlersTo(IDNotaNuova) {
@@ -177,38 +186,39 @@ $(function () {
     }
 
     function protoNotaConScadenza(nome, txt, _id, data, allegati) {
+        {
+            // console.log('allegati', allegati);
+            // let randColor = arr[Math.floor(Math.random() * arr.length)];
+            // let s = `
+            //     <div class="col-3" id="${_id}" style="background-color:${randColor}">
+            //                         <fieldset>
+            //                             <legend>nota</legend>
+            //                             <div class="input-group mt-2 mb-2">
+            //                                 <input type="text" class="form-control" value="${nome}">
+            //             </div>
+            //                                 <div class="input-group mt-2 mb-2">
+            //                                     <textarea class="form-control" rows="3">${txt}</textarea>
+            //                                 </div>
+            //                                 <div class="input-group mt-2 mb-2">
+            //                                     <label>scadenza:</label>
+            //                                 </div>
+            //                                 <input name="data" type="date" class="form-control" value="${data}">
+            //                                     `;
 
-        console.log('allegati', allegati);
-        let randColor = arr[Math.floor(Math.random() * arr.length)];
-        let s = `
-            <div class="col-3" id="${_id}" style="background-color:${randColor}">
-                                <fieldset>
-                                    <legend>nota</legend>
-                                    <div class="input-group mt-2 mb-2">
-                                        <input type="text" class="form-control" value="${nome}">
-                    </div>
-                                        <div class="input-group mt-2 mb-2">
-                                            <textarea class="form-control" rows="3">${txt}</textarea>
-                                        </div>
-                                        <div class="input-group mt-2 mb-2">
-                                            <label>scadenza:</label>
-                                        </div>
-                                        <input name="data" type="date" class="form-control" value="${data}">
-                                            `;
+            // if (allegati)
+            //     allegati.forEach(element => {
+            //         s += "<p>" + element + "</p>"
+            //     });
+            // s += `
+            //             carica allegato: <input class="carica btn btn-dark" name="docs" type="file" multiple />
+            //                                     <input class="modifica btn btn-dark" type="button" value="modifica">
+            //                                         <input class="cancella btn btn-dark" type="button" value="cancella">
 
-        if (allegati)
-            allegati.forEach(element => {
-                s += "<p>" + element + "</p>"
-            });
-        s += `
-                    carica allegato: <input class="carica btn btn-dark" name="docs" type="file" multiple />
-                                            <input class="modifica btn btn-dark" type="button" value="modifica">
-                                                <input class="cancella btn btn-dark" type="button" value="cancella">
-
-                                                    <input type="hidden" name="tipo" value="scheda con scadenza">
-                    </fieldset>
-            </div>`;
-        return s;
+            //                                             <input type="hidden" name="tipo" value="scheda con scadenza">
+            //             </fieldset>
+            //     </div>`;
+            // return s;
+        }
     }
 
 
