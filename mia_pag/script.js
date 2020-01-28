@@ -122,33 +122,35 @@ $(function () {
 
 
     function protoNotaSemplice(nome, txt, _id, allegati) {
-        // console.log('allegati', allegati);
+        {
+            // console.log('allegati', allegati);
 
-        // let randColor = arr[Math.floor(Math.random() * arr.length)];
-        // let s = `
-        //     <div class="col-3" id="${_id}" style="background-color:${randColor}">
-        //         <fieldset>
-        //             <legend>nota</legend>
-        //             <div class="input-group mt-2 mb-2">
-        //                 <input type="text" class="form-control" value="${nome}">
-        //             </div>
-        //             <div class="input-group mt-2 mb-2">
-        //                 <textarea class="form-control" rows="3">${txt}</textarea>
-        //             </div>`;
+            // let randColor = arr[Math.floor(Math.random() * arr.length)];
+            // let s = `
+            //     <div class="col-3" id="${_id}" style="background-color:${randColor}">
+            //         <fieldset>
+            //             <legend>nota</legend>
+            //             <div class="input-group mt-2 mb-2">
+            //                 <input type="text" class="form-control" value="${nome}">
+            //             </div>
+            //             <div class="input-group mt-2 mb-2">
+            //                 <textarea class="form-control" rows="3">${txt}</textarea>
+            //             </div>`;
 
-        // if (allegati)
-        //     allegati.forEach(element => {
-        //         s += "<p>" + element + "</p>"
-        //     });
-        // s += `
-        //             carica allegato: <input class="carica btn btn-dark" name="docs" type="file" multiple/>
-        //             <input class="modifica btn btn-dark" type="button" value="modifica">                
-        //             <input class="cancella btn btn-dark" type="button" value="cancella">
+            // if (allegati)
+            //     allegati.forEach(element => {
+            //         s += "<p>" + element + "</p>"
+            //     });
+            // s += `
+            //             carica allegato: <input class="carica btn btn-dark" name="docs" type="file" multiple/>
+            //             <input class="modifica btn btn-dark" type="button" value="modifica">                
+            //             <input class="cancella btn btn-dark" type="button" value="cancella">
 
-        //             <input type="hidden" name="tipo" value="Semplice">
-        //             </fieldset>
-        //     </div>`;
-        // return s;
+            //             <input type="hidden" name="tipo" value="Semplice">
+            //             </fieldset>
+            //     </div>`;
+            // return s;
+        }
         let randColor = arr[Math.floor(Math.random() * arr.length)];
         let s = `<div class="col-3" id="${_id}" style="background-color:${randColor}">
             <fieldset>
