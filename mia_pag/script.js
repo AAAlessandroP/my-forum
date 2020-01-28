@@ -228,8 +228,8 @@ $(function () {
                 <form action="/dummy" method="post" encType="multipart/form-data">
 
                     <input type="text" class="form-control" name="nome" placeholder="titolo">
-                        <textarea class="form-control" placeholder="testo della nota" rows="3" name="testo"></textarea>
-                        `;
+                    <textarea class="form-control" placeholder="testo della nota" rows="3" name="testo"></textarea>
+                    `;
 
         if (allegati)
             allegati.forEach(element => {
@@ -328,7 +328,7 @@ $(function () {
 
 
 async function modifica(chi) {
-    console.log(`chi`, $("#"+chi)[0].children[0].children[1]);
+    console.log(`chi`, $("#" + chi)[0].children[0].children[1]);
     {
         // var newObj = {
         //     sessid: m_sessid,
@@ -374,8 +374,9 @@ async function modifica(chi) {
         //     });
         // });
     }
-    formdata = new FormData($("#"+chi)[0].children[0].children[1]);
+    formdata = new FormData($("#" + chi)[0].children[0].children[1]);
     formdata.append("sessid", m_sessid)
+    formdata.append("IDNota", chi)
     $.ajax({
         url: '/modificaNota',
         data: formdata ? formdata : form.serialize(),

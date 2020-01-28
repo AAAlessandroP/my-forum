@@ -308,8 +308,9 @@ app.post("/modificaNota", function (req, res) {
 
     var sessid = req.body.sessid;
     var IDNota = req.body.IDNota;
-    var titoloNuovo = req.body.titoloNuovo;
-    var testoNuovo = req.body.testoNuovo;
+    var titoloNuovo = req.body.nome;
+    var testoNuovo = req.body.testo;
+    var scadenza = req.body.scadenza;
 
     if (sessioni[sessid]) {
         let key = sessioni[sessid].chiave;
@@ -326,12 +327,12 @@ app.post("/modificaNota", function (req, res) {
                     Name: c(titoloNuovo.toString(), key)
                 }
             };
-            console.log(`req.body`, req.body);
 
-            if (req.body.dataNuova) whatSet.$set.ScadeIL = c(req.body.dataNuova, key);
-            if (req.body["docs[]"]) whatSet.$push = { allegati: c(JSON.stringify(req.body["docs[]"]), key) };
-            // console.log(`whatSet`, whatSet);
-
+            if (req.body.scadenza) whatSet.$set.ScadeIL = c(req.body.scadenza, key);
+            if (req.files)
+                whatSet.$push = { allegati: c(JSON.stringify(req.files.docs), key) };
+            console.log(`whatSet`, whatSet);
+            console.log(`{ _id: ObjectId(IDNota), BroadcastDelDom: sessioni[sessid].IDSuoDominio, AppartenenteA: sessioni[sessid].IDUtente }`, { _id: ObjectId(IDNota), BroadcastDelDom: sessioni[sessid].IDSuoDominio, AppartenenteA: sessioni[sessid].IDUtente });
             db.db("ms-teams")
                 .collection("dati")
                 .updateOne({ _id: ObjectId(IDNota), BroadcastDelDom: sessioni[sessid].IDSuoDominio, AppartenenteA: sessioni[sessid].IDUtente }, whatSet, (error, result) => {
