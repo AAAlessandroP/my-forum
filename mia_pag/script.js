@@ -258,7 +258,7 @@ $(function () {
 
     $("form").submit((event) => {
         event.preventDefault()
-        formdata = new FormData(event.currentTarget);
+        formdata = new FormData(event.currentTarget);//event.currentTarget È QUEL <FORM>
         formdata.append("sessid", m_sessid)
         $.ajax({
             url: '/newActivity',
@@ -329,7 +329,6 @@ $(function () {
 
 async function modifica(chi) {
     console.log(`chi`, chi);
-
     {
         // var newObj = {
         //     sessid: m_sessid,
@@ -375,6 +374,18 @@ async function modifica(chi) {
         //     });
         // });
     }
+    formdata = new FormData($(chi).children[1]);
+    formdata.append("sessid", m_sessid)
+    $.ajax({
+        url: '/modificaNota',
+        data: formdata ? formdata : form.serialize(),
+        cache: false,
+        contentType: false,
+        processData: false,
+        type: 'POST',
+        success: function (IDNotaNuova, textStatus, jqXHR) {
+            
+    });
 }
 
 function cancella(chi) {
