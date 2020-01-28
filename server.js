@@ -304,6 +304,8 @@ app.post("/allNoteDominio", async (req, res) => {
 });
 
 app.post("/modificaNota", function (req, res) {
+    console.log('req.files', req.files);
+
     var sessid = req.body.sessid;
     var IDNota = req.body.IDNota;
     var titoloNuovo = req.body.titoloNuovo;
