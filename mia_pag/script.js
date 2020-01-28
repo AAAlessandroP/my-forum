@@ -9,7 +9,7 @@ $(function () {
             console.log(`note`, note);
             if (note != "nulla salvato")
                 note.forEach(nota => {
-
+                    console.log(`nota`, nota);
                     var allegati = []
                     nota.allegati.forEach(element => {
                         allegati.push()
