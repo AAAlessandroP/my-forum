@@ -328,7 +328,7 @@ $(function () {
 
 
 async function modifica(chi) {
-    console.log(`chi`, chi);
+    console.log(`chi`, $("#"+chi)[0].children[0].children[1]);
     {
         // var newObj = {
         //     sessid: m_sessid,
@@ -374,7 +374,7 @@ async function modifica(chi) {
         //     });
         // });
     }
-    formdata = new FormData($(chi).children[1]);
+    formdata = new FormData($("#"+chi)[0].children[0].children[1]);
     formdata.append("sessid", m_sessid)
     $.ajax({
         url: '/modificaNota',
@@ -384,7 +384,9 @@ async function modifica(chi) {
         processData: false,
         type: 'POST',
         success: function (IDNotaNuova, textStatus, jqXHR) {
-            
+
+        }
+
     });
 }
 
