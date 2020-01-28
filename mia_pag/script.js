@@ -166,7 +166,6 @@ $(function () {
                 s += "<p>" + element + "</p>"
             });
         s += `
-                        <input type="date" class="form-control" name="scadenza">
                         seleziona allegati: <input class="carica" name="docs" type="file" multiple>
                         <input class="btn btn-dark" type="button" onclick="modifica(${_id})" value="modifica">
                         <input class="btn btn-danger" onclick="cancella(${_id})" type="button" value="cancella">
@@ -221,6 +220,30 @@ $(function () {
             //     </div>`;
             // return s;
         }
+        let randColor = arr[Math.floor(Math.random() * arr.length)];
+        let s = `<div class="col-3" id="${_id}" style="background-color:${randColor}">
+            <fieldset>
+                <legend> Aggiungi:</legend>
+                <form action="/dummy" method="post" encType="multipart/form-data">
+
+                    <input type="text" class="form-control" name="nome" placeholder="titolo">
+                        <textarea class="form-control" placeholder="testo della nota" rows="3" name="testo"></textarea>
+                        `;
+
+        if (allegati)
+            allegati.forEach(element => {
+                s += "<p>" + element + "</p>"
+            });
+        s += `
+                        <input type="date" class="form-control" name="scadenza">
+                        seleziona allegati: <input class="carica" name="docs" type="file" multiple>
+                        <input class="btn btn-dark" type="button" onclick="modifica(${_id})" value="modifica">
+                        <input class="btn btn-danger" onclick="cancella(${_id})" type="button" value="cancella">
+                        <input type="hidden" name="tipo" value="nota con scadenza">
+                    </form>
+                </fieldset>
+            </div>`;
+        return s;
     }
 
 
@@ -304,6 +327,8 @@ $(function () {
 
 
 async function modifica(chi) {
+    console.log(`chi`, chi);
+
     {
         // var newObj = {
         //     sessid: m_sessid,
@@ -352,6 +377,7 @@ async function modifica(chi) {
 }
 
 function cancella(chi) {
+    console.log(`chi`, chi);
     $.post("/delNota", { sessid: m_sessid, IDNota: chi.id }).always(
         (receivedData, status) => {
             console.log(`status`, status);
