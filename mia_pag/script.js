@@ -6,14 +6,15 @@ $(function () {
     function getAllNotes() {//solo dopo login ok
 
         $.post("/allNoteDominio", { sessid: m_sessid }).always(note => {
-            console.log(`note`, note);
             if (note != "nulla salvato")
                 note.forEach(nota => {
-                    console.log(`nota`, nota);
                     var allegati = []
-                    nota.allegati.forEach(element => {
-                        allegati.push()
-                    });
+                    if (nota.allegati)
+                        nota.allegati.forEach(element => {
+                            allegati.push()
+                        });
+                    else nota.allegati = []
+
                     if (nota.Tipo == "Semplice")
                         $("#appendino").append(protoNotaSemplice(nota.nome, nota.testo, nota.IDNota, nota.allegati.map(f => JSON.parse(f).name)));
                     else if (nota.Tipo == "scheda con scadenza")
@@ -167,8 +168,8 @@ $(function () {
             });
         s += `
                         seleziona allegati: <input class="carica" name="docs" type="file" multiple>
-                        <input class="btn btn-dark" type="button" onclick="modifica(${_id})" value="modifica">
-                        <input class="btn btn-danger" onclick="cancella(${_id})" type="button" value="cancella">
+                        <input class="btn btn-dark" type="button" onclick="modifica('${_id}')" value="modifica">
+                        <input class="btn btn-danger" onclick="cancella('${_id}')" type="button" value="cancella">
                         <input type="hidden" name="tipo" value="Semplice">
                     </form>
                 </fieldset>
@@ -237,8 +238,8 @@ $(function () {
         s += `
                         <input type="date" class="form-control" name="scadenza">
                         seleziona allegati: <input class="carica" name="docs" type="file" multiple>
-                        <input class="btn btn-dark" type="button" onclick="modifica(${_id})" value="modifica">
-                        <input class="btn btn-danger" onclick="cancella(${_id})" type="button" value="cancella">
+                        <input class="btn btn-dark" type="button" onclick="modifica('${_id}')" value="modifica">
+                        <input class="btn btn-danger" onclick="cancella('${_id}')" type="button" value="cancella">
                         <input type="hidden" name="tipo" value="nota con scadenza">
                     </form>
                 </fieldset>
