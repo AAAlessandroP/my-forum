@@ -332,11 +332,11 @@ app.post("/modificaNota", function (req, res) {
             if (req.files)
                 whatSet.$push = { allegati: c(JSON.stringify(req.files.docs), key) };
             console.log(`whatSet`, whatSet);
-            let obj = { _id: ObjectId(IDNota), BroadcastDelDom: ObjectId(sessioni[sessid].IDSuoDominio), AppartenenteA: ObjectId(sessioni[sessid].IDUtente) };
-            console.log(`obj`, obj);
+            let what = { _id: ObjectId(IDNota), BroadcastDelDom: ObjectId(sessioni[sessid].IDSuoDominio), AppartenenteA: ObjectId(sessioni[sessid].IDUtente) };
+            console.log(`what`, what);
             db.db("ms-teams")
                 .collection("dati")
-                .updateOne(obj, whatSet, (error, result) => {
+                .updateOne(what, whatSet, (error, result) => {
                     assert.equal(err, null);
                     assert.equal(result.modifiedCount, 1);
                     db.close();
