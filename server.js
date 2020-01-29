@@ -338,7 +338,8 @@ app.post("/modificaNota", function (req, res) {
                 .collection("dati")
                 .updateOne(what, /*whatSet*/{}, (error, result) => {
                     assert.equal(err, null);
-                    assert.equal(result.modifiedCount, 1);
+                    console.log(`result`, result);
+                    // assert.equal(result.modifiedCount, 1);
                     db.close();
                     res.sendStatus(200);
                 });
