@@ -303,7 +303,7 @@ app.post("/allNoteDominio", async (req, res) => {
     } else res.sendStatus(401);
 });
 
-app.post("/modificaNota", function (req, res) {
+app.post("/modificaNota", async (req, res) => {
 
     var sessid = req.body.sessid;
     var IDNota = req.body.IDNota;
@@ -312,37 +312,33 @@ app.post("/modificaNota", function (req, res) {
     var scadenza = req.body.scadenza;
 
     if (sessioni[sessid]) {
-        let key = sessioni[sessid].chiave;
 
-        MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, (err, db) => {
-            if (err) {
-                res.sendStatus(401);
-                db.close();
-                throw err;
-            }
+        try {
+            var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
             var whatSet = {
                 $set: {
                     Text: c(testoNuovo.toString(), key),
                     Name: c(titoloNuovo.toString(), key)
                 }
             };
+            let key = sessioni[sessid].chiave;
 
             if (req.body.scadenza) whatSet.$set.ScadeIL = c(req.body.scadenza, key);
             if (req.files)
                 whatSet.$push = { allegati: c(JSON.stringify(req.files.docs), key) };
             let what = { _id: ObjectId(IDNota), BroadcastDelDom: sessioni[sessid].IDSuoDominio, AppartenenteA: sessioni[sessid].IDUtente }
-            db.db("ms-teams")
-                .collection("dati")
-                .updateOne(what, whatSet, (error, result) => {
-                    assert.equal(err, null);
-                    console.log(`result`, result);
-                    // assert.equal(result.modifiedCount, 1); sennò se cerco di modificarlo con dati identici a quelli preesistenti va a 0 modifiedCount
-                    assert.equal(result.matchedCount, 1);
-                    let new = await db.db("ms-teams").collection("dati").findOne({ _id: ObjectId(IDNota)})
-                    db.close();
-                    res.sendStatus(200);
-                });
-        });
+
+            let result = awaitdb.db("ms-teams").collection("dati").updateOne(what, whatSet);
+            assert.equal(err, null);
+            // assert.equal(result.modifiedCount, 1); sennò se cerco di modificarlo con dati identici a quelli preesistenti va a 0 modifiedCount
+            assert.equal(result.matchedCount, 1);
+            
+            var newNote = await db.db("ms-teams").collection("dati").findOne({ _id: ObjectId(IDNota) });
+            db.close();
+            res.json(newNote);
+        } catch (error) {
+            res.sendStatus(503);
+        }
     } else res.sendStatus(401);
 });
 
