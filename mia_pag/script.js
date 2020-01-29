@@ -392,12 +392,13 @@ async function modifica(chi) {
 }
 
 function cancella(chi) {
-    $.post("/delNota", { sessid: m_sessid, IDNota: $("#" + chi)[0].children[0].children[1].id }).always(
+    console.log(`$("#" + chi)[0].children[0].children[1]`, $("#" + chi)[0].children[0].children[1]);
+    $.post("/delNota", { sessid: m_sessid, IDNota: chi }).always(
         (receivedData, status) => {
             console.log(`status`, status);
 
             if (status == "success") {
-                $(chi).remove();
+                $("#"+chi).remove();
             } else alert("ops");
         }
     );
