@@ -336,7 +336,7 @@ app.post("/modificaNota", function (req, res) {
             console.log(`what`, what);
             db.db("ms-teams")
                 .collection("dati")
-                .updateOne(what, whatSet, (error, result) => {
+                .updateOne(what, /*whatSet*/{}, (error, result) => {
                     assert.equal(err, null);
                     assert.equal(result.modifiedCount, 1);
                     db.close();
