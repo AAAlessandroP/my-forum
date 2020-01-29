@@ -350,7 +350,7 @@ app.post("/modificaNota", function (req, res) {
 app.post("/delNota", function (req, res) {
     var sessid = req.body.sessid;
     var IDNota = req.body.IDNota;
-
+console.log(`IDNota`, IDNota);
     if (sessioni[sessid]) {
         MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, (err, db) => {
             if (err) {

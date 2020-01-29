@@ -392,8 +392,7 @@ async function modifica(chi) {
 }
 
 function cancella(chi) {
-    console.log(`chi`, chi);
-    $.post("/delNota", { sessid: m_sessid, IDNota: chi.id }).always(
+    $.post("/delNota", { sessid: m_sessid, IDNota: $("#" + chi)[0].children[0].children[1].id }).always(
         (receivedData, status) => {
             console.log(`status`, status);
 
@@ -402,4 +401,19 @@ function cancella(chi) {
             } else alert("ops");
         }
     );
+    // formdata = new FormData($("#" + chi)[0].children[0].children[1]);
+    // formdata.append("sessid", m_sessid)
+    // formdata.append("IDNota", chi)
+    // $.ajax({
+    //     url: '/modificaNota',
+    //     data: formdata ? formdata : form.serialize(),
+    //     cache: false,
+    //     contentType: false,
+    //     processData: false,
+    //     type: 'POST',
+    //     success: function (IDNotaNuova, textStatus, jqXHR) {
+
+    //     }
+
+    // });
 }
