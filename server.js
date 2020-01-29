@@ -304,7 +304,6 @@ app.post("/allNoteDominio", async (req, res) => {
 });
 
 app.post("/modificaNota", function (req, res) {
-    console.log('req.files', req.files);
 
     var sessid = req.body.sessid;
     var IDNota = req.body.IDNota;
@@ -331,15 +330,13 @@ app.post("/modificaNota", function (req, res) {
             if (req.body.scadenza) whatSet.$set.ScadeIL = c(req.body.scadenza, key);
             if (req.files)
                 whatSet.$push = { allegati: c(JSON.stringify(req.files.docs), key) };
-            console.log(`whatSet`, whatSet);
             let what = { _id: ObjectId(IDNota), BroadcastDelDom: sessioni[sessid].IDSuoDominio, AppartenenteA: sessioni[sessid].IDUtente }
-            console.log(`what`, what);
             db.db("ms-teams")
                 .collection("dati")
-                .updateOne(what, /*whatSet*/{}, (error, result) => {
+                .updateOne(what, whatSet, (error, result) => {
                     assert.equal(err, null);
-                    console.log(`result`, result);
-                    // assert.equal(result.modifiedCount, 1);
+                    // assert.equal(result.modifiedCount, 1); sennò se cerco di modificarlo con dati identici a quelli preesistenti va a 0 modifiedCount
+                    assert.equal(result.matchedCount, 1); modifiedCount
                     db.close();
                     res.sendStatus(200);
                 });
