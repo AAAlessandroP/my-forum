@@ -332,7 +332,7 @@ app.post("/modificaNota", async (req, res) => {
             assert.equal(err, null);
             // assert.equal(result.modifiedCount, 1); sennò se cerco di modificarlo con dati identici a quelli preesistenti va a 0 modifiedCount
             assert.equal(result.matchedCount, 1);
-            
+
             var newNote = await db.db("ms-teams").collection("dati").findOne({ _id: ObjectId(IDNota) });
             db.close();
             res.json(newNote);
