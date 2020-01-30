@@ -22,10 +22,12 @@ $(function () {
                         });
                     else nota.allegati = []
 
+                    console.log('nota.allegati', nota.allegati);
+                    
                     if (nota.Tipo == "Semplice")
-                        $("#appendino").append(protoNotaSemplice(nota.nome, nota.testo, nota.IDNota, JSON.parse(nota.allegati)))
+                        $("#appendino").append(protoNotaSemplice(nota.nome, nota.testo, nota.IDNota, nota.allegati.map(f => JSON.parse(f))))
                     else if (nota.Tipo == "scheda con scadenza")
-                        $("#appendino").append(protoNotaConScadenza(nota.nome, nota.testo, nota.IDNota, nota.ScadeIL,  JSON.parse(nota.allegati)));
+                        $("#appendino").append(protoNotaConScadenza(nota.nome, nota.testo, nota.IDNota, nota.ScadeIL, nota.allegati.map(f => JSON.parse(f))));
                     else alert("ops")
                 });
         });
@@ -130,6 +132,7 @@ $(function () {
 
 
     function protoNotaSemplice(nome, txt, _id, allegati) {
+        console.log('allegati', allegati);
         {
             // console.log('allegati', allegati);
 
@@ -171,7 +174,7 @@ $(function () {
 
         if (allegati)
             allegati.forEach(element => {
-                s += "<a href='data:text/plain;charset=utf-8,"+ encodeURIComponent(element.data) +"'> " + element.name + "</a>"
+                s += "<a href='data:text/plain;charset=utf-8," + encodeURIComponent(element.data.data) + "'> " + element.name + "</a>"
             });
         s += `
                         seleziona allegati: <input class="carica" name="docs" type="file" multiple>
@@ -228,6 +231,7 @@ $(function () {
             //     </div>`;
             // return s;
         }
+        console.log('allegati', allegati);
         let randColor = arr[Math.floor(Math.random() * arr.length)];
         let s = `<div class="col-3" id="${_id}" style="background-color:${randColor}">
             <fieldset>
@@ -240,7 +244,7 @@ $(function () {
 
         if (allegati)
             allegati.forEach(element => {
-                s += "<p>" + element + "</p>"
+                s += "<a href='data:text/plain;charset=utf-8," + encodeURIComponent(element.data.data) + "'> " + element.name + "</a>"
             });
         s += `
                         <input type="date" class="form-control" name="scadenza">
@@ -283,7 +287,7 @@ $(function () {
                 }
                 else if (formdata.get("tipo") == "scheda con scadenza") {
                     $("#appendino").append(
-                        protoNotaConScadedenza(formdata.get("nome"), formdata.get("testo"), IDNotaNuova, formdata.get("scadenza"), Array.from(formdata.get("docs")).map(f => f.name))
+                        protoNotaConScadedenza(formdata.get("nome"), formdata.get("testo"), IDNotaNuova, formdata.get("scadenza"), Array.from(formdata.get("docs")))
                     );
                 }
             }
