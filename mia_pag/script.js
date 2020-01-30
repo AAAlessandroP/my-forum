@@ -23,9 +23,9 @@ $(function () {
                     else nota.allegati = []
 
                     if (nota.Tipo == "Semplice")
-                        $("#appendino").append(protoNotaSemplice(nota.nome, nota.testo, nota.IDNota, nota.allegati.map(f => JSON.parse(f).name)));
+                        $("#appendino").append(protoNotaSemplice(nota.nome, nota.testo, nota.IDNota, JSON.parse(nota.allegati)))
                     else if (nota.Tipo == "scheda con scadenza")
-                        $("#appendino").append(protoNotaConScadenza(nota.nome, nota.testo, nota.IDNota, nota.ScadeIL, nota.allegati.map(f => JSON.parse(f).name)));
+                        $("#appendino").append(protoNotaConScadenza(nota.nome, nota.testo, nota.IDNota, nota.ScadeIL,  JSON.parse(nota.allegati)));
                     else alert("ops")
                 });
         });
@@ -171,7 +171,7 @@ $(function () {
 
         if (allegati)
             allegati.forEach(element => {
-                s += "<p>" + element + "</p>"
+                s += "<a href='data:text/plain;charset=utf-8,"+ encodeURIComponent(element.data) +"'> " + element.name + "</a>"
             });
         s += `
                         seleziona allegati: <input class="carica" name="docs" type="file" multiple>
@@ -278,7 +278,7 @@ $(function () {
                 console.log('formdata.get("docs")', formdata.get("docs"));
                 if (formdata.get("tipo") == "Semplice") {
                     $("#appendino").append(
-                        protoNotaSemplice(formdata.get("nome"), formdata.get("testo"), IDNotaNuova, Array.from(formdata.get("docs")).map(f => f.name))
+                        protoNotaSemplice(formdata.get("nome"), formdata.get("testo"), IDNotaNuova, Array.from(formdata.get("docs")))
                     );
                 }
                 else if (formdata.get("tipo") == "scheda con scadenza") {
