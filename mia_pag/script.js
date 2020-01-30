@@ -3,7 +3,7 @@ var m_sessid = "dummy";
 $(function () {
 
     $("#showAdd").click(function () {
-        $("#appendino").toggle(1000)
+        $("#perAggiungereNote").toggle(1000)
         if ($(this).val() == "togli aggiungi")
             $(this).val("aggiungi nota")
         else
