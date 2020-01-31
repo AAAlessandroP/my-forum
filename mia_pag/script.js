@@ -168,9 +168,9 @@ $(function () {
                 <legend> Nota:</legend>
                 <form action="/dummy" method="post" encType="multipart/form-data">
 
-                    <input type="text" class="form-control" name="nome" placeholder="titolo">
-                        <textarea class="form-control" placeholder="testo della nota" rows="3" name="testo"></textarea>
-                        `;
+                    <input type="text" class="form-control" placeholder="nome" name="nome" value="${nome}">
+                    <textarea class="form-control" value="${txt}" placeholder="testo della nota" rows="3" name="testo"></textarea>
+                    `;
 
         if (allegati)
             allegati.forEach(element => {
@@ -228,9 +228,9 @@ $(function () {
                 <legend> Nota:</legend>
                 <form action="/dummy" method="post" encType="multipart/form-data">
 
-                    <input type="text" class="form-control" name="nome" placeholder="titolo">
-                    <textarea class="form-control" placeholder="testo della nota" rows="3" name="testo"></textarea>
-                    `;
+                <input type="text" class="form-control" placeholder="nome" name="nome" value="${nome}">
+                <textarea class="form-control" value="${txt}" placeholder="testo della nota" rows="3" name="testo"></textarea>
+                `;
 
         if (allegati)
             allegati.forEach(element => {
