@@ -22,8 +22,6 @@ $(function () {
                         });
                     else nota.allegati = []
 
-                    console.log('nota.allegati', nota.allegati);
-                    console.log('nota.nome, nota.testo, nota.IDNota, nota.allegati.map(f => JSON.parse(f))', nota.nome, nota.testo, nota.IDNota, nota.allegati.map(f => JSON.parse(f)));
                     if (nota.Tipo == "Semplice")
                         $("#appendino").append(protoNotaSemplice(nota.nome, nota.testo, nota.IDNota, nota.allegati.map(f => JSON.parse(f))))
                     else if (nota.Tipo == "scheda con scadenza")
@@ -132,7 +130,7 @@ $(function () {
 
 
     function protoNotaSemplice(nome, txt, _id, allegati) {
-        console.log('...args', nome, txt, _id, allegati);
+        // console.log('...args', nome, txt, _id, allegati);
         {
             // console.log('allegati', allegati);
 
@@ -270,7 +268,7 @@ $(function () {
             processData: false,
             type: 'POST',
             success: function (IDNotaNuova, textStatus, jqXHR) {
-                console.log('formdata.get("docs")', formdata.get("docs"));
+                console.log('formdata', formdata.get("nome"), formdata.get("testo"), IDNotaNuova, Array.from(formdata.get("docs")))
                 if (formdata.get("tipo") == "Semplice") {
                     $("#appendino").append(
                         protoNotaSemplice(formdata.get("nome"), formdata.get("testo"), IDNotaNuova, Array.from(formdata.get("docs")))
