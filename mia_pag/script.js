@@ -23,7 +23,7 @@ $(function () {
                     else nota.allegati = []
 
                     console.log('nota.allegati', nota.allegati);
-
+                    console.log('nota.nome, nota.testo, nota.IDNota, nota.allegati.map(f => JSON.parse(f))', nota.nome, nota.testo, nota.IDNota, nota.allegati.map(f => JSON.parse(f)));
                     if (nota.Tipo == "Semplice")
                         $("#appendino").append(protoNotaSemplice(nota.nome, nota.testo, nota.IDNota, nota.allegati.map(f => JSON.parse(f))))
                     else if (nota.Tipo == "scheda con scadenza")
