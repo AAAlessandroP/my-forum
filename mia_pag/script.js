@@ -174,7 +174,7 @@ $(function () {
 
         if (allegati)
             allegati.forEach(element => {
-                s += "<a download='asd' href='" + element.mimetype + "," + encodeURIComponent("element.data.data") + "'> " + element.name + "</a>"
+                s += "<a download='asd' href='data:text/plain;charset=utf-8," + encodeURIComponent(element.data.data) + "'> " + element.name + "</a>"
             });
         s += `
                         seleziona allegati: <input class="carica" name="docs" type="file" multiple>
@@ -234,7 +234,8 @@ $(function () {
 
         if (allegati)
             allegati.forEach(element => {
-                s += "<a download='asd' href='" + element.mimetype + "," + encodeURIComponent("element.data.data") + "'> " + element.name + "</a>"
+                s += `<a download='${element.name}' href=''data:text/plain;charset=utf-8,${encodeURIComponent("element.data.data")}'> ${element.name} </a>`
+                s += "<a download='asd' href='data:text/plain;charset=utf-8," + encodeURIComponent("element.data.data") + "'> " + element.name + "</a>"
             });
         s += `
                         <input type="date" class="form-control" name="scadenza">
