@@ -132,7 +132,7 @@ $(function () {
 
 
     function protoNotaSemplice(nome, txt, _id, allegati) {
-        console.log('allegati', allegati);
+        console.log('...args', nome, txt, _id, allegati);
         {
             // console.log('allegati', allegati);
 
