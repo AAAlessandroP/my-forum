@@ -23,7 +23,7 @@ $(function () {
                     else nota.allegati = []
 
                     console.log('nota.allegati', nota.allegati);
-                    
+
                     if (nota.Tipo == "Semplice")
                         $("#appendino").append(protoNotaSemplice(nota.nome, nota.testo, nota.IDNota, nota.allegati.map(f => JSON.parse(f))))
                     else if (nota.Tipo == "scheda con scadenza")
@@ -165,7 +165,7 @@ $(function () {
         let randColor = arr[Math.floor(Math.random() * arr.length)];
         let s = `<div class="col-3" id="${_id}" style="background-color:${randColor}">
             <fieldset>
-                <legend> Aggiungi:</legend>
+                <legend> Nota:</legend>
                 <form action="/dummy" method="post" encType="multipart/form-data">
 
                     <input type="text" class="form-control" name="nome" placeholder="titolo">
@@ -185,16 +185,6 @@ $(function () {
                 </fieldset>
             </div>`;
         return s;
-    }
-
-    function attachHandlersTo(IDNotaNuova) {
-
-        $(`#${IDNotaNuova} .modifica`)[0].onclick = () => {
-            modifica($(`#${IDNotaNuova}`)[0]);
-        };
-        $(`#${IDNotaNuova} .cancella`)[0].onclick = () => {
-            cancella($(`#${IDNotaNuova}`)[0]);
-        };
     }
 
     function protoNotaConScadenza(nome, txt, _id, data, allegati) {
@@ -235,7 +225,7 @@ $(function () {
         let randColor = arr[Math.floor(Math.random() * arr.length)];
         let s = `<div class="col-3" id="${_id}" style="background-color:${randColor}">
             <fieldset>
-                <legend> Aggiungi:</legend>
+                <legend> Nota:</legend>
                 <form action="/dummy" method="post" encType="multipart/form-data">
 
                     <input type="text" class="form-control" name="nome" placeholder="titolo">
@@ -257,6 +247,7 @@ $(function () {
             </div>`;
         return s;
     }
+
 
 
     $("#submitAddSemplice").click(() => {
@@ -306,7 +297,8 @@ $(function () {
 
                 if (status == "success") {
                     m_sessid = receivedData;
-                    $(".container:eq(1)").show(1000);
+                    $("#showAdd").show(1000)
+                    // $(".container:eq(1)").show(1000);
                     getAllNotes();
                     getAllDomUser();
                 } else alert("riprova credenziali");
