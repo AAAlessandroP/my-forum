@@ -22,20 +22,12 @@ app.listen(3000);
 console.log("* app in funzione *");
 const uri = `mongodb+srv://ms-teams:${process.env.PASS}@miocluster2-igwb8.mongodb.net/test?retryWrites=true&w=majority`;
 
-(function a() {
+(async function () {
     var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-    var dominio = await db
-        .db("ms-teams")
-        .collection("domini")
-        .findOne({ Name: dom });
-    if (!dominio) {
-        //il dominio non c'era
-        res.sendStatus(401);
-        return;
-    }
-
-    var user = await db.db("ms-teams").collection("utenti").findOne({ Name: name, Dominio: dominio._id });
-
+    var got = await db.db("ms-teams").collection("prova").insertOne({a:1});
+    var all = await db.db("ms-teams").collection("prova").findOne({});
+    console.log(`got`, got);
+    console.log(`all`, all);
 })()
 
 
