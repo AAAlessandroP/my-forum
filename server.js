@@ -70,9 +70,7 @@ app.post("/login", async (req, res) => {
         res.sendStatus(500);
     }
 });
-// CRITTO CON H(KEY)
-// CRITTO CON H(KEY)
-// CRITTO CON H(KEY)
+
 app.post("/addUser", async (req, res) => {
     var name = req.body.utente;
     var pass = req.body.passw;
