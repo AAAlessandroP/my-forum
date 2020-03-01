@@ -219,8 +219,9 @@ app.post("/allUsers", async (req, res) => {
 var page = require("./userPageMod")
 
 app.get("/user/:uid", async (req, res) => {
+
     var uid = req.params.uid
- 
+    res.send(page.page())
 });
 
 
