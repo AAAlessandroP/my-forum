@@ -241,7 +241,7 @@ app.post("/allThreads", async (req, res) => {
         res.json(dati);
     } catch (error) {
         console.log(`error`, error);
-        res.sendStatus(500);
+        res.sendStatus(500); 
     }
 });
 
