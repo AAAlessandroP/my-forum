@@ -232,8 +232,11 @@ app.post("/allThreads", async (req, res) => {
             .collection("messaggi")
             .find({})
             .toArray();
-
         // console.log(dati)
+        dati.forEach(post => {
+            post.ByName = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(post.By) }).project({ _id: 0, Name: 1 })
+            return post
+        })
         res.json(dati);
     } catch (error) {
         console.log(`error`, error);
