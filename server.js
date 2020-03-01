@@ -24,10 +24,7 @@ const uri = `mongodb+srv://forum:${process.env.PASS}@miocluster2-igwb8.mongodb.n
 
 (async function () {
     var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-    // var got = await db.db("forum").collection("prova").insertOne({ a: 1 });
-    // var all = await db.db("forum").collection("prova").findOne({});
-    // console.log(`got`, got);
-    // console.log(`all`, all);
+
 })()
 
 
