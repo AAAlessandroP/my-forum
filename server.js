@@ -24,7 +24,7 @@ const uri = `mongodb+srv://ms-teams:${process.env.PASS}@miocluster2-igwb8.mongod
 
 (async function () {
     var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-    var got = await db.db("ms-teams").collection("prova").insertOne({a:1});
+    var got = await db.db("ms-teams").collection("prova").insertOne({ a: 1 });
     var all = await db.db("ms-teams").collection("prova").findOne({});
     console.log(`got`, got);
     console.log(`all`, all);
