@@ -11,6 +11,7 @@ app.use(bodyParser.json({
 const { ObjectId } = require("mongodb");
 app.use(express.static("mia_pag")); // include con USE
 
+"use strict";
 
 app.listen(3000);
 // RIFARLO CON WEBSOCKET
@@ -217,15 +218,14 @@ app.post("/allUsers", async (req, res) => {
 var page = require("./userPageMod")
 
 app.get("/user/:uid", async (req, res) => {
-    console.log(ObjectId(uid))
+    let o = ObjectId(uid);
+    console.log(o)
     var uid = req.params.uid
     var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
     let a = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(uid) })
-    post.ByName = a.Name
     db.close()
-    res.send(page.page(uid))
+    res.send(page.page(uid, a.Name))
 });
-
 
 
 app.post("/allThreads", async (req, res) => {
