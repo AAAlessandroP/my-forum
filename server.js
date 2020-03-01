@@ -233,15 +233,16 @@ app.post("/allThreads", async (req, res) => {
             .find({})
             .toArray();
         // console.log(dati)
-        dati = dati.map(async post => {
+        dati = await dati.map(async post => {
             console.log(`post`, post);
-            post.ByName = await db.db("forum").collection("utenti").find({/* _id: ObjectId(post.By) */}).project({ _id: 0, Name: 1 })
+            post.ByName = { await db.db("forum").collection("utenti").find({ _id: ObjectId(post.By) }) }.Name
             return post
         })
+        console.log(`dati`, dati);
         res.json(dati);
     } catch (error) {
         console.log(`error`, error);
-        res.sendStatus(500); 
+        res.sendStatus(500);
     }
 });
 
