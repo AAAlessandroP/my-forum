@@ -19,9 +19,10 @@ app.listen(3000);
 console.log("* app in funzione *");
 const uri = `mongodb+srv://forum:${process.env.PASS}@miocluster2-igwb8.mongodb.net/test?retryWrites=true&w=majority`;
 
-(async function () {
-    var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-})()
+// (async function () {
+//     var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+// ci si connette ogni volta prima di una query e dopo ci si scollega!
+// })()
 
 
 var sessioni = {};
@@ -216,15 +217,13 @@ app.post("/allUsers", async (req, res) => {
 var page = require("./userPageMod")
 
 app.get("/user/:uid", async (req, res) => {
-
+    console.log(ObjectId(uid))
     var uid = req.params.uid
-    var dati = await db
-        .db("forum")
-        .collection("utenti")
-        .find({})
-        .project({ Name: 1 })
-        .toArray();
-    res.send(page.page(uid, dati[0].Name))
+    var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    let a = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(uid) })
+    post.ByName = a.Name
+    db.close()
+    res.send(page.page(uid))
 });
 
 
