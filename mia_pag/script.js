@@ -5,7 +5,7 @@ $(function () {
     $.post("/allThreads").always(note => {
         if (note != "nulla salvato")
             note.forEach(nota => {
-                $("#threads").append("<div>" + nota + "</div>")
+                $("#threads").append("<textarea disabled>" + nota.Text + "</textarea>")
             });
     });
 

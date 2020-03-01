@@ -229,11 +229,11 @@ app.post("/allThreads", async (req, res) => {
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
         var dati = await db
             .db("forum")
-            .collection("mesaggi")
+            .collection("messaggi")
             .find({})
             .toArray();
-            
-        console.log(dati)
+
+        // console.log(dati)
         res.json(dati);
     } catch (error) {
         console.log(`error`, error);
