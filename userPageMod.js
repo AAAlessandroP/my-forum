@@ -1,9 +1,5 @@
 module.exports = { page: page };
-const { ObjectId } = require("mongodb");
-const MongoClient = require("mongodb").MongoClient;
-const uri = `mongodb+srv://forum:${process.env.PASS}@miocluster2-igwb8.mongodb.net/test?retryWrites=true&w=majority`;
-
-function page(uid) {
+function page(uid, name) {
     return `
     <!DOCTYPE html>
     <html>
@@ -17,13 +13,7 @@ function page(uid) {
     </head>
     <body>
 
-        <h2>Pagina di ${
-        (async function () {
-            db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-            let a = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(uid) })
-            return a.Name
-        })()
-        }</h2>
+        <h2>Pagina di ${name}</h2>
         <img src="https://cdn.glitch.com/8f696785-3177-4609-b393-3252e90ccbf5%2F${uid}.jpg" alt="profile pic" height="42" width="42">
 
     </body>

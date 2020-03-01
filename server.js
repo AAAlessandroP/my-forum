@@ -218,7 +218,8 @@ var page = require("./userPageMod")
 app.get("/user/:uid", async (req, res) => {
 
     var uid = req.params.uid
-    res.send(page.page(uid))
+    let a = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(uid) })
+    res.send(page.page(uid, a.Name))
 });
 
 
@@ -232,7 +233,7 @@ app.post("/allThreads", async (req, res) => {
             .collection("messaggi")
             .find({})
             .toArray();
-        
+
         dati = await Promise.all(dati.map(async post => {
             let a = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(post.By) })
             post.ByName = a.Name
