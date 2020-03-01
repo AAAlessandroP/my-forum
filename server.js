@@ -232,12 +232,13 @@ app.post("/allThreads", async (req, res) => {
             .collection("messaggi")
             .find({})
             .toArray();
-        // console.log(dati)
-        dati = await dati.map(async post => {
-            console.log(`post`, post);
-            post.ByName = { await db.db("forum").collection("utenti").find({ _id: ObjectId(post.By) }) }.Name
+        
+        dati = await Promise.all(dati.map(async post => {
+            let a = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(post.By) })
+            post.ByName = a.Name
             return post
-        })
+        }));
+
         console.log(`dati`, dati);
         res.json(dati);
     } catch (error) {
