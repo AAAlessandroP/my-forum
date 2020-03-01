@@ -14,7 +14,7 @@ $(function () {
         console.log(`utenti`, utenti);
         if (utenti)
             utenti.forEach(nota => {
-                $("#utenti").append(`<input class="btn btn-dark" type="button" value="${nota.Name}">`)
+                $("#utenti").append(`${nota.Name} <a href="/user?userId=${nota._id}">`)
             });
     });
 
