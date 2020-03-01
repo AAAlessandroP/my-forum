@@ -20,32 +20,18 @@ app.listen(3000);
 // RIFARLO CON WEBSOCKET
 // RIFARLO CON WEBSOCKET
 console.log("* app in funzione *");
-const uri = `mongodb+srv://ms-teams:${process.env.PASS}@miocluster2-igwb8.mongodb.net/test?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://forum:${process.env.PASS}@miocluster2-igwb8.mongodb.net/test?retryWrites=true&w=majority`;
 
 (async function () {
     var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-    var got = await db.db("ms-teams").collection("prova").insertOne({ a: 1 });
-    var all = await db.db("ms-teams").collection("prova").findOne({});
-    console.log(`got`, got);
-    console.log(`all`, all);
+    // var got = await db.db("forum").collection("prova").insertOne({ a: 1 });
+    // var all = await db.db("forum").collection("prova").findOne({});
+    // console.log(`got`, got);
+    // console.log(`all`, all);
 })()
 
 
 var sessioni = {};
-
-function c(s, key) {
-    return crypto.createCipher("aes-256-ctr", key).update(s.toString(), "utf-8", "hex");
-}
-
-function d(s, key) {
-    return crypto.createDecipher("aes-256-ctr", key).update(s, "hex", "utf-8");
-}
-
-function h(s) {
-    var hash = crypto.createHash("sha256");
-    hash.update(s);
-    return hash.digest("base64");
-}
 
 app.post("/login", async (req, res) => {
     var name = req.body.utente;
@@ -55,7 +41,7 @@ app.post("/login", async (req, res) => {
     try {
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
         var dominio = await db
-            .db("ms-teams")
+            .db("forum")
             .collection("domini")
             .findOne({ Name: dom });
         if (!dominio) {
@@ -64,7 +50,7 @@ app.post("/login", async (req, res) => {
             return;
         }
 
-        var user = await db.db("ms-teams").collection("utenti").findOne({ Name: name, Dominio: dominio._id });
+        var user = await db.db("forum").collection("utenti").findOne({ Name: name, Dominio: dominio._id });
         if (user && user.HashedPwd === h(user.Salt + pass)) {
             var sessId = crypto.randomBytes(32).toString("hex");
             sessioni[sessId] = {
@@ -90,21 +76,21 @@ app.post("/addUser", async (req, res) => {
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
         var dominio = await db
-            .db("ms-teams")
+            .db("forum")
             .collection("domini")
             .findOne({ Name: dom });
 
         if (!dominio) {
             //il dominio non c'era
             var newDom = await db
-                .db("ms-teams")
+                .db("forum")
                 .collection("domini")
                 .insertOne({ Name: dom });
             dominio = newDom.ops[0]; //??
         }
 
         var giaPresente = await db
-            .db("ms-teams")
+            .db("forum")
             .collection("utenti")
             .findOne({ Name: name, Dominio: ObjectId(dominio._id) });
 
@@ -120,7 +106,7 @@ app.post("/addUser", async (req, res) => {
 
             try {
                 var resIns = await db
-                    .db("ms-teams")
+                    .db("forum")
                     .collection("utenti")
                     .insertOne(nuovo_utente, { safe: true, upsert: true });
 
@@ -199,7 +185,7 @@ app.post("/newActivity", (req, res) => {
             }
 
             // console.log(`nuovaAttivita`, nuovaAttivita);
-            db.db("ms-teams")
+            db.db("forum")
                 .collection("dati")
                 .insertOne(nuovaAttivita, function (err, resIns) {
                     // console.log(`resIns`, resIns);
@@ -216,35 +202,7 @@ app.post("/newActivity", (req, res) => {
     else res.sendStatus(401);
 });
 
-app.post("/newDom", async (req, res) => {
-    /*nuovo gruppo di utenti*/
-    var sessid = req.body.sessid;
-    var name = req.body.name;
-
-    if (sessioni[sessid]) {
-        var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-        var dominio = await db
-            .db("ms-teams")
-            .collection("domini")
-            .findOne({ Name: name });
-
-        if (!dominio) {
-            //il dominio non c'era
-            try {
-                var newDom = await db
-                    .db("ms-teams")
-                    .collection("domini")
-                    .insertOne({ Name: name });
-                console.log(`newDom`, newDom);
-            } catch (error) {
-                console.log(`error`, error);
-                throw error;
-            }
-        }
-    } else res.sendStatus(401);
-});
-
-app.post("/allDomUsers", async (req, res) => {
+app.post("/allUsers", async (req, res) => {
     //tranne il chiedente
 
     var sessid = req.body.sessid;
@@ -252,7 +210,7 @@ app.post("/allDomUsers", async (req, res) => {
         try {
             var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
             var dati = await db
-                .db("ms-teams")
+                .db("forum")
                 .collection("utenti")
                 .find({
                     Dominio: sessioni[sessid].IDSuoDominio,
@@ -272,14 +230,14 @@ app.post("/allDomUsers", async (req, res) => {
     } else res.sendStatus(401);
 });
 
-app.post("/allNoteDominio", async (req, res) => {
+app.post("/allThreads", async (req, res) => {
 
     var sessid = req.body.sessid;
     if (sessioni[sessid]) {
         try {
             var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
             var dati = await db
-                .db("ms-teams")
+                .db("forum")
                 .collection("dati")
                 .find({ BroadcastDelDom: sessioni[sessid].IDSuoDominio })
                 .toArray();
@@ -335,12 +293,12 @@ app.post("/modificaNota", async (req, res) => {
                 whatSet.$push = { allegati: c(JSON.stringify(req.files.docs), key) };
             let what = { _id: ObjectId(IDNota), BroadcastDelDom: sessioni[sessid].IDSuoDominio, AppartenenteA: sessioni[sessid].IDUtente }
 
-            let result = awaitdb.db("ms-teams").collection("dati").updateOne(what, whatSet);
+            let result = awaitdb.db("forum").collection("dati").updateOne(what, whatSet);
             assert.equal(err, null);
             // assert.equal(result.modifiedCount, 1); sennò se cerco di modificarlo con dati identici a quelli preesistenti va a 0 modifiedCount
             assert.equal(result.matchedCount, 1);
 
-            var newNote = await db.db("ms-teams").collection("dati").findOne({ _id: ObjectId(IDNota) });
+            var newNote = await db.db("forum").collection("dati").findOne({ _id: ObjectId(IDNota) });
             db.close();
             res.json(newNote);
         } catch (error) {
@@ -360,7 +318,7 @@ app.post("/delNota", function (req, res) {
                 throw err;
             }
             console.log(`sessioni[sessid]`, sessioni[sessid]);
-            db.db("ms-teams")
+            db.db("forum")
                 .collection("dati")
                 .deleteOne({ _id: ObjectId(IDNota), BroadcastDelDom: sessioni[sessid].IDSuoDominio, AppartenenteA: sessioni[sessid].IDUtente }, (error, result) => {
 
