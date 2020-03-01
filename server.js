@@ -233,7 +233,8 @@ app.post("/allThreads", async (req, res) => {
             .find({})
             .toArray();
         // console.log(dati)
-        dati.forEach(async post => {
+        dati = dati.map(async post => {
+            console.log(`post`, post);
             post.ByName = await db.db("forum").collection("utenti").findOne({/* _id: ObjectId(post.By) */}).project({ _id: 0, Name: 1 })
             return post
         })
