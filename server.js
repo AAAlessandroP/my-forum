@@ -10,10 +10,7 @@ app.use(bodyParser.json({
 }));
 const { ObjectId } = require("mongodb");
 app.use(express.static("mia_pag")); // include con USE
-const fileUpload = require("express-fileupload");
-app.use(fileUpload({
-    limits: { fileSize: 50 * 1024 * 1024 },
-}));
+
 
 app.listen(3000);
 // RIFARLO CON WEBSOCKET

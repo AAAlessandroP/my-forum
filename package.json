@@ -11,9 +11,7 @@
   },
   "dependencies": {
     "express": "^4.17.1",
-    "mongodb": "*",
-    "cors": "^2.8.5",
-    "express-fileupload": "*"
+    "mongodb": "*"
   },
   "engines": {
     "node": "8.x"
