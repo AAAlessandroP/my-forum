@@ -1,7 +1,6 @@
 $(() => {
+    // $.post("/user").always(who => {
 
-    $.post("/user").always(who => {
-
-    })
+    // })
 
 });

@@ -216,12 +216,11 @@ app.post("/allUsers", async (req, res) => {
     }
 });
 
-app.get("/user/:id", async (req, res) => {
+import * as userPage from "userPageMod"
+
+app.get("/user/:uid", async (req, res) => {
     var uid = req.params.uid
-    if (uid == "script.js")
-        res.sendFile('user/script.js', { root: __dirname });
-    else if (uid == "script.js")
-        res.sendFile('user/user.html', { root: __dirname });
+
 });
 
 
