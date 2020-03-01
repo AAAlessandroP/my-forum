@@ -216,11 +216,15 @@ app.post("/allUsers", async (req, res) => {
     }
 });
 
-app.get("/user/:uid", async (req, res) => {
+app.get("/user/:id", async (req, res) => {
     var uid = req.params.uid
-
-    res.sendFile('user/user.html' , { root : __dirname});
+    if (uid == "script.js")
+        res.sendFile('user/script.js', { root: __dirname });
+    else if (uid == "script.js")
+        res.sendFile('user/user.html', { root: __dirname });
 });
+
+
 
 app.post("/allThreads", async (req, res) => {
 
