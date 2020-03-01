@@ -216,7 +216,7 @@ app.post("/allUsers", async (req, res) => {
     }
 });
 
-import * as userPage from "userPageMod"
+import page as userPage from "userPageMod"
 
 app.get("/user/:uid", async (req, res) => {
     var uid = req.params.uid
