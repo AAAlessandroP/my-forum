@@ -203,31 +203,21 @@ app.post("/newActivity", (req, res) => {
 });
 
 app.post("/allUsers", async (req, res) => {
-    //tranne il chiedente
 
-    var sessid = req.body.sessid;
-    if (sessioni[sessid]) {
-        try {
-            var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-            var dati = await db
-                .db("forum")
-                .collection("utenti")
-                .find({
-                    Dominio: sessioni[sessid].IDSuoDominio,
-                    _id: { $nin: [sessioni[sessid].IDUtente] }
-                })
-                .project({ Name: 1 })
-                .toArray();
-            let tutti = [];
-            await dati.forEach(ele => {
-                tutti.push(ele);
-            });
-            res.json(tutti);
-        } catch (error) {
-            console.log(`error`, error);
-            res.sendStatus(500);
-        }
-    } else res.sendStatus(401);
+    try {
+        var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+        var dati = await db
+            .db("forum")
+            .collection("utenti")
+            .find({})
+            .project({ Name: 1 })
+            .toArray();
+
+        res.json(dati);
+    } catch (error) {
+        console.log(`error`, error);
+        res.sendStatus(500);
+    }
 });
 
 app.post("/allThreads", async (req, res) => {

@@ -40,41 +40,8 @@
 
     <div class="container">
 
-        <input style="display: none;" class="btn btn-dark" id="showAdd" type="button" value="aggiungi nota">
-
-        <div style="display: none;" class="row" id="perAggiungereNote">
-            <div class="col-3" style="background-color:coral">
-                <fieldset>
-                    <legend> Aggiungi:</legend>
-                    <form id="formAddSemplice" action="/upload" method="post" encType="multipart/form-data">
-
-                        <input type="text" class="form-control" name="nome" placeholder="titolo">
-                        <textarea class="form-control" placeholder="testo della nota" rows="3" name="testo"></textarea>
-                        seleziona allegati: <input class="carica" name="docs" type="file" multiple>
-                        <input class="btn btn-dark" type="submit" value="add">
-                        <input type="hidden" name="tipo" value="Semplice">
-                    </form>
-                </fieldset>
-            </div>
-            <div class="col-3" style="background-color:plum">
-                <fieldset>
-                    <legend> Aggiungi:</legend>
-                    <form id="formAddConScadenza" action="/newActivity" method="post" encType="multipart/form-data">
-
-                        <input type="text" class="form-control" name="nome" placeholder="titolo">
-                        <textarea class="form-control" placeholder="testo della nota" rows="3" name="testo"></textarea>
-                        <input type="date" class="form-control" name="scadenza">
-                        seleziona allegati: <input class="carica" name="docs" type="file" multiple>
-                        <input class="btn btn-dark" type="submit" value="add">
-                        <input type="hidden" name="tipo" value="scheda con scadenza">
-                    </form>
-                </fieldset>
-            </div>
-
-            <div class="col-6"></div>
-        </div>
-
-        <div class="row" id="appendino"></div>
+        <div class="row" id="utenti"></div>
+        <div class="row" id="threads"></div>
 
     </div>
 
