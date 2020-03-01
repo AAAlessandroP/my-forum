@@ -24,7 +24,6 @@ const uri = `mongodb+srv://forum:${process.env.PASS}@miocluster2-igwb8.mongodb.n
 
 (async function () {
     var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-
 })()
 
 
@@ -219,40 +218,19 @@ app.post("/allUsers", async (req, res) => {
 
 app.post("/allThreads", async (req, res) => {
 
-    var sessid = req.body.sessid;
-    if (sessioni[sessid]) {
-        try {
-            var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-            var dati = await db
-                .db("forum")
-                .collection("dati")
-                .find({ BroadcastDelDom: sessioni[sessid].IDSuoDominio })
-                .toArray();
+    try {
+        var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+        var dati = await db
+            .db("forum")
+            .collection("mesaggi")
+            .find()
+            .toArray();
 
-            let tutti = [];
-            let key = sessioni[sessid].chiave;
-            let eleDecrittato;
-            dati.forEach(ele => {
-                // console.log(`ele`, ele);
-                eleDecrittato = ele;
-                eleDecrittato.IDNota = ele._id;
-                delete eleDecrittato._id;
-                eleDecrittato.nome = d(ele.Name, key);
-                eleDecrittato.testo = d(ele.Text, key);
-                if (ele.ScadeIL)
-                    //le semplici non l'hanno
-                    eleDecrittato.ScadeIL = d(ele.ScadeIL, key);
-                if (ele.allegati)
-                    eleDecrittato.allegati = ele.allegati.map(e => d(e, key))
-                tutti.push(eleDecrittato);
-            });
-            // console.log(`tutti`, tutti);
-            res.json(tutti);
-        } catch (error) {
-            console.log(`error`, error);
-            res.sendStatus(500);
-        }
-    } else res.sendStatus(401);
+        res.json(dati);
+    } catch (error) {
+        console.log(`error`, error);
+        res.sendStatus(500);
+    }
 });
 
 app.post("/modificaNota", async (req, res) => {
