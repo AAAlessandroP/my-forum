@@ -218,8 +218,13 @@ var page = require("./userPageMod")
 app.get("/user/:uid", async (req, res) => {
 
     var uid = req.params.uid
-    let a = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(uid) })
-    res.send(page.page(uid, a.Name))
+    var dati = await db
+        .db("forum")
+        .collection("utenti")
+        .find({})
+        .project({ Name: 1 })
+        .toArray();
+    res.send(page.page(uid, dati[0].Name))
 });
 
 
