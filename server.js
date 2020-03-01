@@ -218,7 +218,7 @@ var page = require("./userPageMod")
 app.get("/user/:uid", async (req, res) => {
 
     var uid = req.params.uid
-    res.send(page.page())
+    res.send(page.page(uid))
 });
 
 
@@ -230,9 +230,10 @@ app.post("/allThreads", async (req, res) => {
         var dati = await db
             .db("forum")
             .collection("mesaggi")
-            .find()
+            .find({})
             .toArray();
-
+            
+        console.log(dati)
         res.json(dati);
     } catch (error) {
         console.log(`error`, error);
