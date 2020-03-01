@@ -1,5 +1,4 @@
-export { page }
-
+module.exports = { page: page };
 function page() {
 
 };
