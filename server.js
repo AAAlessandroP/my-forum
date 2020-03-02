@@ -259,7 +259,13 @@ app.get("/thread/:id", async (req, res) => {
     var id = req.params.id
     var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
     let posts = await db.db("forum").collection("messaggi").find({ "$or": [{ _id: ObjectId(id) }, { "replyTo": ObjectId(id) }] }).toArray()
-    res.send(ThreadPage.page(id, posts))
+    // console.log(posts)
+    let dati = await Promise.all(posts.map(async post => {
+        let a = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(post.By) })
+        post.ByName = a.Name //gli attacco il nome risolto tipo dns
+        return post
+    }));
+    res.send(ThreadPage.page(id, dati))
     db.close()
 });
 

@@ -17,7 +17,8 @@ function page(uid, hisData, hisPosts) {
         <img src="${hisData.picUrl}" alt="profile pic" height="152" width="152">
         <br>
         <br>
-        ${"<textarea disabled>" + hisPosts.map(post => post.Text).join("</textarea><br><br><textarea disabled>") + "</textarea>"}
+        <h2> Posts scritti di recente:<h2>
+        ${"<textarea readonly>" + hisPosts.map(post => post.Text).join("</textarea><br><br><textarea readonly>") + "</textarea>"}
     </body>
     </html>`;
     // link 2 these posts

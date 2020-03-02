@@ -1,6 +1,6 @@
 module.exports = { page: page };
 function page(id, posts) {
-    return `
+    let s = `
     <!DOCTYPE html>
     <html>
     <head>
@@ -12,10 +12,12 @@ function page(id, posts) {
     
     </head>
     <body style="background-color:grey">
-
-        
+    `
+    posts.forEach(nota=>{
+        s += `<br><a href="/user/${nota.By}"> ${nota.ByName} </a>scrive:<br><textarea id=${nota._id} onclick=f(this) readonly>${nota.Text}</textarea>`
+    })
+    + `    
     </body>
     </html>`;
-    // link 2 these posts
-    // link 2 these posts
+    return s;
 };
