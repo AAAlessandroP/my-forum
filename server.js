@@ -6,7 +6,7 @@ const MongoClient = require("mongodb").MongoClient;
 var app = express();
 app.use(bodyParser.urlencoded({ extended: false, limit: 50 * 1024 * 1024 }));
 app.use(bodyParser.json({
-    limit: 50 * 1024 
+    limit: 50 * 1024
 }));
 const { ObjectId } = require("mongodb");
 app.use(express.static("mia_pag")); // include con USE
@@ -256,9 +256,10 @@ app.post("/allThreads", async (req, res) => {
 
 app.get("/thread/:id", async (req, res) => {
     var id = req.params.id
-    let thread = await db.db("forum").collection("messaggi").find({ _id: ObjectId(id) })
-    new Post
-
+    var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    let thread = await db.db("forum").collection("messaggi").find({ "$or": [{ _id: ObjectId(id) }, { "By": ObjectId(id) }] }).toArray()
+    console.log(thread)
+    db.close()
 });
 
 app.post("/modificaNota", async (req, res) => {
