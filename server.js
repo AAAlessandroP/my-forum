@@ -217,10 +217,10 @@ app.post("/allUsers", async (req, res) => {
 
 var page = require("./userPageMod")
 
-app.get("/user/:uid", async (req, res) => {
+app.post("/user", async (req, res) => {
     let o = ObjectId(uid);
     console.log(o)
-    var uid = req.params.uid
+    var uid = req.body.uid
     var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
     let a = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(uid) })
     db.close()
