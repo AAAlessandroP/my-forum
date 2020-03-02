@@ -257,6 +257,7 @@ app.post("/allThreads", async (req, res) => {
 app.get("/thread/:id", async (req, res) => {
     var id = req.params.id
     let thread = await db.db("forum").collection("messaggi").find({ _id: ObjectId(id) })
+    new Post
 
 });
 
