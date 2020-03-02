@@ -215,7 +215,7 @@ app.post("/allUsers", async (req, res) => {
     }
 });
 
-var page = require("./userPageMod")
+var Page = require("./userPageMod")
 
 app.get("/user/:uid", async (req, res) => {
     var uid = req.params.uid
@@ -226,9 +226,10 @@ app.get("/user/:uid", async (req, res) => {
     let hisData = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(uid) })
     let hisPosts = await db.db("forum").collection("messaggi").find({ By: ObjectId(uid) }).toArray()
     db.close()
-    res.send(page.page(uid, hisData, hisPosts))
+    res.send(Page.page(uid, hisData, hisPosts))
 });
 
+var ThreadPage = require("./threadPageMod")
 
 app.post("/allThreads", async (req, res) => {
 
@@ -257,8 +258,8 @@ app.post("/allThreads", async (req, res) => {
 app.get("/thread/:id", async (req, res) => {
     var id = req.params.id
     var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-    let thread = await db.db("forum").collection("messaggi").find({ "$or": [{ _id: ObjectId(id) }, { "By": ObjectId(id) }] }).toArray()
-    console.log(thread)
+    let posts = await db.db("forum").collection("messaggi").find({ "$or": [{ _id: ObjectId(id) }, { "replyTo": ObjectId(id) }] }).toArray()
+    res.send(ThreadPage.page(id, posts))
     db.close()
 });
 
