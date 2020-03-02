@@ -14,9 +14,7 @@ $(function () {
         console.log(`utenti`, utenti);
         if (utenti)
             utenti.forEach(nota => {
-                $("#utenti").append(`
-                <form action="/user" method=
-                <a href="/user/=${nota._id}"> ${nota.Name} </a>`)
+                $("#utenti").append(`<a href="/user/=${nota._id}"> ${nota.Name} </a>`)
             });
     });
 
