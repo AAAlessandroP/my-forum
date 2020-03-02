@@ -14,7 +14,7 @@ function page(uid, hisData, hisPosts) {
     <body>
 
         <h2>Pagina di ${hisData.Name}</h2>
-        <img src="${hisData.picUrl}" alt="profile pic" height="42" width="42">
+        <img src="${hisData.picUrl}" alt="profile pic" height="152" width="152">
         <br>
         <br>
         ${"<textarea disabled>" + hisPosts.join("</textarea><textarea disabled>") + "</textarea>"}
