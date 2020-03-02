@@ -5,11 +5,9 @@ $(function () {
     $.post("/allThreads").always(note => {
         if (note != "nulla salvato")
             note.forEach(nota => {
-                $("#threads").append(`<br><a href="/user/${nota.By}"> ${nota.ByName} </a>scrive:<br><textarea readonly>${nota.Text}</textarea>`)
+                $("#threads").append(`<br><a href="/user/${nota.By}"> ${nota.ByName} </a>scrive:<br><textarea onclick=f(this) readonly>${nota.Text}</textarea>`)
             });
-        $("textarea").click(() => {
-            console.log(`$(this)`, this);
-        });
+        
     });
 
 
@@ -21,3 +19,6 @@ $(function () {
     });
 
 });
+function f(chi){
+    console.log(`chi`, chi);
+}
