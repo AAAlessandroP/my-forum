@@ -1,5 +1,5 @@
 module.exports = { page: page };
-function page(uid, name) {
+function page(uid, hisData) {
     return `
     <!DOCTYPE html>
     <html>
@@ -13,8 +13,8 @@ function page(uid, name) {
     </head>
     <body>
 
-        <h2>Pagina di ${name}</h2>
-        <img src="https://cdn.glitch.com/8f696785-3177-4609-b393-3252e90ccbf5%2F${uid}.jpg" alt="profile pic" height="42" width="42">
+        <h2>Pagina di ${hisData.Name}</h2>
+        <img src="${hisData.picUrl}" alt="profile pic" height="42" width="42">
 
     </body>
     </html>`;

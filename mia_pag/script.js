@@ -5,7 +5,7 @@ $(function () {
     $.post("/allThreads").always(note => {
         if (note != "nulla salvato")
             note.forEach(nota => {
-                $("#threads").append(`<a href="/user/=${nota.By}"> ${nota.ByName} </a>scrive:<br><textarea disabled>${nota.Text}</textarea>`)
+                $("#threads").append(`<a href="/user/${nota.By}"> ${nota.ByName} </a>scrive:<br><textarea disabled>${nota.Text}</textarea>`)
             });
     });
 
@@ -14,7 +14,7 @@ $(function () {
         console.log(`utenti`, utenti);
         if (utenti)
             utenti.forEach(nota => {
-                $("#utenti").append(`<a href="/user/=${nota._id}"> ${nota.Name} </a>`)
+                $("#utenti").append(`<a href="/user/${nota._id}"> ${nota.Name} </a>`)
             });
     });
 

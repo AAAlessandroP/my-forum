@@ -223,9 +223,9 @@ app.get("/user/:uid", async (req, res) => {
     let o = ObjectId(uid);
     console.log(o)
     var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-    let a = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(uid) })
+    let hisData = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(uid) })
     db.close()
-    res.send(page.page(uid, a.Name))
+    res.send(page.page(uid, hisData))
 });
 
 
