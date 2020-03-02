@@ -21,4 +21,5 @@ $(function () {
 });
 function f(chi){
     console.log(`chi`, chi.id);
+    windows.location = 
 }
