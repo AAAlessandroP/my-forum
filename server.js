@@ -237,7 +237,7 @@ app.post("/allThreads", async (req, res) => {
         var dati = await db
             .db("forum")
             .collection("messaggi")
-            .find({ firstOfTheThread: 1 })
+            .find({ firstOfTheThread: true })
             .toArray();
 
         dati = await Promise.all(dati.map(async post => {
