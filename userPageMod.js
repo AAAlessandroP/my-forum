@@ -11,14 +11,15 @@ function page(uid, hisData, hisPosts) {
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     
     </head>
-    <body>
+    <body style="background-color:grey">
 
         <h2>Pagina di ${hisData.Name}</h2>
         <img src="${hisData.picUrl}" alt="profile pic" height="152" width="152">
         <br>
         <br>
-        ${"<textarea disabled>" + hisPosts.join("</textarea><textarea disabled>") + "</textarea>"}
+        ${"<textarea disabled>" + hisPosts.map(post => post.Text).join("</textarea><br><br><textarea disabled>") + "</textarea>"}
     </body>
     </html>`;
-    // +all his posts
+    // link 2 these posts
+    // link 2 these posts
 };
