@@ -7,7 +7,7 @@ $(function () {
             note.forEach(nota => {
                 $("#threads").append(`<br><a href="/user/${nota.By}"> ${nota.ByName} </a>scrive:<br><textarea id=${nota._id} onclick=f(this) readonly>${nota.Text}</textarea>`)
             });
-        
+
     });
 
 
@@ -19,7 +19,7 @@ $(function () {
     });
 
 });
-function f(chi){
+function f(chi) {
     console.log(`chi`, chi.id);
-    windows.location = 
+    window.location = `https://my-forum.glitch.me/thread/${chi.id}`
 }
