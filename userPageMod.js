@@ -1,6 +1,6 @@
 module.exports = { page: page };
 function page(uid, hisData, hisPosts) {
-    return `
+    let s = `
     <!DOCTYPE html>
     <html>
     <head>
@@ -18,8 +18,14 @@ function page(uid, hisData, hisPosts) {
         <br>
         <br>
         <h2> Posts scritti di recente:<h2>
-        ${"<textarea readonly>" + hisPosts.map(post => post.Text).join(`</textarea readonly id=${post._id} onclick=f(this)><br><br><textarea readonly>`) + "</textarea>"}
-    </body>
+        `
+
+    hisPosts.forEach(post => {
+        s += `<textarea readonly id=${post._id} onclick=f(this)> ${post.Text} </textarea> <br><br>`
+    });
+
+    s += `
+        </body>
     </html>
     <script>
     function f(chi) {
@@ -27,6 +33,7 @@ function page(uid, hisData, hisPosts) {
     }
     </script>
     `;
+    return s;
     // link 2 these posts
     // link 2 these posts
 };
