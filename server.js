@@ -6,7 +6,7 @@ const MongoClient = require("mongodb").MongoClient;
 var app = express();
 app.use(bodyParser.urlencoded({ extended: false, limit: 50 * 1024 * 1024 }));
 app.use(bodyParser.json({
-    limit: 50 * 1024 * 1024
+    limit: 50 * 1024 
 }));
 const { ObjectId } = require("mongodb");
 app.use(express.static("mia_pag")); // include con USE
@@ -22,7 +22,7 @@ const uri = `mongodb+srv://forum:${process.env.PASS}@miocluster2-igwb8.mongodb.n
 
 // (async function () {
 //     var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-// ci si connette ogni volta prima di una query e dopo ci si scollega!
+//  ci si connette ogni volta prima di una query e dopo ci si scollega!
 // })()
 
 
@@ -237,7 +237,7 @@ app.post("/allThreads", async (req, res) => {
         var dati = await db
             .db("forum")
             .collection("messaggi")
-            .find({ firstOfTheThread: true })
+            .find({ replyTo: null })
             .toArray();
 
         dati = await Promise.all(dati.map(async post => {

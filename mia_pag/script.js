@@ -11,7 +11,6 @@ $(function () {
 
 
     $.post("/allUsers").always(utenti => {
-        console.log(`utenti`, utenti);
         if (utenti)
             utenti.forEach(nota => {
                 $("#utenti").append(`<a href="/user/${nota._id}"> ${nota.Name} </a>`)
