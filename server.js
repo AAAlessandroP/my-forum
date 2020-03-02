@@ -224,8 +224,9 @@ app.get("/user/:uid", async (req, res) => {
     console.log(o)
     var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
     let hisData = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(uid) })
+    let hisPosts = await db.db("forum").collection("messaggi").find({ By: ObjectId(uid) }).toArray()
     db.close()
-    res.send(page.page(uid, hisData))
+    res.send(page.page(uid, hisData, hisPosts))
 });
 
 
@@ -236,7 +237,7 @@ app.post("/allThreads", async (req, res) => {
         var dati = await db
             .db("forum")
             .collection("messaggi")
-            .find({})
+            .find({ firstOfTheThread: 1 })
             .toArray();
 
         dati = await Promise.all(dati.map(async post => {
