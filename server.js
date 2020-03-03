@@ -254,8 +254,10 @@ app.post("/allThreads", async (req, res) => {
     }
 });
 
-//ordine temporale
-//ordine temporale
+// ORDER BY data
+// ORDER BY data
+// ORDER BY data
+// ORDER BY data
 
 app.get("/thread/:id", async (req, res) => {
     var id = req.params.id
@@ -265,10 +267,10 @@ app.get("/thread/:id", async (req, res) => {
     if (whatIs.replyTo == null)
         posts = await db.db("forum").collection("messaggi").find({ "$or": [{ _id: ObjectId(id) }, { "replyTo": ObjectId(id) }] }).toArray()
     else
-        posts = await db.db("forum").collection("messaggi").find({ "$or": [{ _id: ObjectId(id) }, { "replyTo": ObjectId(id) }] }).toArray()
+        posts = await db.db("forum").collection("messaggi").find({ "$or": [{ _id: ObjectId(id) }, { "replyTo": whatIs.replyTo }, { _id: whatIs.replyTo }] }).toArray()
 
     console.log(posts)
-    
+
     let dati = await Promise.all(posts.map(async post => {
         let a = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(post.By) })
         post.ByName = a.Name //gli attacco il nome risolto tipo dns
