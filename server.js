@@ -261,6 +261,7 @@ app.get("/thread/:id", async (req, res) => {
     var id = req.params.id
     //se :id è foglia tira fuori solo quella: invece deve essere: se prima domanda-> i reply a lei; sennò i reply alla ? a cui si replicava
     var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    let whatIs = await db.db("forum").collection("messaggi").findOne({ _id: ObjectId(id) })
     let posts = await db.db("forum").collection("messaggi").find({ "$or": [{ _id: ObjectId(id) }, { "replyTo": ObjectId(id) }] }).toArray()
     console.log(posts)
     let dati = await Promise.all(posts.map(async post => {
