@@ -64,7 +64,7 @@ app.post("/addUser", async (req, res) => {
             .db("forum")
             .collection("utenti")
             .findOne({ Name: name });
-
+        console.log(`giaPresente`, giaPresente);
         if (!giaPresente) {
             //lui non c'era
 
@@ -97,6 +97,7 @@ app.post("/addUser", async (req, res) => {
 
         db.close();
     } catch (error) {
+        console.log(`error`, error);
         res.sendStatus(500);
     }
 });
