@@ -277,7 +277,10 @@ app.get("/thread/:id", async (req, res) => {
         return post
     }));
 
-    dati.sort((post1, post2) => { })
+    dati.sort((post1, post2) => {
+        if (post1.Date && post2.Date)
+        
+    })
 
     res.send(ThreadPage.page(id, dati))
     db.close()
