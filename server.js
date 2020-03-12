@@ -31,26 +31,16 @@ var sessioni = {};
 app.post("/login", async (req, res) => {
     var name = req.body.utente;
     var pass = req.body.passw;
-    var dom = req.body.dom;
 
     try {
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-        var dominio = await db
-            .db("forum")
-            .collection("domini")
-            .findOne({ Name: dom });
-        if (!dominio) {
-            //il dominio non c'era
-            res.sendStatus(401);
-            return;
-        }
 
-        var user = await db.db("forum").collection("utenti").findOne({ Name: name, Dominio: dominio._id });
+
+        var user = await db.db("forum").collection("utenti").findOne({ Name: name});
         if (user && user.HashedPwd === h(user.Salt + pass)) {
             var sessId = crypto.randomBytes(32).toString("hex");
             sessioni[sessId] = {
                 IDUtente: user._id,
-                IDSuoDominio: user.Dominio,
                 Utente: user.Name,
                 chiave: pass
             };
@@ -64,39 +54,24 @@ app.post("/login", async (req, res) => {
 app.post("/addUser", async (req, res) => {
     var name = req.body.utente;
     var pass = req.body.passw;
-    var dom = req.body.dom;
     var salt = crypto.randomBytes(32).toString("hex");
 
     try {
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
-        var dominio = await db
-            .db("forum")
-            .collection("domini")
-            .findOne({ Name: dom });
-
-        if (!dominio) {
-            //il dominio non c'era
-            var newDom = await db
-                .db("forum")
-                .collection("domini")
-                .insertOne({ Name: dom });
-            dominio = newDom.ops[0]; //??
-        }
 
         var giaPresente = await db
             .db("forum")
             .collection("utenti")
-            .findOne({ Name: name, Dominio: ObjectId(dominio._id) });
+            .findOne({ Name: name });
 
         if (!giaPresente) {
-            //il dominio non c'era
+            //lui non c'era
 
             var nuovo_utente = {
                 Name: name,
                 Salt: salt,
                 HashedPwd: h(salt + pass),
-                Dominio: dominio._id
             };
 
             try {
@@ -111,15 +86,14 @@ app.post("/addUser", async (req, res) => {
                 sessioni[sessId] = {
                     IDUtente: resIns.insertedId,//$conn->insert_iid
                     Utente: name,
-                    chiave: pass,
-                    IDSuoDominio: nuovo_utente.Dominio
+                    chiave: pass
                 };
                 res.send(sessId);
             } catch (error) {
                 console.log(`error`, error);
                 res.sendStatus(500);
             }
-        } else res.send("username already taken in this domain");
+        } else res.send("username already taken");
 
         db.close();
     } catch (error) {

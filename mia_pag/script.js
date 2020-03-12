@@ -5,7 +5,6 @@ $(function () {
         if (singleton) {
             $.post("/login", {
                 utente: $("#Codice").val(),
-                dom: $("#dom").val(),
                 passw: $("#passw").val()
             }).always((receivedData, status) => {
                 console.log(`status`, status);
@@ -24,8 +23,7 @@ $(function () {
     $("#submitRegistrati").click(() => {
         $.post("/addUser", {
             utente: $("#Codice").val(),
-            passw: $("#passw").val(),
-            dom: $("#dom").val()
+            passw: $("#passw").val()
         }).always((receivedData, status) => {
             console.log(`status`, status);
 
