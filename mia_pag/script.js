@@ -1,6 +1,27 @@
 $(function () {
 
+    var singleton = true;
+    $("#submitLogin").click(() => {
+        if (singleton) {
+            $.post("/login", {
+                utente: $("#Codice").val(),
+                dom: $("#dom").val(),
+                passw: $("#passw").val()
+            }).always((receivedData, status) => {
+                console.log(`status`, status);
 
+                if (status == "success") {
+                    m_sessid = receivedData;
+                    $("#showAdd").show(1000)
+                    // $(".container:eq(1)").show(1000);
+                    getAllNotes();
+                    getAllDomUser();
+                } else alert("riprova credenziali");
+            });
+            // singleton = false;
+            // PRODUCTION MODE ONLY
+        }
+    });
 
     $.post("/allThreads").always(note => {
         if (note != "nulla salvato")
