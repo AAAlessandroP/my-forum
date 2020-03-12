@@ -14,13 +14,28 @@ $(function () {
                     m_sessid = receivedData;
                     $("#showAdd").show(1000)
                     // $(".container:eq(1)").show(1000);
-                    getAllNotes();
-                    getAllDomUser();
                 } else alert("riprova credenziali");
             });
             // singleton = false;
             // PRODUCTION MODE ONLY
         }
+    });
+
+    $("#submitRegistrati").click(() => {
+        $.post("/addUser", {
+            utente: $("#Codice").val(),
+            passw: $("#passw").val(),
+            dom: $("#dom").val()
+        }).always((receivedData, status) => {
+            console.log(`status`, status);
+
+            if (status == "success" && receivedData != "username already taken") {
+                m_sessid = receivedData;
+                getAllNotes();
+                $(".container:eq(1)").show(1000);
+            } else if (receivedData == "username already taken") alert(receivedData);
+            else alert("ops");
+        });
     });
 
     $.post("/allThreads").always(note => {
