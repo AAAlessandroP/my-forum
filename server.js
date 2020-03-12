@@ -279,7 +279,10 @@ app.get("/thread/:id", async (req, res) => {
 
     dati.sort((post1, post2) => {
         if (post1.Date && post2.Date)
+            if (new Date(post1.Date).getTime()/1000)
         
+        else
+                return post1
     })
 
     res.send(ThreadPage.page(id, dati))
