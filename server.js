@@ -276,6 +276,9 @@ app.get("/thread/:id", async (req, res) => {
         post.ByName = a.Name //gli attacco il nome risolto tipo dns
         return post
     }));
+
+    dati.sort(())
+
     res.send(ThreadPage.page(id, dati))
     db.close()
 });
