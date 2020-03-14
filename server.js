@@ -55,7 +55,7 @@ app.get("/login", async (req, res) => {
             else {
 
                 let AUTH_TOKEN = crypto.randomBytes(128).toString('hex')
-                ARR_AUTH_TOKENS[AUTH_TOKEN] = user._id
+                ARR_AUTH_TOKENS[AUTH_TOKEN] = { uid: user._id, scope: scope }
                 response.writeHead(302, {
                     'Location': redirect_uri + "?code=" + AUTH_TOKEN + "&who=" + user._id
                 });//avere questo = sapere quell'user autenticato
@@ -71,10 +71,12 @@ app.post("/getToken", async (req, res) => {
     var AUTH_TOKEN = req.body.AUTH_TOKEN;
     var client_id = req.body.client_id;
     var client_secret = req.body.client_id;
-// TODO gestione scope
-    if (ARR_AUTH_TOKENS[AUTH_TOKEN]) {
-        var token = crypto.randomBytes(128).toString("hex");
-        access_tokens[token]
+    // TODO gestione scope
+    if (ARR_AUTH_TOKENS[AUTH_TOKEN]/*&&pass giusta*/) {
+        var token = crypto.randomBytes(256).toString("hex");
+        access_tokens[token] = ARR_AUTH_TOKENS[AUTH_TOKEN]
+        delete ARR_AUTH_TOKENS[AUTH_TOKEN];
+
         res.send({ access_token: token })
     } else res.sendStatus(403)
 });
