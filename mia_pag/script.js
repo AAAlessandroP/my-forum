@@ -3,10 +3,22 @@ $(function () {
     var singleton = true;
     $("#submitLogin").click(() => {
         if (singleton) {
-            $.get("/login", {
+            let obj = {
                 utente: $("#Codice").val(),
                 passw: $("#passw").val()
-            }).always((receivedData, status) => {
+            };
+            (window.onpopstate = function () {
+                var match,
+                    pl = /\+/g,  // Regex for replacing addition symbol with a space
+                    search = /([^&=]+)=?([^&]*)/g,
+                    decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
+                    query = window.location.search.substring(1);
+
+                while (match = search.exec(query))
+                    obj[decode(match[1])] = decode(match[2]);
+            })();
+            //appendo eventuali parametri dalla querystring della pagina principale /
+            $.get("/login", obj).always((receivedData, status) => {
                 console.log(`status`, status);
 
                 if (status == "success") {

@@ -29,10 +29,6 @@ const uri = `mongodb+srv://forum:${process.env.PASS}@miocluster2-igwb8.mongodb.n
 var sessioni = {};
 var ARR_AUTH_TOKENS = {};
 
-app.get("/", (req, res) => {
-    res.send("vabb")
-});
-
 app.get("/login", async (req, res) => {
     var name = req.body.utente;
     var pass = req.body.passw;
@@ -53,7 +49,7 @@ app.get("/login", async (req, res) => {
                 chiave: pass
             };
             if (!redirect_uri) // req da script.js
-                res.send(sessId);
+                res.send(sessId); 
             else {
 
                 var user = await db.db("forum").collection("utenti").findOne({ Name: name });
@@ -71,13 +67,13 @@ app.get("/login", async (req, res) => {
 });
 
 app.post("/getToken", async (req, res) => {
-    var AUTH_TOKEN = req.body.AUTH_TOKEN;
-    var client_id = req.body.client_id;
-    var client_secret = req.body.client_id;
-    var token = crypto.randomBytes(32).toString("hex");
-    if ()
+    // var AUTH_TOKEN = req.body.AUTH_TOKEN;
+    // var client_id = req.body.client_id;
+    // var client_secret = req.body.client_id;
+    // var token = crypto.randomBytes(32).toString("hex");
+    // if ()
 
-        res.send({ access_token: token })
+    //     res.send({ access_token: token })
 });
 
 app.post("/addUser", async (req, res) => {
