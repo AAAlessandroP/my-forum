@@ -3,7 +3,7 @@ $(function () {
     var singleton = true;
     $("#submitLogin").click(() => {
         if (singleton) {
-            $.post("/login", {
+            $.get("/login", {
                 utente: $("#Codice").val(),
                 passw: $("#passw").val()
             }).always((receivedData, status) => {
