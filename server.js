@@ -28,6 +28,7 @@ const uri = `mongodb+srv://forum:${process.env.PASS}@miocluster2-igwb8.mongodb.n
 
 var sessioni = {};
 var ARR_AUTH_TOKENS = {};
+var access_tokens = {};
 
 app.get("/login", async (req, res) => {
     var name = req.body.utente;
@@ -41,7 +42,8 @@ app.get("/login", async (req, res) => {
 
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
         var user = await db.db("forum").collection("utenti").findOne({ Name: name });
-        if (true/*user && user.HashedPwd === h(user.Salt + pass)) {
+        if (true/*user && user.HashedPwd === h(user.Salt + pass)*/) {
+            user = { _id: 0, Name: "ale" }
             var sessId = crypto.randomBytes(32).toString("hex");
             sessioni[sessId] = {
                 IDUtente: user._id,
@@ -49,15 +51,14 @@ app.get("/login", async (req, res) => {
                 chiave: pass
             };
             if (!redirect_uri) // req da script.js
-                res.send(sessId); 
+                res.send(sessId);
             else {
 
-                var user = await db.db("forum").collection("utenti").findOne({ Name: name });
                 let AUTH_TOKEN = crypto.randomBytes(128).toString('hex')
-                ARR_AUTH_TOKENS[AUTH_TOKEN] = "OK"
+                ARR_AUTH_TOKENS[AUTH_TOKEN] = user._id
                 response.writeHead(302, {
-                    'Location': redirect_uri + "?code=" + AUTH_TOKEN
-                });
+                    'Location': redirect_uri + "?code=" + AUTH_TOKEN + "&who=" + user._id
+                });//avere questo = sapere quell'user autenticato
                 response.end();
             }
         } else res.sendStatus(401);
@@ -67,13 +68,15 @@ app.get("/login", async (req, res) => {
 });
 
 app.post("/getToken", async (req, res) => {
-    // var AUTH_TOKEN = req.body.AUTH_TOKEN;
-    // var client_id = req.body.client_id;
-    // var client_secret = req.body.client_id;
-    // var token = crypto.randomBytes(32).toString("hex");
-    // if ()
-
-    //     res.send({ access_token: token })
+    var AUTH_TOKEN = req.body.AUTH_TOKEN;
+    var client_id = req.body.client_id;
+    var client_secret = req.body.client_id;
+// TODO gestione scope
+    if (ARR_AUTH_TOKENS[AUTH_TOKEN]) {
+        var token = crypto.randomBytes(128).toString("hex");
+        access_tokens[token]
+        res.send({ access_token: token })
+    } else res.sendStatus(403)
 });
 
 app.post("/addUser", async (req, res) => {
