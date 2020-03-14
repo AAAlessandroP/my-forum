@@ -36,7 +36,7 @@ app.post("/login", async (req, res) => {
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 
-        var user = await db.db("forum").collection("utenti").findOne({ Name: name});
+        var user = await db.db("forum").collection("utenti").findOne({ Name: name });
         if (user && user.HashedPwd === h(user.Salt + pass)) {
             var sessId = crypto.randomBytes(32).toString("hex");
             sessioni[sessId] = {
@@ -49,6 +49,19 @@ app.post("/login", async (req, res) => {
     } catch (error) {
         res.sendStatus(500);
     }
+});
+
+app.get("/oauth", async (req, res) => {
+    var redirect_uri = req.query.redirect_uri
+    var client_id = req.query.client_id
+    var scope = req.query.scope
+
+    let o = ObjectId(client_id);
+    var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    let hisData = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(uid) })
+    let hisPosts = await db.db("forum").collection("messaggi").find({ By: ObjectId(uid) }).toArray()
+    db.close()
+    res.send(Page.page(uid, hisData, hisPosts))
 });
 
 app.post("/addUser", async (req, res) => {
