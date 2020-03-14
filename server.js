@@ -37,9 +37,8 @@ app.get("/login", async (req, res) => {
     var scope = req.query.scope
 
     try {
+
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-
-
         var user = await db.db("forum").collection("utenti").findOne({ Name: name });
         if (user && user.HashedPwd === h(user.Salt + pass)) {
             var sessId = crypto.randomBytes(32).toString("hex");
@@ -48,7 +47,11 @@ app.get("/login", async (req, res) => {
                 Utente: user.Name,
                 chiave: pass
             };
-            res.send(sessId);
+            if (!redirect_uri)// req da script.js
+                res.send(sessId);
+            else//req dal dac
+                res.send(AUTH_CODE);
+
         } else res.sendStatus(401);
     } catch (error) {
         res.sendStatus(500);
