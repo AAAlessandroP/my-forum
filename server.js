@@ -66,6 +66,16 @@ app.get("/login", async (req, res) => {
     }
 });
 
+app.post("/getToken", async (req, res) => {
+    var name = req.body.utente;
+    var pass = req.body.passw;
+    var salt = crypto.randomBytes(32).toString("hex");
+
+    let token =;
+
+    res.send({ access_token: token })
+});
+
 app.post("/addUser", async (req, res) => {
     var name = req.body.utente;
     var pass = req.body.passw;
