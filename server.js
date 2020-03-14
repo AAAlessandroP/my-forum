@@ -67,11 +67,11 @@ app.get("/login", async (req, res) => {
 });
 
 app.post("/getToken", async (req, res) => {
-    var name = req.body.utente;
-    var pass = req.body.passw;
-    var salt = crypto.randomBytes(32).toString("hex");
-
-    let token =;
+    var AUTH_TOKEN = req.body.AUTH_TOKEN;
+    var client_id = req.body.client_id;
+    var client_secret = req.body.client_id;
+    var token = crypto.randomBytes(32).toString("hex");
+    if()
 
     res.send({ access_token: token })
 });
