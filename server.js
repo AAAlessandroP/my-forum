@@ -27,6 +27,7 @@ const uri = `mongodb+srv://forum:${process.env.PASS}@miocluster2-igwb8.mongodb.n
 
 
 var sessioni = {};
+var ARR_AUTH_TOKENS = {};
 
 app.get("/login", async (req, res) => {
     var name = req.body.utente;
@@ -47,11 +48,18 @@ app.get("/login", async (req, res) => {
                 Utente: user.Name,
                 chiave: pass
             };
-            if (!redirect_uri)// req da script.js
+            if (!redirect_uri) // req da script.js
                 res.send(sessId);
-            else//req dal dac
-                res.send(AUTH_CODE);
+            else {
 
+                var user = await db.db("forum").collection("utenti").findOne({ Name: name });
+                let AUTH_TOKEN = crypto.randomBytes(128).toString('hex')
+                ARR_AUTH_TOKENS[AUTH_TOKEN] = "OK"
+                response.writeHead(302, {
+                    'Location': redirect_uri + "?code=" + AUTH_TOKEN
+                });
+                response.end();
+            }
         } else res.sendStatus(401);
     } catch (error) {
         res.sendStatus(500);
