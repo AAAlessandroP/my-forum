@@ -52,12 +52,13 @@ app.get("/login", async (req, res) => {
 
                 let AUTH_TOKEN = crypto.randomBytes(128).toString('hex')
                 ARR_AUTH_TOKENS[AUTH_TOKEN] = { uid: user._id, scope: scope }
-                res.writeHead(302, {
-                    'Location': redirect_uri + "?code=" + AUTH_TOKEN + "&who=" + user._id
-                });//avere questo = sapere quell'user autenticato
-                res.end();
+                // res.writeHead(302, {
+                //     'Location': redirect_uri + "?code=" + AUTH_TOKEN + "&who=" + user._id
+                // });//avere questo = sapere quell'user autenticato 
+                // res.end();
+                res.send("<html><body><script>window.location='" + redirect_uri + "?code=" + AUTH_TOKEN + "&who=" + user._id + "'</script></body></html>");
                 console.log("asd");
-                
+
             }
         } else res.sendStatus(401);
     } catch (error) {
