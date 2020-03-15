@@ -2,6 +2,7 @@ var express = require("express");
 var assert = require("assert");
 var bodyParser = require("body-parser");
 const crypto = require("crypto");
+const cors = require("cors");
 const MongoClient = require("mongodb").MongoClient;
 var app = express();
 app.use(bodyParser.urlencoded({ extended: false, limit: 50 * 1024 * 1024 }));
@@ -10,7 +11,7 @@ app.use(bodyParser.json({
 }));
 const { ObjectId } = require("mongodb");
 app.use(express.static("mia_pag")); // include con USE
-
+app.use(cors())
 "use strict";
 
 app.listen(3000);
@@ -19,11 +20,6 @@ app.listen(3000);
 // RIFARLO CON WEBSOCKET
 console.log("* app in funzione *");
 const uri = `mongodb+srv://forum:${process.env.PASS}@miocluster2-igwb8.mongodb.net/test?retryWrites=true&w=majority`;
-
-// (async function () {
-//     var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-//  ci si connette ogni volta prima di una query e dopo ci si scollega!
-// })()
 
 
 var sessioni = {};
@@ -56,13 +52,16 @@ app.get("/login", async (req, res) => {
 
                 let AUTH_TOKEN = crypto.randomBytes(128).toString('hex')
                 ARR_AUTH_TOKENS[AUTH_TOKEN] = { uid: user._id, scope: scope }
-                response.writeHead(302, {
+                res.writeHead(302, {
                     'Location': redirect_uri + "?code=" + AUTH_TOKEN + "&who=" + user._id
                 });//avere questo = sapere quell'user autenticato
-                response.end();
+                res.end();
+                console.log("asd");
+                
             }
         } else res.sendStatus(401);
     } catch (error) {
+        console.log(`error`, error);
         res.sendStatus(500);
     }
 });
