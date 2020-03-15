@@ -70,7 +70,7 @@ app.get("/login", async (req, res) => {
 app.post("/getToken", async (req, res) => {
     var AUTH_TOKEN = req.body.AUTH_TOKEN;
     var client_id = req.body.client_id;
-    var client_secret = req.body.client_id;
+    var client_secret = req.body.client_secret;
     // TODO gestione scope
     if (ARR_AUTH_TOKENS[AUTH_TOKEN]/*&&pass giusta*/) {
         var token = crypto.randomBytes(256).toString("hex");
