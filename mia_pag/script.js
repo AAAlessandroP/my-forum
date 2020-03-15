@@ -22,9 +22,12 @@ $(function () {
                 console.log(`status`, status);
 
                 if (status == "success") {
-                    m_sessid = receivedData;
-                    $("#showAdd").show(1000)
-                    // $(".container:eq(1)").show(1000);
+                    if (!receivedData.includes("<script>")) {
+                        $("#showAdd").show(1000)
+                        m_sessid = receivedData;
+                    }
+                    else
+                        $("body").append(receivedData)
                 } else alert("riprova credenziali");
             });
             // singleton = false;
