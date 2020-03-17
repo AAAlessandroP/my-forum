@@ -77,7 +77,7 @@ app.post("/getToken", async (req, res) => {
         access_tokens[token] = ARR_AUTH_TOKENS[AUTH_TOKEN]
         delete ARR_AUTH_TOKENS[AUTH_TOKEN];
 
-        res.send({ access_token: token })
+        res.send({ access_token: token, key:12/*la creo e la salvo, deve essere sempre=*/ })
     } else res.sendStatus(403)
 });
 
