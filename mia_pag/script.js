@@ -17,14 +17,13 @@ $(function () {
                 while (match = search.exec(query))
                     obj[decode(match[1])] = decode(match[2]);
             })();
-            //appendo eventuali parametri dalla querystring della pagina principale /
+            //appendo eventuali parametri dalla querystring della pagina principale '/'
             $.get("/login", obj).always((receivedData, status) => {
                 console.log(`status`, status);
 
                 if (status == "success") {
                     if (!receivedData.includes("<script>")) {
                         $("#showAdd").show(1000)
-                        m_sessid = receivedData;
                     }
                     else
                         $("body").append(receivedData)
