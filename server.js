@@ -38,7 +38,7 @@ app.get("/login", async (req, res) => {
 
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
         var user = await db.db("forum").collection("utenti").findOne({ Name: name });
-        if (true/*user && user.HashedPwd === h(user.Salt + pass)*/) {
+        if (user && user.HashedPwd === h(user.Salt + pass)) {
             user = { _id: 0, Name: "ale" }
             var sessId = crypto.randomBytes(32).toString("hex");
             sessioni[sessId] = {
