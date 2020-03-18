@@ -85,9 +85,8 @@ app.post("/getToken", async (req, res) => {
         var token = crypto.randomBytes(256).toString("hex");
         access_tokens[token] = ARR_AUTH_TOKENS[AUTH_TOKEN]
         delete ARR_AUTH_TOKENS[AUTH_TOKEN];
-
         res.send({ access_token: token, key: 12/*la creo e la salvo, deve essere sempre=*/ })
-    } else res.sendStatus(403)
+    } else res.sendStatus(401)
 });
 
 app.post("/addUser", async (req, res) => {
