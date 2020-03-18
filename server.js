@@ -81,13 +81,13 @@ app.post("/getToken", async (req, res) => {
     var client_id = req.body.client_id;
     var client_secret = req.body.client_secret;
     // TODO gestione scope
-    if (ARR_AUTH_TOKENS[AUTH_TOKEN]/*&&pass giusta*/) {
+    if (/*ARR_AUTH_TOKENS[AUTH_TOKEN]/*&&pass giusta*/true) {
         var token = crypto.randomBytes(256).toString("hex");
         access_tokens[token] = ARR_AUTH_TOKENS[AUTH_TOKEN]
         delete ARR_AUTH_TOKENS[AUTH_TOKEN];
         console.log({ access_token: token, key: 12/*la creo e la salvo, deve essere sempre=*/ })
       
-        res.send({ access_token: token, key: 12/*la creo e la salvo, deve essere sempre=*/ })
+        res.json({ access_token: token, key: 12/*la creo e la salvo, deve essere sempre=*/ })
     } else res.sendStatus(401)
 });
 
