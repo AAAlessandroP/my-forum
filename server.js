@@ -65,7 +65,7 @@ app.get("/login", async (req, res) => {
             else {// req da / per /login con parametri get passati a  /
 
                 let AUTH_TOKEN = crypto.randomBytes(128).toString('hex')
-                ARR_AUTH_TOKENS[AUTH_TOKEN] = { uid: user._id, scope: scope }
+                ARR_AUTH_TOKENS[AUTH_TOKEN] = { uid: user._id, scope: scope, toCipher: user.stringaCheLapiUsaPerCifrare }
                 res.send("<html><body><script>window.location='" + redirect_uri + "?code=" + AUTH_TOKEN + "&who=" + user._id + "'</script></body></html>");
             }
         } else res.sendStatus(401);
@@ -81,6 +81,8 @@ app.post("/getToken", async (req, res) => {
     var client_secret = req.body.client_secret;
     // TODO gestione scope
     // TODO gestione scope
+    // TODO gestione scope
+    // TODO gestione scope
 
     var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
     var client = await db.db("ms-teams").collection("apps").findOne({ _id: ObjectId(client_id), client_secret: ObjectId(client_secret) });
@@ -89,9 +91,8 @@ app.post("/getToken", async (req, res) => {
         var token = crypto.randomBytes(256).toString("hex");
         access_tokens[token] = ARR_AUTH_TOKENS[AUTH_TOKEN]
         delete ARR_AUTH_TOKENS[AUTH_TOKEN];
-        console.log({ access_token: token, key: 12/*la creo e la salvo, deve essere sempre=*/ })
 
-        res.json({ access_token: token, key: 12/*la creo e la salvo, deve essere sempre=*/ })
+        res.json({ access_token: token, key: access_tokens[token].toCipher })//key è la stringa che il client usa per cifrare i dati dell'utente
     } else res.sendStatus(401)
     db.close()
 });
@@ -117,6 +118,7 @@ app.post("/addUser", async (req, res) => {
                 Name: name,
                 Salt: salt,
                 HashedPwd: h(salt + pass),
+                stringaCheLapiUsaPerCifrare: crypto.randomBytes(32).toString("hex")
             };
 
             try {
