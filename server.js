@@ -48,17 +48,11 @@ app.get("/login", async (req, res) => {
             };
             if (!redirect_uri) // req da script.js
                 res.send(sessId);
-            else {
+            else {// req da / per /login con parametri get passati a  /
 
                 let AUTH_TOKEN = crypto.randomBytes(128).toString('hex')
                 ARR_AUTH_TOKENS[AUTH_TOKEN] = { uid: user._id, scope: scope }
-                // res.writeHead(302, {
-                //     'Location': redirect_uri + "?code=" + AUTH_TOKEN + "&who=" + user._id
-                // });//avere questo = sapere quell'user autenticato 
-                // res.end();
                 res.send("<html><body><script>window.location='" + redirect_uri + "?code=" + AUTH_TOKEN + "&who=" + user._id + "'</script></body></html>");
-                console.log("asd");
-
             }
         } else res.sendStatus(401);
     } catch (error) {
@@ -77,7 +71,7 @@ app.post("/getToken", async (req, res) => {
         access_tokens[token] = ARR_AUTH_TOKENS[AUTH_TOKEN]
         delete ARR_AUTH_TOKENS[AUTH_TOKEN];
 
-        res.send({ access_token: token, key:12/*la creo e la salvo, deve essere sempre=*/ })
+        res.send({ access_token: token, key: 12/*la creo e la salvo, deve essere sempre=*/ })
     } else res.sendStatus(403)
 });
 
