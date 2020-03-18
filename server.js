@@ -91,7 +91,14 @@ app.post("/getToken", async (req, res) => {
         var token = crypto.randomBytes(256).toString("hex");
         access_tokens[token] = ARR_AUTH_TOKENS[AUTH_TOKEN]
         delete ARR_AUTH_TOKENS[AUTH_TOKEN];
-
+//  200 cpu
+// + 150
+// + 100
+// + 100
+// + 100
+// + 150
+// + 150
+// + 60
         res.json({ access_token: token, key: access_tokens[token].toCipher })//key è la stringa che il client usa per cifrare i dati dell'utente
     } else res.sendStatus(401)
     db.close()
