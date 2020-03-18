@@ -21,21 +21,21 @@ app.listen(3000);
 console.log("* app in funzione *");
 const uri = `mongodb+srv://forum:${process.env.PASS}@miocluster2-igwb8.mongodb.net/test?retryWrites=true&w=majority`;
 
-{
-    function c(s, key) {
-        return crypto.createCipher("aes-256-ctr", key).update(s.toString(), "utf-8", "hex");
-    }
 
-    function d(s, key) {
-        return crypto.createDecipher("aes-256-ctr", key).update(s, "hex", "utf-8");
-    }
-
-    function h(s) {
-        var hash = crypto.createHash("sha256");
-        hash.update(s);
-        return hash.digest("base64");
-    }
+function c(s, key) {
+    return crypto.createCipher("aes-256-ctr", key).update(s.toString(), "utf-8", "hex");
 }
+
+function d(s, key) {
+    return crypto.createDecipher("aes-256-ctr", key).update(s, "hex", "utf-8");
+}
+
+function h(s) {
+    var hash = crypto.createHash("sha256");
+    hash.update(s);
+    return hash.digest("base64");
+}
+
 
 var sessioni = {};
 var ARR_AUTH_TOKENS = {};
@@ -54,7 +54,6 @@ app.get("/login", async (req, res) => {
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
         var user = await db.db("forum").collection("utenti").findOne({ Name });
         if (user && user.HashedPwd === h(user.Salt + pass)) {
-            user = { _id: 0, Name: "ale" }
             var sessId = crypto.randomBytes(32).toString("hex");
             sessioni[sessId] = {
                 IDUtente: user._id,
@@ -81,6 +80,12 @@ app.post("/getToken", async (req, res) => {
     var client_id = req.body.client_id;
     var client_secret = req.body.client_secret;
     // TODO gestione scope
+  
+        var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+        var client = await db.db("ms-teams").collection("apps").findOne({ _id: ObjectId(client_id), client_secret: ObjectId(client_secret) });
+        assert.notEqual(client, null)
+
+  
     if (/*ARR_AUTH_TOKENS[AUTH_TOKEN]/*&&pass giusta*/true) {
         var token = crypto.randomBytes(256).toString("hex");
         access_tokens[token] = ARR_AUTH_TOKENS[AUTH_TOKEN]
@@ -331,8 +336,7 @@ app.post("/modificaNota", async (req, res) => {
                 whatSet.$push = { allegati: c(JSON.stringify(req.files.docs), key) };
             let what = { _id: ObjectId(IDNota), BroadcastDelDom: sessioni[sessid].IDSuoDominio, AppartenenteA: sessioni[sessid].IDUtente }
 
-            let result = awaitdb.db("forum").collection("dati").updateOne(what, whatSet);
-            assert.equal(err, null);
+            let result = await db.db("forum").collection("dati").updateOne(what, whatSet);
             // assert.equal(result.modifiedCount, 1); sennò se cerco di modificarlo con dati identici a quelli preesistenti va a 0 modifiedCount
             assert.equal(result.matchedCount, 1);
 
