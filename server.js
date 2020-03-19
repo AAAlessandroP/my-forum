@@ -66,7 +66,7 @@ app.get("/login", async (req, res) => {
 
                 let AUTH_TOKEN = crypto.randomBytes(128).toString('hex')
                 ARR_AUTH_TOKENS[AUTH_TOKEN] = { uid: user._id, scope: scope, toCipher: user.stringaCheLapiUsaPerCifrare }
-                res.send("<html><body><script>window.location='" + redirect_uri + "?code=" + AUTH_TOKEN + "&who=" + user._id + "'</script></body></html>");
+                res.send("<html><body><script>window.location='" + redirect_uri + "?code=" + AUTH_TOKEN + "&who=" + user._id.toString().replace("a","b") + "'</script></body></html>");
             }
         } else res.sendStatus(401);
     } catch (error) {
