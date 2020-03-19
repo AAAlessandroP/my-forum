@@ -53,7 +53,6 @@ app.get("/login", async (req, res) => {
 
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
         var user = await db.db("forum").collection("utenti").findOne({ Name });
-        console.log("user",user)
         if (user && user.HashedPwd === h(user.Salt + pass)) {
             var sessId = crypto.randomBytes(32).toString("hex");
             sessioni[sessId] = {
@@ -87,9 +86,12 @@ app.post("/getToken", async (req, res) => {
     // TODO gestione scope
 
     var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-    var client = await db.db("ms-teams").collection("apps").findOne({ _id: ObjectId(client_id), client_secret: client_secret });
+    var client = await db.db("ms-teams").collection("apps").
+        findOne({ _id: ObjectId(client_id), client_secret: client_secret.toString() });
+    console.log(client)
 
-    if (client !== null && ARR_AUTH_TOKENS[AUTH_TOKEN]) {
+    if (client && ARR_AUTH_TOKENS[AUTH_TOKEN]) {
+        console.log(1)
         var token = crypto.randomBytes(256).toString("hex");
         access_tokens[token] = ARR_AUTH_TOKENS[AUTH_TOKEN]
         delete ARR_AUTH_TOKENS[AUTH_TOKEN];
