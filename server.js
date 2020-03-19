@@ -53,6 +53,7 @@ app.get("/login", async (req, res) => {
 
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
         var user = await db.db("forum").collection("utenti").findOne({ Name });
+        console.log("user",user)
         if (user && user.HashedPwd === h(user.Salt + pass)) {
             var sessId = crypto.randomBytes(32).toString("hex");
             sessioni[sessId] = {
@@ -73,6 +74,7 @@ app.get("/login", async (req, res) => {
         console.log(`error`, error);
         res.sendStatus(500);
     }
+    db.close()
 });
 
 app.post("/getToken", async (req, res) => {
