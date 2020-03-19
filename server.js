@@ -86,12 +86,12 @@ app.post("/getToken", async (req, res) => {
     // TODO gestione scope
 
     var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-    var client = await db.db("ms-teams").collection("apps").
-        findOne({ _id: ObjectId(client_id), client_secret: client_secret.toString() });
+    var client = await db.db("forum").collection("apps").findOne({ _id: ObjectId(client_id), client_secret: client_secret.toString() });
     console.log(client)
-
+    console.log(ARR_AUTH_TOKENS[AUTH_TOKEN])
+    
     if (client && ARR_AUTH_TOKENS[AUTH_TOKEN]) {
-        console.log(1)
+        console.log("ok")
         var token = crypto.randomBytes(256).toString("hex");
         access_tokens[token] = ARR_AUTH_TOKENS[AUTH_TOKEN]
         delete ARR_AUTH_TOKENS[AUTH_TOKEN];
