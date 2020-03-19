@@ -89,9 +89,9 @@ app.post("/getToken", async (req, res) => {
     var client = await db.db("forum").collection("apps").findOne({ _id: ObjectId(client_id), client_secret: client_secret.toString() });
     console.log(client)
     console.log(ARR_AUTH_TOKENS[AUTH_TOKEN])
-    
+
     if (client && ARR_AUTH_TOKENS[AUTH_TOKEN]) {
-        console.log("ok")
+        console.log("access granted ")
         var token = crypto.randomBytes(256).toString("hex");
         access_tokens[token] = ARR_AUTH_TOKENS[AUTH_TOKEN]
         delete ARR_AUTH_TOKENS[AUTH_TOKEN];
@@ -271,7 +271,6 @@ app.post("/allThreads", async (req, res) => {
             return post
         }));
 
-        console.log(`dati`, dati);
         res.json(dati);
     } catch (error) {
         console.log(`error`, error);
