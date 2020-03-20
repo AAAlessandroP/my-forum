@@ -37,7 +37,6 @@ function h(s) {
 }
 
 
-var sessioni = {};
 var ARR_AUTH_TOKENS = {};
 var access_tokens = {};
 
@@ -162,64 +161,62 @@ app.post("/newQuestion", (req, res) => {
     var tipo = req.body.tipo;
     var sessid = req.body.sessid;
 
-    if (sessioni[sessid])
-        MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, (err, db) => {
-            if (err) {
-                res.sendStatus(401);
-                db.close();
-                throw err;
-            }
-            let key = sessioni[sessid].chiave;
-            var nuovaAttivita;
-            if (tipo == "Semplice")
-                nuovaAttivita = {
-                    Name: c(nome.toString(), key),
-                    Text: c(testo.toString(), key),
-                    Tipo: tipo,
-                    AppartenenteA: sessioni[sessid].IDUtente,
-                    BroadcastDelDom: sessioni[sessid].IDSuoDominio
-                };
-            else if (tipo == "scheda con scadenza") {
-                nuovaAttivita = {
-                    Name: c(nome.toString(), key),
-                    Text: c(testo.toString(), key),
-                    ScadeIL: c(req.body.scadenza.toString(), key),
-                    Tipo: tipo,
-                    AppartenenteA: sessioni[sessid].IDUtente,
-                    BroadcastDelDom: sessioni[sessid].IDSuoDominio
-                };
-            } else {
-                res.sendStatus(500);
-                return;
-            }
+    MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, (err, db) => {
+        if (err) {
+            res.sendStatus(401);
+            db.close();
+            throw err;
+        }
+        let key = sessioni[sessid].chiave;
+        var nuovaAttivita;
+        if (tipo == "Semplice")
+            nuovaAttivita = {
+                Name: c(nome.toString(), key),
+                Text: c(testo.toString(), key),
+                Tipo: tipo,
+                AppartenenteA: sessioni[sessid].IDUtente,
+                BroadcastDelDom: sessioni[sessid].IDSuoDominio
+            };
+        else if (tipo == "scheda con scadenza") {
+            nuovaAttivita = {
+                Name: c(nome.toString(), key),
+                Text: c(testo.toString(), key),
+                ScadeIL: c(req.body.scadenza.toString(), key),
+                Tipo: tipo,
+                AppartenenteA: sessioni[sessid].IDUtente,
+                BroadcastDelDom: sessioni[sessid].IDSuoDominio
+            };
+        } else {
+            res.sendStatus(500);
+            return;
+        }
 
-            if (req.files) {
-                var docs = []
-                if (req.files.docs instanceof Array)
-                    req.files.docs.forEach(element => {
-                        docs.push(c(JSON.stringify(element), key))
-                    });
-                else
-                    docs.push(c(JSON.stringify(req.files.docs), key))
-                nuovaAttivita.allegati = docs;
-            }
-
-            // console.log(`nuovaAttivita`, nuovaAttivita);
-            db.db("forum")
-                .collection("dati")
-                .insertOne(nuovaAttivita, function (err, resIns) {
-                    // console.log(`resIns`, resIns);
-                    if (err || resIns.insertedCount != 1) {
-                        res.sendStatus(401);
-                        db.close();
-                        throw err;
-                    }
-                    console.log("1 nuovo doc inserito");
-                    db.close();
-                    res.send(resIns.insertedId);
+        if (req.files) {
+            var docs = []
+            if (req.files.docs instanceof Array)
+                req.files.docs.forEach(element => {
+                    docs.push(c(JSON.stringify(element), key))
                 });
-        });
-    else res.sendStatus(401);
+            else
+                docs.push(c(JSON.stringify(req.files.docs), key))
+            nuovaAttivita.allegati = docs;
+        }
+
+        // console.log(`nuovaAttivita`, nuovaAttivita);
+        db.db("forum")
+            .collection("dati")
+            .insertOne(nuovaAttivita, function (err, resIns) {
+                // console.log(`resIns`, resIns);
+                if (err || resIns.insertedCount != 1) {
+                    res.sendStatus(401);
+                    db.close();
+                    throw err;
+                }
+                console.log("1 nuovo doc inserito");
+                db.close();
+                res.send(resIns.insertedId);
+            });
+    });
 });
 // new reply
 // new reply
@@ -325,7 +322,6 @@ app.post("/modificaNota", async (req, res) => {
     var testoNuovo = req.body.testo;
     var scadenza = req.body.scadenza;
 
-    if (sessioni[sessid]) {
 
         try {
             var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -352,13 +348,11 @@ app.post("/modificaNota", async (req, res) => {
         } catch (error) {
             res.sendStatus(503);
         }
-    } else res.sendStatus(401);
 });
 
 app.post("/delNota", function (req, res) {
     var sessid = req.body.sessid;
     var IDNota = req.body.IDNota;
-    if (sessioni[sessid]) {
         MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, (err, db) => {
             if (err) {
                 res.sendStatus(401);
@@ -377,7 +371,6 @@ app.post("/delNota", function (req, res) {
                         res.sendStatus(500);
                 });
         });
-    } else res.sendStatus(401);
 });
 
 app.post("/share", function (req, res) {
