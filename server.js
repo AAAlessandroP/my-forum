@@ -173,26 +173,19 @@ app.post("/addUser", loggedChecker, async (req, res) => {
     }
 });
 
-app.post("/newQuestion", (req, res) => {
-
-    console.log('req.files', req.files);
-
+app.post("/newQuestion", loggedChecker, async (req, res) => {
 
     var nome = req.body.nome;
-    var testo = req.body.testo;
-    var tipo = req.body.tipo;
-    var sessid = req.body.sessid;
 
-    try{
-    var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-    let key = req.session.lui.chiave;
+    try {
+        var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+        let key = req.session.lui.chiave;
         var nuovaAttivita;
         nuovaAttivita = {
             Name: c(nome.toString(), key),
             Text: c(testo.toString(), key),
             Tipo: tipo,
             AppartenenteA: req.session.lui.IDUtente,
-            BroadcastDelDom: req.session.lui.IDSuoDominio
         }
  (req.files) {
             var docs = []
@@ -209,7 +202,7 @@ app.post("/newQuestion", (req, res) => {
         db.db("forum")
             .collection("dati")
             .insertOne(nuovaAttivita, function (err, resIns) {
-              catch(error){
+               catch (error) {
         console.error(error)
     } // console.log(`resIns`, resIns);
                 if (err || resIns.insertedCount != 1) {
