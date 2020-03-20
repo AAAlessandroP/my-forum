@@ -152,7 +152,7 @@ app.post("/addUser", async (req, res) => {
     }
 });
 
-app.post("/newActivity", (req, res) => {
+app.post("/newQuestion", (req, res) => {
 
     console.log('req.files', req.files);
 
@@ -221,7 +221,9 @@ app.post("/newActivity", (req, res) => {
         });
     else res.sendStatus(401);
 });
-
+// new reply
+// new reply
+// new reply
 app.post("/allUsers", async (req, res) => {
 
     try {
