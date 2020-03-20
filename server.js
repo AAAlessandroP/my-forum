@@ -377,3 +377,28 @@ app.post("/delNota", function (req, res) {
         });
     } else res.sendStatus(401);
 });
+
+app.post("/share", function (req, res) {
+    var sessid = req.body.sessid;
+    var IDNota = req.body.IDNota;
+    if (sessioni[sessid]) {
+        MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, (err, db) => {
+            if (err) {
+                res.sendStatus(401);
+                db.close();
+                throw err;
+            }
+            console.log(`sessioni[sessid]`, sessioni[sessid]);
+            db.db("forum")
+                .collection("dati")
+                .deleteOne({ _id: ObjectId(IDNota), BroadcastDelDom: sessioni[sessid].IDSuoDominio, AppartenenteA: sessioni[sessid].IDUtente }, (error, result) => {
+
+                    assert.equal(err, null);
+                    if (result.deletedCount == 1)
+                        res.sendStatus(200);
+                    else
+                        res.sendStatus(500);
+                });
+        });
+    } else res.sendStatus(401);
+});
