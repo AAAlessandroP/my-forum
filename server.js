@@ -379,9 +379,9 @@ app.post("/delNota", function (req, res) {
 });
 
 app.post("/share", function (req, res) {
-    var sessid = req.body.sessid;
     var IDNota = req.body.IDNota;
-    // aggiungo la 
+    // aggiungo la nota che il client ci ha passato
+
     // if (sessioni[sessid]) {
     //     MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, (err, db) => {
     //         if (err) {
