@@ -391,5 +391,6 @@ app.post("/delNota", function (req, res) {
 app.post("/share", function (req, res) {
     var IDNota = req.body.IDNota;
     // aggiungo la nota che il client ci ha passato
+    // aggiungo la nota che il client ci ha passato
 
 });
