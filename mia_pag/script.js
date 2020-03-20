@@ -20,13 +20,14 @@ $(function () {
             //appendo eventuali parametri dalla querystring della pagina principale '/'
             $.get("/login", obj).always((receivedData, status) => {
                 console.log(`status`, status);
+                console.log(`receivedData`, receivedData);
 
                 if (status == "success") {
                     if (!receivedData.includes("<script>")) {
-                        $("#showAdd").show(1000)
+                        $("#AddMessage").show(1000)
                     }
                     else
-                        $("body").append(receivedData)
+                        $("body").append(receivedData)//è il redirect a ms-teams
                 } else alert("riprova credenziali");
             });
             // singleton = false;
