@@ -10,14 +10,27 @@ app.use(bodyParser.json({
     limit: 50 * 1024
 }));
 const { ObjectId } = require("mongodb");
+const session = require('express-session')
+
 app.use(express.static("mia_pag")); // include con USE
 app.use(cors())
 "use strict";
 
 app.listen(3000);
-// RIFARLO CON WEBSOCKET
-// RIFARLO CON WEBSOCKET
-// RIFARLO CON WEBSOCKET
+app.use(
+    session({
+        // store,
+        name: 'sid',
+        saveUninitialized: false,
+        resave: false,
+        secret: `quiet, pal! it's a secret!`,
+        cookie: {
+            maxAge: 1000 * 60 * 60 * 2,
+            sameSite: true,
+            secure: process.env.NODE_ENV === 'production'
+        }
+    })
+)
 console.log("* app in funzione *");
 const uri = `mongodb+srv://forum:${process.env.PASS}@miocluster2-igwb8.mongodb.net/test?retryWrites=true&w=majority`;
 
@@ -54,11 +67,12 @@ app.get("/login", async (req, res) => {
         var user = await db.db("forum").collection("utenti").findOne({ Name });
         if (user && user.HashedPwd === h(user.Salt + pass)) {
             var sessId = crypto.randomBytes(32).toString("hex");
-            sessioni[sessId] = {
+            req.session.lui = {
                 IDUtente: user._id,
+                IDSuoDominio: user.Dominio,
                 Utente: user.Name,
                 chiave: pass
-            };
+            }
             if (!redirect_uri) // req da script.js
                 res.send(sessId);
             else {// req da / per /login con parametri get passati a  /
@@ -132,11 +146,12 @@ app.post("/addUser", async (req, res) => {
                 assert.notEqual(resIns, null)
 
                 var sessId = crypto.randomBytes(32).toString("hex");
-                sessioni[sessId] = {
-                    IDUtente: resIns.insertedId,//$conn->insert_iid
-                    Utente: name,
+                req.session.lui = {
+                    IDUtente: user._id,
+                    IDSuoDominio: user.Dominio,
+                    Utente: user.Name,
                     chiave: pass
-                };
+                }
                 res.send(sessId);
             } catch (error) {
                 console.log(`error`, error);
@@ -167,15 +182,15 @@ app.post("/newQuestion", (req, res) => {
             db.close();
             throw err;
         }
-        let key = sessioni[sessid].chiave;
+        let key = req.session.lui.chiave;
         var nuovaAttivita;
         if (tipo == "Semplice")
             nuovaAttivita = {
                 Name: c(nome.toString(), key),
                 Text: c(testo.toString(), key),
                 Tipo: tipo,
-                AppartenenteA: sessioni[sessid].IDUtente,
-                BroadcastDelDom: sessioni[sessid].IDSuoDominio
+                AppartenenteA: req.session.lui.IDUtente,
+                BroadcastDelDom: req.session.lui.IDSuoDominio
             };
         else if (tipo == "scheda con scadenza") {
             nuovaAttivita = {
@@ -183,8 +198,8 @@ app.post("/newQuestion", (req, res) => {
                 Text: c(testo.toString(), key),
                 ScadeIL: c(req.body.scadenza.toString(), key),
                 Tipo: tipo,
-                AppartenenteA: sessioni[sessid].IDUtente,
-                BroadcastDelDom: sessioni[sessid].IDSuoDominio
+                AppartenenteA: req.session.lui.IDUtente,
+                BroadcastDelDom: req.session.lui.IDSuoDominio
             };
         } else {
             res.sendStatus(500);
@@ -323,78 +338,58 @@ app.post("/modificaNota", async (req, res) => {
     var scadenza = req.body.scadenza;
 
 
-        try {
-            var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-            var whatSet = {
-                $set: {
-                    Text: c(testoNuovo.toString(), key),
-                    Name: c(titoloNuovo.toString(), key)
-                }
-            };
-            let key = sessioni[sessid].chiave;
+    try {
+        var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+        var whatSet = {
+            $set: {
+                Text: c(testoNuovo.toString(), key),
+                Name: c(titoloNuovo.toString(), key)
+            }
+        };
+        let key = req.session.lui.chiave;
 
-            if (req.body.scadenza) whatSet.$set.ScadeIL = c(req.body.scadenza, key);
-            if (req.files)
-                whatSet.$push = { allegati: c(JSON.stringify(req.files.docs), key) };
-            let what = { _id: ObjectId(IDNota), BroadcastDelDom: sessioni[sessid].IDSuoDominio, AppartenenteA: sessioni[sessid].IDUtente }
+        if (req.body.scadenza) whatSet.$set.ScadeIL = c(req.body.scadenza, key);
+        if (req.files)
+            whatSet.$push = { allegati: c(JSON.stringify(req.files.docs), key) };
+        let what = { _id: ObjectId(IDNota), BroadcastDelDom: req.session.lui.IDSuoDominio, AppartenenteA: req.session.lui.IDUtente }
 
-            let result = await db.db("forum").collection("dati").updateOne(what, whatSet);
-            // assert.equal(result.modifiedCount, 1); sennò se cerco di modificarlo con dati identici a quelli preesistenti va a 0 modifiedCount
-            assert.equal(result.matchedCount, 1);
+        let result = await db.db("forum").collection("dati").updateOne(what, whatSet);
+        // assert.equal(result.modifiedCount, 1); sennò se cerco di modificarlo con dati identici a quelli preesistenti va a 0 modifiedCount
+        assert.equal(result.matchedCount, 1);
 
-            var newNote = await db.db("forum").collection("dati").findOne({ _id: ObjectId(IDNota) });
-            db.close();
-            res.json(newNote);
-        } catch (error) {
-            res.sendStatus(503);
-        }
+        var newNote = await db.db("forum").collection("dati").findOne({ _id: ObjectId(IDNota) });
+        db.close();
+        res.json(newNote);
+    } catch (error) {
+        res.sendStatus(503);
+    }
 });
 
 app.post("/delNota", function (req, res) {
     var sessid = req.body.sessid;
     var IDNota = req.body.IDNota;
-        MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, (err, db) => {
-            if (err) {
-                res.sendStatus(401);
-                db.close();
-                throw err;
-            }
-            console.log(`sessioni[sessid]`, sessioni[sessid]);
-            db.db("forum")
-                .collection("dati")
-                .deleteOne({ _id: ObjectId(IDNota), BroadcastDelDom: sessioni[sessid].IDSuoDominio, AppartenenteA: sessioni[sessid].IDUtente }, (error, result) => {
+    MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, (err, db) => {
+        if (err) {
+            res.sendStatus(401);
+            db.close();
+            throw err;
+        }
+        console.log(`req.session.lui`, req.session.lui);
+        db.db("forum")
+            .collection("dati")
+            .deleteOne({ _id: ObjectId(IDNota), BroadcastDelDom: req.session.lui.IDSuoDominio, AppartenenteA: req.session.lui.IDUtente }, (error, result) => {
 
-                    assert.equal(err, null);
-                    if (result.deletedCount == 1)
-                        res.sendStatus(200);
-                    else
-                        res.sendStatus(500);
-                });
-        });
+                assert.equal(err, null);
+                if (result.deletedCount == 1)
+                    res.sendStatus(200);
+                else
+                    res.sendStatus(500);
+            });
+    });
 });
 
 app.post("/share", function (req, res) {
     var IDNota = req.body.IDNota;
     // aggiungo la nota che il client ci ha passato
 
-    // if (sessioni[sessid]) {
-    //     MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, (err, db) => {
-    //         if (err) {
-    //             res.sendStatus(401);
-    //             db.close();
-    //             throw err;
-    //         }
-    //         console.log(`sessioni[sessid]`, sessioni[sessid]);
-    //         db.db("forum")
-    //             .collection("dati")
-    //             .deleteOne({ _id: ObjectId(IDNota), BroadcastDelDom: sessioni[sessid].IDSuoDominio, AppartenenteA: sessioni[sessid].IDUtente }, (error, result) => {
-
-    //                 assert.equal(err, null);
-    //                 if (result.deletedCount == 1)
-    //                     res.sendStatus(200);
-    //                 else
-    //                     res.sendStatus(500);
-    //             });
-    //     });
-    // } else res.sendStatus(401);
 });
