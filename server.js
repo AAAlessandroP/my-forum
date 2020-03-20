@@ -49,11 +49,18 @@ function h(s) {
     return hash.digest("base64");
 }
 
+function loggedChecker(req, res, next) {
+    console.log("req.session.lui", req.session.lui)
+    if (req.session.lui !== undefined)
+        next()
+    else
+        res.sendStatus(401)
+}
 
 var ARR_AUTH_TOKENS = {};
 var access_tokens = {};
 
-app.get("/login", async (req, res) => {
+app.get("/login",loggedChecker,loggedChecker, async (req, res) => {
     var Name = req.query.utente;
     var pass = req.query.passw;
 
@@ -89,7 +96,7 @@ app.get("/login", async (req, res) => {
     db.close()
 });
 
-app.post("/getToken", async (req, res) => {
+app.post("/getToken",loggedChecker, async (req, res) => {
     var AUTH_TOKEN = req.body.AUTH_TOKEN;
     var client_id = req.body.client_id;
     var client_secret = req.body.client_secret;
@@ -113,7 +120,7 @@ app.post("/getToken", async (req, res) => {
     db.close()
 });
 
-app.post("/addUser", async (req, res) => {
+app.post("/addUser",loggedChecker, async (req, res) => {
     var name = req.body.utente;
     var pass = req.body.passw;
     var salt = crypto.randomBytes(32).toString("hex");
@@ -236,7 +243,7 @@ app.post("/newQuestion", (req, res) => {
 // new reply
 // new reply
 // new reply
-app.post("/allUsers", async (req, res) => {
+app.post("/allUsers",loggedChecker, async (req, res) => {
 
     try {
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -256,7 +263,7 @@ app.post("/allUsers", async (req, res) => {
 
 var Page = require("./userPageMod")
 
-app.get("/user/:uid", async (req, res) => {
+app.get("/user/:uid",loggedChecker, async (req, res) => {
     var uid = req.params.uid
 
     let o = ObjectId(uid);
@@ -269,7 +276,7 @@ app.get("/user/:uid", async (req, res) => {
 
 var ThreadPage = require("./threadPageMod")
 
-app.post("/allThreads", async (req, res) => {
+app.post("/allThreads",loggedChecker, async (req, res) => {
 
     try {
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -297,7 +304,7 @@ app.post("/allThreads", async (req, res) => {
 // ORDER BY data
 // ORDER BY data
 
-app.get("/thread/:id", async (req, res) => {
+app.get("/thread/:id",loggedChecker, async (req, res) => {
     var id = req.params.id
     //se :id è foglia tira fuori solo quella: invece deve essere: se prima domanda-> i reply a lei; sennò i reply alla ? a cui si replicava
     var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -329,7 +336,7 @@ app.get("/thread/:id", async (req, res) => {
     db.close()
 });
 
-app.post("/modificaNota", async (req, res) => {
+app.post("/modificaNota",loggedChecker, async (req, res) => {
 
     var sessid = req.body.sessid;
     var IDNota = req.body.IDNota;
