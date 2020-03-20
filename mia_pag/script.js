@@ -67,6 +67,12 @@ $(function () {
             });
     });
 
+    $("#nuova_domanda").click(() => {
+        $.post("/newQuestion", { domanda: $("#domanda").val() })
+            .done()
+    });
+})
+
 });
 function f(chi) {
     console.log(`chi`, chi.id);
