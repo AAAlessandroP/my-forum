@@ -245,7 +245,7 @@ app.post("/newQuestion", (req, res) => {
 // new reply
 // new reply
 // new reply
-app.post("/allUsers",loggedChecker, async (req, res) => {
+app.post("/allUsers", async (req, res) => {
 
     try {
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -264,8 +264,7 @@ app.post("/allUsers",loggedChecker, async (req, res) => {
 });
 
 var Page = require("./userPageMod")
-
-app.get("/user/:uid",loggedChecker, async (req, res) => {
+app.get("/user/:uid", async (req, res) => {
     var uid = req.params.uid
 
     let o = ObjectId(uid);
@@ -278,7 +277,7 @@ app.get("/user/:uid",loggedChecker, async (req, res) => {
 
 var ThreadPage = require("./threadPageMod")
 
-app.post("/allThreads",loggedChecker, async (req, res) => {
+app.post("/allThreads", async (req, res) => {
 
     try {
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -293,7 +292,7 @@ app.post("/allThreads",loggedChecker, async (req, res) => {
             post.ByName = a.Name
             return post
         }));
-
+        // console.log("dati",dati)
         res.json(dati);
     } catch (error) {
         console.log(`error`, error);
@@ -306,7 +305,7 @@ app.post("/allThreads",loggedChecker, async (req, res) => {
 // ORDER BY data
 // ORDER BY data
 
-app.get("/thread/:id",loggedChecker, async (req, res) => {
+app.get("/thread/:id", async (req, res) => {
     var id = req.params.id
     //se :id è foglia tira fuori solo quella: invece deve essere: se prima domanda-> i reply a lei; sennò i reply alla ? a cui si replicava
     var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
