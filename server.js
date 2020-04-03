@@ -34,19 +34,20 @@ app.use(
 console.log("* app in funzione *");
 const uri = `mongodb+srv://forum:${process.env.PASS}@miocluster2-igwb8.mongodb.net/test?retryWrites=true&w=majority`;
 
+{
+// function c(s, key) {
+//     return crypto.createCipher("aes-256-ctr", key).update(s.toString(), "utf-8", "hex");
+// }
 
-function c(s, key) {
-    return crypto.createCipher("aes-256-ctr", key).update(s.toString(), "utf-8", "hex");
-}
-
-function d(s, key) {
-    return crypto.createDecipher("aes-256-ctr", key).update(s, "hex", "utf-8");
-}
+// function d(s, key) {
+//     return crypto.createDecipher("aes-256-ctr", key).update(s, "hex", "utf-8");
+// }
 
 function h(s) {
     var hash = crypto.createHash("sha256");
     hash.update(s);
     return hash.digest("base64");
+}
 }
 
 function loggedChecker(req, res, next) {
@@ -60,7 +61,7 @@ function loggedChecker(req, res, next) {
 var ARR_AUTH_TOKENS = {};
 var access_tokens = {};
 
-app.get("/login",loggedChecker,loggedChecker, async (req, res) => {
+app.get("/login",loggedChecker, async (req, res) => {
     var Name = req.query.utente;
     var pass = req.query.passw;
 
@@ -69,7 +70,6 @@ app.get("/login",loggedChecker,loggedChecker, async (req, res) => {
     var scope = req.query.scope
 
     try {
-
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
         var user = await db.db("forum").collection("utenti").findOne({ Name });
         if (user && user.HashedPwd === h(user.Salt + pass)) {
@@ -120,7 +120,7 @@ app.post("/getToken",loggedChecker, async (req, res) => {
     db.close()
 });
 
-app.post("/addUser",loggedChecker, async (req, res) => {
+app.post("/addUser", async (req, res) => {
     var name = req.body.utente;
     var pass = req.body.passw;
     var salt = crypto.randomBytes(32).toString("hex");
@@ -167,6 +167,8 @@ app.post("/addUser",loggedChecker, async (req, res) => {
         } else res.send("username already taken");
 
         db.close();
+        res.sendStatus(200);
+      
     } catch (error) {
         console.log(`error`, error);
         res.sendStatus(500);
