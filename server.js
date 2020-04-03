@@ -60,7 +60,7 @@ function loggedChecker(req, res, next) {
 var ARR_AUTH_TOKENS = {};
 var access_tokens = {};
 
-app.get("/login", loggedChecker, loggedChecker, async (req, res) => {
+app.get("/login",loggedChecker,loggedChecker, async (req, res) => {
     var Name = req.query.utente;
     var pass = req.query.passw;
 
@@ -96,7 +96,7 @@ app.get("/login", loggedChecker, loggedChecker, async (req, res) => {
     db.close()
 });
 
-app.post("/getToken", loggedChecker, async (req, res) => {
+app.post("/getToken",loggedChecker, async (req, res) => {
     var AUTH_TOKEN = req.body.AUTH_TOKEN;
     var client_id = req.body.client_id;
     var client_secret = req.body.client_secret;
@@ -120,7 +120,7 @@ app.post("/getToken", loggedChecker, async (req, res) => {
     db.close()
 });
 
-app.post("/addUser", loggedChecker, async (req, res) => {
+app.post("/addUser",loggedChecker, async (req, res) => {
     var name = req.body.utente;
     var pass = req.body.passw;
     var salt = crypto.randomBytes(32).toString("hex");
@@ -173,13 +173,77 @@ app.post("/addUser", loggedChecker, async (req, res) => {
     }
 });
 
-app.post("/newQuestion", loggedChecker, async (req, res) => {
+app.post("/newQuestion", (req, res) => {
 
+    console.log('req.files', req.files);
+
+
+    var nome = req.body.nome;
+    var testo = req.body.testo;
+    var tipo = req.body.tipo;
+    var sessid = req.body.sessid;
+
+    MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, (err, db) => {
+        if (err) {
+            res.sendStatus(401);
+            db.close();
+            throw err;
+        }
+        let key = req.session.lui.chiave;
+        var nuovaAttivita;
+        if (tipo == "Semplice")
+            nuovaAttivita = {
+                Name: c(nome.toString(), key),
+                Text: c(testo.toString(), key),
+                Tipo: tipo,
+                AppartenenteA: req.session.lui.IDUtente,
+                BroadcastDelDom: req.session.lui.IDSuoDominio
+            };
+        else if (tipo == "scheda con scadenza") {
+            nuovaAttivita = {
+                Name: c(nome.toString(), key),
+                Text: c(testo.toString(), key),
+                ScadeIL: c(req.body.scadenza.toString(), key),
+                Tipo: tipo,
+                AppartenenteA: req.session.lui.IDUtente,
+                BroadcastDelDom: req.session.lui.IDSuoDominio
+            };
+        } else {
+            res.sendStatus(500);
+            return;
+        }
+
+        if (req.files) {
+            var docs = []
+            if (req.files.docs instanceof Array)
+                req.files.docs.forEach(element => {
+                    docs.push(c(JSON.stringify(element), key))
+                });
+            else
+                docs.push(c(JSON.stringify(req.files.docs), key))
+            nuovaAttivita.allegati = docs;
+        }
+
+        // console.log(`nuovaAttivita`, nuovaAttivita);
+        db.db("forum")
+            .collection("dati")
+            .insertOne(nuovaAttivita, function (err, resIns) {
+                // console.log(`resIns`, resIns);
+                if (err || resIns.insertedCount != 1) {
+                    res.sendStatus(401);
+                    db.close();
+                    throw err;
+                }
+                console.log("1 nuovo doc inserito");
+                db.close();
+                res.send(resIns.insertedId);
+            });
+    });
 });
 // new reply
 // new reply
 // new reply
-app.post("/allUsers", loggedChecker, async (req, res) => {
+app.post("/allUsers",loggedChecker, async (req, res) => {
 
     try {
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -199,7 +263,7 @@ app.post("/allUsers", loggedChecker, async (req, res) => {
 
 var Page = require("./userPageMod")
 
-app.get("/user/:uid", loggedChecker, async (req, res) => {
+app.get("/user/:uid",loggedChecker, async (req, res) => {
     var uid = req.params.uid
 
     let o = ObjectId(uid);
@@ -212,11 +276,11 @@ app.get("/user/:uid", loggedChecker, async (req, res) => {
 
 var ThreadPage = require("./threadPageMod")
 
-app.post("/allThreads", loggedChecker, async (req, res) => {
+app.post("/allThreads",loggedChecker, async (req, res) => {
 
     try {
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-        var dati        console.log("dati", dati) = await db
+        var dati = await db
             .db("forum")
             .collection("messaggi")
             .find({ replyTo: null })
@@ -240,7 +304,7 @@ app.post("/allThreads", loggedChecker, async (req, res) => {
 // ORDER BY data
 // ORDER BY data
 
-app.get("/thread/:id", loggedChecker, async (req, res) => {
+app.get("/thread/:id",loggedChecker, async (req, res) => {
     var id = req.params.id
     //se :id è foglia tira fuori solo quella: invece deve essere: se prima domanda-> i reply a lei; sennò i reply alla ? a cui si replicava
     var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -272,7 +336,7 @@ app.get("/thread/:id", loggedChecker, async (req, res) => {
     db.close()
 });
 
-app.post("/modificaNota", loggedChecker, async (req, res) => {
+app.post("/modificaNota",loggedChecker, async (req, res) => {
 
     var sessid = req.body.sessid;
     var IDNota = req.body.IDNota;
