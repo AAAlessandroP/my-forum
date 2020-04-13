@@ -15,16 +15,22 @@
 <body style="background-color:grey">
 
     <div class="container">
-        <div class="row">
-            <div class="col-lg" style="background-color:yellowgreen">
+        <div class="row divAccesso">
+            <div class="col-md" style="background-color:yellowgreen">
                 Fai l'accesso
             </div>
         </div>
-        <div class="row">
+        <div class="row divAccesso">
             <div class="col-lg" style="background-color:yellowgreen">
                 Utenza:<input type="text" id="Codice"><br>
                 Codice d'accesso:<input type="password" id="passw">
                 <input type="button" value="Fai l'accesso" id="submitLogin">
+                <a href="https://github.com/login/oauth/authorize?client_id=9468a9a53590c81cc3b9">Accedi con
+                    GitHub</a>
+                <a
+                    href="https://www.facebook.com/v6.0/dialog/oauth?client_id=2546945782289657&redirect_uri=http://localhost:3000/fromFB&state=123">Accedi
+                    con
+                    Facebook</a>
                 <input type="button" value="registrati" id="submitRegistrati">
             </div>
         </div>
@@ -32,8 +38,11 @@
             <div class="col-lg" style="background-color:rgb(11, 145, 11)">
                 <div id="AddMessage" style="display: none;">
                     <div>
+                        <br>
+                        fai una nuova domanda:
                         <input type="text" placeholder="fai una nuova domanda" id="domanda">
                         <input type="button" id="nuova_domanda" value="vai">
+                        <br>
                     </div>
                 </div>
             </div>
