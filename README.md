@@ -1,4 +1,4 @@
 # Welcome to My App visitor!
 
-app that imitates trello & MS Teams
-i'm still working on it
+A node-mongo-ajax forum 
+I'm still working on it
