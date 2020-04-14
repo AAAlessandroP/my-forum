@@ -4,6 +4,7 @@ var bodyParser = require("body-parser");
 const crypto = require("crypto");
 const fetch = require('node-fetch');
 const cors = require("cors");
+const nodemailer = require("nodemailer");
 const MongoClient = require("mongodb").MongoClient;
 var app = express();
 app.use(bodyParser.urlencoded({ extended: false, limit: 50 * 1024 * 1024 }));
@@ -39,14 +40,21 @@ app.use(
         }
     })
 )
-const uri = `mongodb+srv://forum:${process.env.PASS}@miocluster2-igwb8.mongodb.net/test?retryWrites=true&w=majority`;
 
+if (process.env.NODE_ENV == 'production')
+    home_sito = "https://my-forum.glitch.me"
+else
+    home_sito = "http://localhost:3000"
+
+const uri = `mongodb+srv://forum:${process.env.MONGO_PASS}@miocluster2-igwb8.mongodb.net/test?retryWrites=true&w=majority`;
 //  todo gli STATE del redirect validi in funzione del tempo(cambiano con, non lo stesso sempre)
-
+//  todo gli STATE del redirect validi in funzione del tempo(cambiano con, non lo stesso sempre)
+//  todo gli STATE del redirect validi in funzione del tempo(cambiano con, non lo stesso sempre)
 // '5e726f0534058302ceb2ccc2' è il _id pescato da una query
 // ObjectId('5e726f0534058302ceb2ccc2') == '5e726f0534058302ceb2ccc2' sì
 // ObjectId('5e726f0534058302ceb2ccc2') == ObjectId(ObjectId('5e726f0534058302ceb2ccc2')) sì
 
+// i temp token che arrivano all'endoint nostro sono usabili una sola volta
 function h(s) {
     var hash = crypto.createHash("sha256");
     hash.update(s);
@@ -72,9 +80,10 @@ async function infoSuDiMeGH(token) {
     });
     return response.json();
 }
-
+// TODO quando faccio l'@ medo la lista di possibili target
+// TODO quando faccio l'@ medo la lista di possibili target
 async function infoSuDiMeFB(token) {
-    let url = `https://graph.facebook.com/v6.0/me?fields=id%2Cname&access_token=` + token
+    let url = `https://graph.facebook.com/v6.0/me?fields=id%2Cemail%2Cname&access_token=` + token
     const response = await fetch(url, {
         method: 'GET',
         headers: {
@@ -87,10 +96,11 @@ async function infoSuDiMeFB(token) {
 app.get("/fromGH", async (req, res) => {
     // endpoint del redirect da gh, che ci dà il code e ottenere il token , noi facciamo accedere l'user già registrato/lo registriamo
     console.log("req.query", req.query)
-    var client_id = '9468a9a53590c81cc3b9';
-    var client_secret = process.env.FB_PASS
+    var client_id = process.env.NODE_ENV == 'production' ? process.env.GH_PROD_ID : process.env.GH_DEV_ID
+    var client_secret = process.env.NODE_ENV == 'production' ? process.env.GH_PROD_PASS : process.env.GH_DEV_PASS
     var code = req.query.code
-
+    console.log(`client_secret`, client_secret);
+    console.log(`client_id`, client_id);
 
     fetch('https://github.com/login/oauth/access_token', {
         method: 'post',
@@ -103,22 +113,22 @@ app.get("/fromGH", async (req, res) => {
                 // ObjectId(userOnFB.id.padStart(24, "0"))
                 // console.log(`data.access_token`, data.access_token);
                 let userOnGH = await infoSuDiMeGH(data.access_token);
-                // console.log(`userOnGH`, userOnGH);
+                console.log(`userOnGH`, userOnGH);
                 var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-                var lui = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(userOnGH.id.padStart(24, "0")) });
+                var lui = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(userOnGH.id.toString().padStart(24, "0")) });
                 if (!lui) { //se non c'era già
                     req.session.token = data.access_token
                     let userOnGH = await infoSuDiMeGH(req.session.token);
                     var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
                     await db.db("forum").collection("utenti").insertOne(
                         {
-                            _id: ObjectId(userOnGH.id.padStart(24, "0")),
+                            _id: ObjectId(userOnGH.id.toString().padStart(24, "0")),
                             token: req.session.token,
                             Name: userOnGH.login,
                         }, { safe: true, upsert: true });
 
                     req.session.lui = {
-                        IDUtente: ObjectId(userOnGH.id.padStart(24, "0")),
+                        IDUtente: ObjectId(userOnGH.id.toString().padStart(24, "0")),
                         Utente: userOnGH.login,
                     }
                 } else {
@@ -141,12 +151,13 @@ app.get("/fromGH", async (req, res) => {
 
 app.get("/fromFB", async (req, res) => {
     // endpoint del redirect da fb, che ci dà il code e ottenere il token , noi facciamo accedere l'user già registrato/lo registriamo
-    console.log("req.query", req.query)
-    var client_id = '2546945782289657';
+    var client_id = process.env.FB_ID
     var client_secret = process.env.FB_PASS
     var code = req.query.code//il token temporaneo da scambiare
+    // console.log(`client_id`, client_id);
+    // console.log(`client_secret`, client_secret);
 
-    var endpoint = `https://graph.facebook.com/v6.0/oauth/access_token?client_id=${client_id}&redirect_uri=http://localhost:3000/fromFB&client_secret=${client_secret}&code=${code}`;
+    endpoint = `https://graph.facebook.com/v6.0/oauth/access_token?client_id=${client_id}&redirect_uri=${home_sito}/fromFB&client_secret=${client_secret}&code=${code}`
 
     fetch(endpoint, {
         method: 'get',
@@ -155,19 +166,21 @@ app.get("/fromFB", async (req, res) => {
         .then(res => res.json())
         .then(async data => {
             try {
-                console.log(`data`, data);
+                // console.log(`data`, data);
                 let userOnFB = await infoSuDiMeFB(data.access_token);
-                console.log(`userOnFB`, userOnFB);
+                // console.log(`userOnFB`, userOnFB);
                 var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-                var lui = await db.db("forum").collection("utenti").findOne({ _id: userOnFB.id });
-                console.log(`lui`, lui);
+                var lui = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(userOnFB.id.toString().padStart(24, "0")) })
+                // console.log(`lui`, lui);
                 if (lui) { //se c'era già
                     req.session.token = data.access_token
                     var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-                    await db.db("forum").collection("utenti").findOneAndUpdate({ _id: ObjectId(userOnFB.id.padStart(24, "0")) },
+                    await db.db("forum").collection("utenti").findOneAndUpdate({ _id: ObjectId(userOnFB.id.toString().padStart(24, "0")) },
                         {
-                            token: data.access_token,
-                            expires_in: data.expires_in + Math.trunc(new Date().getTime() / 1000) //secondi rimanenti+ora attuale
+                            $set: {
+                                token: data.access_token,
+                                expires_in: data.expires_in + Math.trunc(new Date().getTime() / 1000) //secondi rimanenti+ora attuale
+                            }
                         }, { safe: true, upsert: false });
 
                     req.session.lui = {
@@ -181,24 +194,28 @@ app.get("/fromFB", async (req, res) => {
                         {
                             token: req.session.token,
                             expires_in: data.expires_in + Math.trunc(new Date().getTime() / 1000), //secondi rimanenti+ora attuale
-                            _id: ObjectId(userOnFB.id.padStart(24, "0")),
-                            Name: userOnFB.name,
+                            _id: ObjectId(userOnFB.id.toString().padStart(24, "0")),
+                            Name: userOnFB.name.toString().replace(" ", "_"),
+                            Email: userOnFB.email,
                         });
 
                     req.session.lui = {
-                        IDUtente: ObjectId(userOnFB.id.padStart(24, "0")),
+                        IDUtente: ObjectId(userOnFB.id.toString().padStart(24, "0")),
                         Utente: userOnFB.name,
                     }
                 }
-                res.redirect("/")
-
-                // ora l'user è su / con l'accesso
+                res.redirect("/")// ora l'user è su / con l'accesso
             } catch (error) {
                 console.log(`error`, error);
                 res.sendStatus(500);
                 return;
             }
-        });
+        }).catch(error => {
+            console.log(`error`, error);
+            res.sendStatus(500);
+        })
+
+
 });
 
 var ARR_AUTH_TOKENS = {};
@@ -346,11 +363,48 @@ app.post("/newQuestion", loggedChecker, async (req, res) => {
 
 });
 
+function sendMail(mess, to) {
+    var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.MAIL_ADDR,
+            pass: process.env.PASS_MAIL
+        }
+    });
+    var mailOptions = {
+        from: process.env.MAIL,
+        to,
+        subject: "ti hanno citato",
+        text: mess
+    };
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
+}
+
 app.post("/newReply", loggedChecker, async (req, res) => {
 
     try {
         var testo = req.body.text;
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+        //qualcuno è stato citato?
+        if (pos = testo.toString().search("@") !== -1) {
+            console.log(`testo.substring(pos)`, testo.substring(pos + 1));
+            let end = testo.substring(pos + 1).search(/.\b./)
+            let chi = testo.substring(pos + 1, pos + 2 + end)
+            console.log(chi);
+            var lui = await db.db("forum").collection("utenti").findOne({ Name: chi });
+            console.log(`lui.Email`, lui.Email);
+            if (lui.Email) {
+                sendMail(`sei stato citato da ${req.session.lui.Utente}.\n${req.session.lui.Utente} scrive: "${testo}" \nvedi il messaggio: ${home_sito}/thread/${ObjectId(req.body.replyTo)}`, lui.Email)
+            }
+            // notifica in alto
+        }
+
         let nuovaDomanda = {
             replyTo: ObjectId(req.body.replyTo),
             Text: testo,
@@ -360,11 +414,9 @@ app.post("/newReply", loggedChecker, async (req, res) => {
         var done = await db.db("forum").collection("messaggi").insertOne(nuovaDomanda);
         assert.equal(done.insertedCount, 1)
         res.sendStatus(200)
-        console.log(`done`, done);
     } catch (error) {
         console.log(`error`, error);
     }
-
 });
 
 app.post("/allUsers", async (req, res) => {
@@ -396,7 +448,7 @@ app.get("/user/:uid", async (req, res) => {
             uid = ObjectId(uid)
         } catch (error) {
             // l'id è quello corto di gh/fb allra
-            uid = ObjectId(uid.padStart(24, "0"))
+            uid = ObjectId(uid.toString().padStart(24, "0"))
         }
     } else {
         res.sendStatus(400)
@@ -440,7 +492,8 @@ app.get("/myPic", loggedChecker, async (req, res) => {
     console.log(`him`, him);
     res.send(him.picUrl || "https://raw.githubusercontent.com/Infernus101/ProfileUI/0690f5e61a9f7af02c30342d4d6414a630de47fc/icon.png")
 });
-
+// TODO NEWPIC
+// TODO NEWPIC
 app.post("/allQuestions", async (req, res) => {
 
     try {
@@ -496,7 +549,7 @@ app.get("/thread/:id", async (req, res) => {
             return post1
     })
 
-    res.send(ThreadPage.page(question_id, dati))
+    res.send(ThreadPage.page(question_id, dati, req.session.lui ? req.session.lui.IDUtente : null))
     db.close()
 });
 
@@ -516,7 +569,8 @@ app.post("/modificaNota", loggedChecker, async (req, res) => {
         res.sendStatus(500);
     }
 });
-
+// del
+// del
 app.post("/delNota", function (req, res) {
     var sessid = req.body.sessid;
     var IDNota = req.body.IDNota;
@@ -547,3 +601,7 @@ app.post("/share", function (req, res) {
     // aggiungo la nota che il client ci ha passato
 
 });
+
+// share su fb la nuova domanda
+// share su fb la nuova domanda
+// share su fb la nuova domanda

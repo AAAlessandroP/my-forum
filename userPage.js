@@ -23,7 +23,9 @@ function page(uid, hisData, hisPosts) {
 
     if (hisPosts.length)
         hisPosts.forEach(post => {
-            s += `<textarea readonly id=${post._id} onclick=f(this)> ${post.Text} </textarea> <br><br>`
+            s += `<textarea readonly id=${post._id}> ${post.Text} </textarea> 
+            <div style="display:inline;"</div> <img onclick=goto('${post._id}') src="/goto_icon.svg" alt="see it" height="20" width="20">
+            <br><br>`
         });
     else s += "<i>sembra che l'utente non abbia ancora scritto niente.</i>"
 
@@ -32,7 +34,7 @@ function page(uid, hisData, hisPosts) {
         </body>
     </html>
     <script>
-    f = chi=> window.location = \`/thread/\${chi.id}\`   
+    goto = chi=> window.location = \`/thread/\${chi}\`   
     </script>
     `;
     return s;
