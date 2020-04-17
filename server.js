@@ -2,6 +2,7 @@ var express = require("express");
 var assert = require("assert");
 var bodyParser = require("body-parser");
 const crypto = require("crypto");
+const Mastodon = require('mastodon-api');
 const fetch = require('node-fetch');
 const cors = require("cors");
 const nodemailer = require("nodemailer");
@@ -40,6 +41,29 @@ app.use(
         }
     })
 )
+
+
+
+
+
+// function toot() {
+//     const num = Math.floor(Math.random() * 100);
+//     const params = {
+//         spoiler_text: "The meaning of life is: ",
+//         status: num
+//     }
+//     M.post('statuses', params, (error, data) => {
+//         if (error) {
+//             console.error("error", error);
+//         } else {
+//             console.log(data);
+//             console.log(`ID: ${data.id} and timestamp: ${data.created_at}`);
+//         }
+//     });
+// }
+// toot()
+
+
 
 if (process.env.NODE_ENV == 'production')
     home_sito = "https://my-forum.glitch.me"
@@ -216,6 +240,60 @@ app.get("/fromFB", async (req, res) => {
         })
 
 
+});
+// share with fb ache sulle altre pagine
+// share with fb ache sulle altre pagine
+// share with fb ache sulle altre pagine
+// share with fb ache sulle altre pagine
+app.get("/fromMasto", async (req, res) => {
+    // endpoint del redirect da gh, che ci dà il code e ottenere il token , noi facciamo accedere l'user già registrato/lo registriamo
+    console.log("req.query", req.query)
+    var client_id = process.env.MASTO_APP_ID
+    var client_secret = process.env.MASTO_APP_SECR
+    var code = req.query.code
+    // let url = Mastodon.getAuthorizationUrl(client_id, client_secret, "https://botsin.space", "write", "http://localhost:3000/fromMasto")
+    // console.log(`url`, url); basta una volta e metti l'url nell'href
+    let p = Mastodon.getAccessToken(client_id, client_secret, code, "https://botsin.space", "http://localhost:3000/fromMasto")
+    p.then(access_token => {
+        console.log(`access_token`, access_token);
+        const M = new Mastodon({
+            client_key: process.env.MASTO_APP_ID,
+            client_secret: process.env.MASTO_APP_SECR,
+            access_token,
+            timeout_ms: 60 * 1000, // optional HTTP request timeout to apply to all requests.
+            api_url: 'https://botsin.space/api/v1/', // optional, defaults to https://mastodon.social/api/v1/
+        })
+
+        // serve lo scope:read per leggere qualunque cosa!
+        M.get('accounts/verify_credentials').then(async resp => {
+
+            const userOnMasto = resp.data;
+            var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+            var lui = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(userOnMasto.id.toString().padStart(24, "0")) });
+            if (!lui) { //se non c'era già
+                req.session.token = access_token
+                var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+                await db.db("forum").collection("utenti").insertOne(
+                    {
+                        _id: ObjectId(userOnMasto.id.toString().padStart(24, "0")),
+                        token: req.session.token,
+                        Name: userOnMasto.username,
+                    }, { safe: true, upsert: true });
+
+                req.session.lui = {
+                    IDUtente: ObjectId(userOnMasto.id.toString().padStart(24, "0")),
+                    Utente: userOnMasto.username,
+                }
+            } else {
+                req.session.token = access_token
+                req.session.lui = {
+                    IDUtente: lui._id,
+                    Utente: lui.Name,
+                }
+            }
+            res.redirect("/")
+        });
+    })
 });
 
 var ARR_AUTH_TOKENS = {};
