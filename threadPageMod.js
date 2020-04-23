@@ -1,5 +1,5 @@
 module.exports = { page: page };
-function page(op_id, posts, IDUtente) {
+function page(op_id, posts, IDUtente, con_masto) {
     // IDUtente c'è se user è loggato
     let s = `
     <!DOCTYPE html>
@@ -16,13 +16,20 @@ function page(op_id, posts, IDUtente) {
     `;
 
     posts.forEach(nota => {
-        s += `<br><small>${nota.Date.toLocaleDateString()}</small><br>${nota.isOP ? "(OP) " : ""}<a href="/user/${nota.by}"> ${nota.ByName} </a>scrive:<br>
+        s += `<div><br><small>${nota.Date.toLocaleDateString()}</small><br>${nota.isOP ? "(OP) " : ""}<a href="/user/${nota.by}"> ${nota.ByName} </a>scrive:<br>
         <textarea id=${nota._id}>${nota.Text}</textarea><div style="display:inline;"></div> 
         <img class="perModificare"  style="display:${IDUtente == nota.by ? "inline" : "none"}" onclick="modificaNota('${nota._id}')" src="/edit_icon.svg" alt="edit" height="20" width="20">
-        <img src="/share_icon.svg" id ="my_share_button" alt="share with facebook" height="20" width="20">
-        <img src="/toot_icon.svg" data-cosa="${nota._id}" id="masto_share_button" style="display:${IDUtente == nota.by ? "inline" : "none"}" alt="repost on mastodont" height="20" width="20"><br>`;
+        <img src="/share_icon.svg" class ="my_share_button" alt="share with facebook" height="20" width="20">
+        ${con_masto ? `<img src="/toot_icon.svg" data-cosa="${nota._id}" class="masto_share_button" alt="repost on mastodont" height="20" width="20">` : ""}
+        <div style="display:inline"></div>
+        <img data-post-by="${nota.by}" class="perModificare" onclick="delNota('${nota._id}')" style="display:${IDUtente == nota.by ? "inline" : "none"}" src="/delete_icon.svg" alt="edit" height="20" width="20">                
+        </div><br>`;
     })
+
     s += `    
+
+    <br><br>reply with: <textarea id=reply></textarea> <input type=button id=Pubblica value=Pubblica!>
+
     </body>
 </html>
 
@@ -42,8 +49,12 @@ function page(op_id, posts, IDUtente) {
 
     <script>
     $(function () {
-
-        $('#my_share_button').click(function(e){
+// SHARE ANCHE RISPOSTE
+// SHARE ANCHE RISPOSTE
+// SHARE ANCHE RISPOSTE
+// SHARE ANCHE RISPOSTE
+// SHARE ANCHE RISPOSTE
+        $('.my_share_button').click(function(e){
             try{
                 e.preventDefault();
                 FB.ui(
@@ -61,28 +72,28 @@ function page(op_id, posts, IDUtente) {
             }
         });
 
-        $('#masto_share_button').click(function(e){
-            console.log(e)
-            $.post("/tootIt",{ id: e.target.getAttribute("data-cosa") }).then(()=>{
-                $("#" + chi).next().html("OK!").css("background-color", "green");
+        ${con_masto ? `
+        $('.masto_share_button').click(function (e) {
+            console.log(e.target)
+            $.post("/tootIt", { testo: $("#" + e.target.getAttribute("data-cosa")).val() }).then(() => {
+                $(e.target).next().html("OK!").css("background-color", "green");
                 setTimeout(() => {
-                    $("#" + chi).next().html("");
+                    $(e.target).next().html("")
                 }, 1000)
             })
         });
-            
+        `: ""}
 
-        $.get("/logged?").then(() => {
-            $("body").append("<br><br>reply with: <textarea id=reply></textarea> <input type=button id=DoItNOW value=Pubblica!>")
-            $("#DoItNOW").click(()=>{
-                $.post("/newReply",{replyTo:"${op_id}" , text:$("#reply").val()})
-                //la vedo
-                //la vedo
-                //la vedo
-            });
+        $("#Pubblica").click(()=>{
+            $.post("/newReply",{replyTo:"${op_id}" , text:$("#reply").val()})
+            //la vedo
+            //la vedo
+            //la vedo
         });
-
+        
     });
+
+
 
     function modificaNota(chi) {
         console.log($("#" + chi).val())
@@ -94,6 +105,17 @@ function page(op_id, posts, IDUtente) {
         });
     
     }
+
+    function delNota(chi) {
+        console.log($("#" + chi).val())
+        $.post("/delNota", { id: "" + chi, text: $("#" + chi).val() }).then(() => {
+            $("#" + chi).next().html("OK!").css("background-color", "green");
+            setTimeout(() => {
+                $("#" + chi).parent().remove()
+            }, 500)
+        });
+    }
+
     </script>`;
     return s;
 };

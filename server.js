@@ -1,10 +1,12 @@
 var express = require("express");
 var assert = require("assert");
+const { check, validationResult } = require('express-validator');
 var bodyParser = require("body-parser");
 const crypto = require("crypto");
 const Mastodon = require('mastodon-api');
 const fetch = require('node-fetch');
 const cors = require("cors");
+const fs = require("fs");
 const nodemailer = require("nodemailer");
 const MongoClient = require("mongodb").MongoClient;
 var app = express();
@@ -41,29 +43,6 @@ app.use(
         }
     })
 )
-
-
-
-
-
-// function toot() {
-//     const num = Math.floor(Math.random() * 100);
-//     const params = {
-//         spoiler_text: "The meaning of life is: ",
-//         status: num
-//     }
-//     M.post('statuses', params, (error, data) => {
-//         if (error) {
-//             console.error("error", error);
-//         } else {
-//             console.log(data);
-//             console.log(`ID: ${data.id} and timestamp: ${data.created_at}`);
-//         }
-//     });
-// }
-// toot()
-
-
 
 if (process.env.NODE_ENV == 'production')
     home_sito = "https://my-forum.glitch.me"
@@ -172,6 +151,9 @@ app.get("/fromGH", async (req, res) => {
             }
         });
 });
+// estraggo pic da gh
+// estraggo pic da gh
+// estraggo pic da gh
 
 app.get("/fromFB", async (req, res) => {
     // endpoint del redirect da fb, che ci dà il code e ottenere il token , noi facciamo accedere l'user già registrato/lo registriamo
@@ -245,29 +227,46 @@ app.get("/fromFB", async (req, res) => {
 // share with fb ache sulle altre pagine
 // share with fb ache sulle altre pagine
 // share with fb ache sulle altre pagine
+
+
+async function toot(M_config, txt, base_url) {
+    const num = Math.floor(Math.random() * 100);
+    const params = {
+        spoiler_text: `Check Out What I said on my-forum: ${base_url}`,
+        status: txt
+    }
+    try {
+        M_config = new Mastodon(M_config)
+        let data = await M_config.post('statuses', params)
+        console.log(data);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+// endpoint del redirect da gh, che ci dà il code e ottenere il token , noi facciamo accedere l'user già registrato/lo registriamo
 app.get("/fromMasto", async (req, res) => {
-    // endpoint del redirect da gh, che ci dà il code e ottenere il token , noi facciamo accedere l'user già registrato/lo registriamo
-    console.log("req.query", req.query)
     var client_id = process.env.MASTO_APP_ID
     var client_secret = process.env.MASTO_APP_SECR
     var code = req.query.code
     // let url = Mastodon.getAuthorizationUrl(client_id, client_secret, "https://botsin.space", "write", "http://localhost:3000/fromMasto")
     // console.log(`url`, url); basta una volta e metti l'url nell'href
-    let p = Mastodon.getAccessToken(client_id, client_secret, code, "https://botsin.space", "http://localhost:3000/fromMasto")
+    let p = Mastodon.getAccessToken(client_id, client_secret, code, "https://botsin.space", home_sito + "/fromMasto")
     p.then(access_token => {
-        console.log(`access_token`, access_token);
+
         const M = new Mastodon({
             client_key: process.env.MASTO_APP_ID,
             client_secret: process.env.MASTO_APP_SECR,
             access_token,
             timeout_ms: 60 * 1000, // optional HTTP request timeout to apply to all requests.
             api_url: 'https://botsin.space/api/v1/', // optional, defaults to https://mastodon.social/api/v1/
-        })
+        });
 
         // serve lo scope:read per leggere qualunque cosa!
         M.get('accounts/verify_credentials').then(async resp => {
 
             const userOnMasto = resp.data;
+            // console.log(`userOnMasto`, userOnMasto);
             var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
             var lui = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(userOnMasto.id.toString().padStart(24, "0")) });
             if (!lui) { //se non c'era già
@@ -278,23 +277,55 @@ app.get("/fromMasto", async (req, res) => {
                         _id: ObjectId(userOnMasto.id.toString().padStart(24, "0")),
                         token: req.session.token,
                         Name: userOnMasto.username,
+                        picUrl: userOnMasto.avatar.toString()
                     }, { safe: true, upsert: true });
 
                 req.session.lui = {
                     IDUtente: ObjectId(userOnMasto.id.toString().padStart(24, "0")),
                     Utente: userOnMasto.username,
+                    masto: M
                 }
             } else {
                 req.session.token = access_token
                 req.session.lui = {
                     IDUtente: lui._id,
                     Utente: lui.Name,
+                    masto: M
                 }
             }
             res.redirect("/")
         });
     })
 });
+
+const picNamesTortoises = []
+fs.readdirSync("./files4rechapta/tortoises").forEach(file => {
+    if (file.endsWith(".jpg"))
+        picNamesTortoises.push("tortoises/" + file)
+})
+const picNamesSeagulls = []
+fs.readdirSync("./files4rechapta/seagulls").forEach(file => {
+    if (file.endsWith(".jpg"))
+        picNamesSeagulls.push("seagulls/" + file)
+})
+
+// mando indietro la pic nel body e l'id di questa nell'header
+var i = 0;
+var arrAssocIdCategoria = {}
+app.get("/rechaptaPhotos", async (req, res) => {
+    let randPicName;
+    if (Math.random() > 0.5) {
+        arrAssocIdCategoria[i] = "tortoise"
+        randPicName = picNamesTortoises[Math.round(Math.random() * (picNamesTortoises.length - 1))]
+    } else {
+        arrAssocIdCategoria[i] = "seagull"
+        randPicName = picNamesSeagulls[Math.round(Math.random() * (picNamesSeagulls.length - 1))]
+    }
+    res.setHeader("X-photo-id", i)
+    i++;
+    res.sendFile(`./files4rechapta/${randPicName}`, { root: __dirname })
+})
+
 
 var ARR_AUTH_TOKENS = {};
 var access_tokens = {};
@@ -330,45 +361,48 @@ app.get("/login", async (req, res) => {
     db.close()
 });
 
-app.get("/logged?", (req, res) => {
-    console.log(`req.session.lui`, req.session.lui);
-    if (req.session.lui)
-        res.send(req.session.lui.IDUtente.toString())
+//se è loggato gli metto l'header che lo specifica
+// funz usata per appendere l'header a /allQuestions, così lo script dalla req capisce se è loggato
+function isLogged(req, res, next) {
+    // console.log(`req.session.lui`, req.session.lui);
+    if (req.session.lui) {
+        res.setHeader("X-logged", req.session.lui.IDUtente)
+        if (req.session.lui.masto)
+            res.setHeader("X-masto-logged", "yes")
+    }
     else
-        res.sendStatus(401)
-});
+        res.setHeader("X-logged", "no")
 
-app.post("/addUser", async (req, res) => {
+    next()
+}
+
+app.post("/addUser", [check('utente').escape()], async (req, res) => {
     var name = req.body.utente;
     var pass = req.body.passw;
+    let photoId = req.body.photoId
+    let guess = req.body.guess
+
     var salt = crypto.randomBytes(32).toString("hex");
 
     try {
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-
-
-        var giaPresente = await db
-            .db("forum")
-            .collection("utenti")
-            .findOne({ Name: name });
-        console.log(`giaPresente`, giaPresente);
+        var giaPresente = await db.db("forum").collection("utenti").findOne({ Name: name });
         if (!giaPresente) {
             //lui non c'era
-
+            if (arrAssocIdCategoria[photoId] != guess) {
+                res.status(412).send("ma ci vedi?");
+                db.close();
+                return
+            }
             var nuovo_utente = {
                 Name: name,
                 Salt: salt,
                 HashedPwd: h(salt + pass),
             };
-
             try {
-                var resIns = await db
-                    .db("forum")
-                    .collection("utenti")
-                    .insertOne(nuovo_utente, { safe: true, upsert: true });
-
-                assert.notEqual(resIns, null)
-
+                var user = await db.db("forum").collection("utenti").insertOne(nuovo_utente, { safe: true, upsert: true });
+                user = user.ops[0]
+                assert.notEqual(user, null)
                 req.session.lui = {
                     IDUtente: user._id,
                     Utente: user.Name,
@@ -421,7 +455,7 @@ app.post("/getToken", loggedChecker, async (req, res) => {
     db.close()
 });
 
-app.post("/newQuestion", loggedChecker, async (req, res) => {
+app.post("/newQuestion", [check("domanda").escape()], loggedChecker, async (req, res) => {
 
     try {
         var testo = req.body.domanda;
@@ -464,7 +498,7 @@ function sendMail(mess, to) {
     });
 }
 
-app.post("/newReply", loggedChecker, async (req, res) => {
+app.post("/newReply", [check("text").escape()], loggedChecker, async (req, res) => {
 
     try {
         var testo = req.body.text;
@@ -514,13 +548,10 @@ app.post("/allUsers", async (req, res) => {
         res.sendStatus(500);
     }
 });
-
 var Page = require("./userPage")
 var LoggedPage = require("./userPageLogged")
 app.get("/user/:uid", async (req, res) => {
     var uid = req.params.uid
-    console.log(`uid`, uid);
-
     if (uid && uid != "undefined") {
         try {
             uid = ObjectId(uid)
@@ -537,11 +568,17 @@ app.get("/user/:uid", async (req, res) => {
     let all = await db.db("forum").collection("utenti").find({}).toArray()
     let hisPosts = await db.db("forum").collection("messaggi").find({ by: uid }).toArray()
     db.close()
+
+    if (!hisData) {//user non c'è
+        res.send("pagina non disponibile. utente cancellato?")
+        return;
+    }
+
     hisData.picUrl = hisData.picUrl || "https://raw.githubusercontent.com/Infernus101/ProfileUI/0690f5e61a9f7af02c30342d4d6414a630de47fc/icon.png"
     if (!req.session.lui || req.session.lui.IDUtente != uid)//o non loggato o non sua-> solo vedere
         res.send(Page.page(uid, hisData, hisPosts))
     else
-        res.send(LoggedPage.page(uid, hisData, hisPosts))
+        res.send(LoggedPage.page(uid, hisData, hisPosts, req.session.lui ? req.session.lui.masto : null))
 });
 
 app.post("/nuovoNome", loggedChecker, async (req, res) => {
@@ -557,22 +594,51 @@ app.post("/nuovoNome", loggedChecker, async (req, res) => {
     }
     db.close()
 });
+
+app.post("/delProfile", loggedChecker, async (req, res) => {
+    try {
+        var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+        await db.db("forum").collection("utenti").deleteOne({ _id: ObjectId(req.session.lui.IDUtente) });
+        res.sendStatus(200)
+    } catch (error) {
+        console.log(`error`, error);
+        res.sendStatus(500)
+    }
+    db.close()
+});
+
 // da rimuovere: /user/id/pic porta alla pic e non è + necessario v
 // da rimuovere: /user/id/pic porta alla pic e non è + necessario v
 app.get("/myPic", loggedChecker, async (req, res) => {
-
+    console.log(`req.session.lui.IDUtente`, ObjectId(req.session.lui.IDUtente))
     var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
     let him = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(req.session.lui.IDUtente) })
-    console.log(`him`, him);
-    // let hisPosts = await db.db("forum").collection("messaggi").find({ by: ObjectId(uid) }).toArray()
-    // db.close()
-    // res.send(Page.page(uid, him, hisPosts))
-    console.log(`him`, him);
     res.send(him.picUrl || "https://raw.githubusercontent.com/Infernus101/ProfileUI/0690f5e61a9f7af02c30342d4d6414a630de47fc/icon.png")
 });
-// TODO NEWPIC
-// TODO NEWPIC
-app.post("/allQuestions", async (req, res) => {
+
+app.get("/modificaPicc", loggedChecker, async (req, res) => {
+    try {
+        var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+        picc = req.files.picc
+        if (picc) {
+            picc.mv("/public/" + picc.name)
+            let done = await db.db("forum").collection("utenti").findOneAndUpdate({ _id: ObjectId(req.session.lui.IDUtente) }, { $set: { picUrl: "/public/" + picc.name } })
+            console.log(`done`, done);
+        } else {
+
+            let done = await db.db("forum").collection("utenti").findOneAndUpdate({ _id: ObjectId(req.session.lui.IDUtente) }, { $set: { picUrl: "/public/" + picc.name } })
+            console.log(`done`, done);
+        }
+        res.sendStatus(200)
+    } catch (error) {
+        console.log(`error`, error);
+        res.sendStatus(500)
+    }
+    db.close()
+});
+
+//gli appendo l'header: x-logged
+app.post("/allQuestions", isLogged, async (req, res) => {
 
     try {
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -584,26 +650,33 @@ app.post("/allQuestions", async (req, res) => {
             .toArray();
         dati = await Promise.all(dati.map(async post => {
             let a = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(post.by) })
-            post.ByName = a.Name
+            if (a == null) {
+                post.ByName = "Utente Eliminato"
+            } else {
+                post.ByName = a.Name
+            }
             return post
         }));
         // console.log("dati",dati)
-        res.json(dati);
+        res.json(dati.reverse());//dal + nuovo
     } catch (error) {
         console.log(`error`, error);
         res.sendStatus(500);
     }
 });
-// UPLOAD PIC PROFILO/DA IG
-// UPLOAD PIC PROFILO/DA IG
+
 var ThreadPage = require("./threadPageMod")
 app.get("/thread/:id", async (req, res) => {
     var question_id = req.params.id
 
     var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
-
     let originalQuestion = await db.db("forum").collection("messaggi").findOne({ _id: ObjectId(question_id) })
+    if (originalQuestion == null) {
+        res.send("pagina non esistente!")
+        return;
+    }
+
     if (originalQuestion.replyTo == undefined)
         posts = await db.db("forum").collection("messaggi").find({ "$or": [{ _id: ObjectId(question_id) }, { "replyTo": ObjectId(question_id) }] }).toArray()
     else
@@ -611,7 +684,10 @@ app.get("/thread/:id", async (req, res) => {
 
     let dati = await Promise.all(posts.map(async post => {
         let lui = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(post.by) });
-        post.ByName = lui.Name //gli attacco il nome risolto tipo dns
+
+        if (lui) post.ByName = lui.Name //gli attacco il nome risolto tipo dns
+        else post.ByName = "utente eliminato"
+
         if (post.by.toString() == originalQuestion.by.toString())
             post.isOP = true
         return post
@@ -627,59 +703,45 @@ app.get("/thread/:id", async (req, res) => {
             return post1
     })
 
-    res.send(ThreadPage.page(question_id, dati, req.session.lui ? req.session.lui.IDUtente : null))
+    res.send(ThreadPage.page(question_id, dati, req.session.lui ? req.session.lui.IDUtente : null, req.session.lui ? req.session.lui.masto : null))
     db.close()
 });
 
-app.post("/modificaNota", loggedChecker, async (req, res) => {
+app.use(bodyParser.text({ type: 'text' }))
 
+app.post("/modificaNota", [check("text").escape()], loggedChecker, async (req, res) => {
+    let newText = req.body.text //html sanitized
+    console.log(`newText`, newText);
     try {
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
         var prima = await db.db("forum").collection("messaggi").findOne({ by: ObjectId(req.session.lui.IDUtente), _id: ObjectId(req.body.id) })
-        console.log(`prima`, prima);
-        var dati = await db.db("forum").collection("messaggi").findOneAndUpdate({ by: ObjectId(req.session.lui.IDUtente), _id: ObjectId(req.body.id) }, { $set: { Text: req.body.text } })
-        console.log(`dati`, dati);
+        var dati = await db.db("forum").collection("messaggi").findOneAndUpdate({ by: ObjectId(req.session.lui.IDUtente), _id: ObjectId(req.body.id) }, { $set: { Text: newText } })
         var dopo = await db.db("forum").collection("messaggi").findOne({ by: ObjectId(req.session.lui.IDUtente), _id: ObjectId(req.body.id) })
-        console.log(`dopo`, dopo);
         res.sendStatus(200)
     } catch (error) {
         console.log(`error`, error);
         res.sendStatus(500);
     }
 });
-// del
-// del
-app.post("/delNota", function (req, res) {
-    var sessid = req.body.sessid;
-    var IDNota = req.body.IDNota;
-    MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, (err, db) => {
-        if (err) {
-            res.sendStatus(401);
-            db.close();
-            throw err;
-        }
-        console.log(`req.session.lui`, req.session.lui);
-        db.db("forum")
-            .collection("dati")
-            .deleteOne({ _id: ObjectId(IDNota), BroadcastDelDom: req.session.lui.IDSuoDominio, AppartenenteA: req.session.lui.IDUtente }, (error, result) => {
 
-                assert.equal(err, null);
-                if (result.deletedCount == 1)
-                    res.sendStatus(200);
-                else
-                    res.sendStatus(500);
-            });
-    });
+app.post("/delNota", loggedChecker, async function (req, res) {
+    try {
+        var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+        var done = await db.db("forum").collection("messaggi").deleteOne({ by: ObjectId(req.session.lui.IDUtente), _id: ObjectId(req.body.id) })
+        if (done.deletedCount != 1)
+            throw Error("oops")
+        res.sendStatus(200)
+    } catch (error) {
+        console.log(`error`, error);
+        res.sendStatus(500);
+    }
 });
 
-// TODO aggiungo la nota che il client ci ha passato
-app.post("/share", function (req, res) {
-    var IDNota = req.body.IDNota;
-    // aggiungo la nota che il client ci ha passato
-    // aggiungo la nota che il client ci ha passato
-
+app.post("/tootIt", loggedChecker, async function (req, res) {
+    // console.log(`req.headers.referer`, req.headers.referer); request's origin
+    if (req.session.lui.masto) {
+        await toot(req.session.lui.masto.config, req.body.testo, req.headers.referer)
+        res.sendStatus(201)
+    } else
+        res.sendStatus(428)
 });
-
-// share su fb la nuova domanda
-// share su fb la nuova domanda
-// share su fb la nuova domanda
