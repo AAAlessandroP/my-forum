@@ -14,6 +14,7 @@
     "cors": "*",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "express-fileupload": "^1.1.7-alpha.3",
     "express-session": "*",
     "express-validator": "^6.4.0",
     "ioredis": "^4.16.1",
@@ -21,7 +22,9 @@
     "mongodb": "*",
     "node-fetch": "^2.6.0",
     "nodemailer": "^6.4.6",
-    "redis": "^3.0.2"
+    "nodemon": "^2.0.3",
+    "redis": "^3.0.2",
+    "telegraf": "^3.38.0"
   },
   "engines": {
     "node": "8.x"

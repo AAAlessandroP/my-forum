@@ -16,7 +16,7 @@ $(async function () {
         }).appendTo($('#rechapta'));
         window.URL.revokeObjectURL(imgSrc);
     };
-    res.send(null);;
+    res.send(null);
 
     $.post("/allUsers").always(utenti => {
         if (utenti)
@@ -30,7 +30,8 @@ $(async function () {
         if (singleton) {
             let obj = {
                 utente: $("#Codice").val().trim(),
-                passw: $("#passw").val()
+                passw: $("#passw").val(),
+                mail: $("#mail").val().trim(),
             };
             (window.onpopstate = function () {
                 var match,
@@ -69,11 +70,15 @@ $(async function () {
             $.post("/addUser", {
                 utente: $("#Codice").val().trim(),
                 passw: $("#passw").val(),
+                mail: $("#mail").val().trim(),
                 guess: $(":checked:eq(0)").val(),
                 photoId
-            }).then((id) => {
-                // onaccessGranted(id.substr(1, id.length - 1))???
-                onaccessGranted(id)
+            }).then((mess) => {
+                alert(mess)
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+                // non chiamo onaccessgranted perchè non potrei fare nulla!
             }).catch((err) => {
                 alert(err.responseText)
             });
@@ -82,90 +87,111 @@ $(async function () {
 
     $("#nuova_domanda").click(() => {
         $.post("/newQuestion", { domanda: $("#domanda").val() })
-            .done(async () => {
-                $("#threads").html("");
-                await getAllThreads();
-                let imgs = $(".perModificare")
-                for (let i = 0; i < imgs.length; i++)
-                    if (imgs[i].getAttribute("data-post-by") == m_id) { //post mio->posso modificare
-                        $(".perModificare:eq(" + i + ")").show()
-                    }
-
+            .done(() => {
+                ricaricaThreads()
             })
     });
 
 
-
+    var singleton3 = true;
     function onaccessGranted(id) {
-        console.log(`onaccessGranted`);
 
-        m_id = id
+        if (singleton3) {
+            singleton3 = false;
+            m_id = id
 
-        $("#AddMessage").show(1000)
-        setTimeout(() => {
-            let imgs = $(".perModificare")
-            // console.log(`imgs`, imgs);
-            for (let i = 0; i < imgs.length; i++)
-                if (imgs[i].getAttribute("data-post-by") == m_id) //post mio->posso modificare
-                    $(".perModificare:eq(" + i + ")").show()
-        }, 1000);
+            console.log(`onaccessGranted`);
+
+            $("#AddMessage").show(1000)
+            ricaricaThreads() //così adesso ci saranno i  pulsanti del, mod ecc
 
 
-        $.get("/myPic").then(picc => {
-            console.log("myPic");
+            $.get("/myPic").then(picc => {
+                console.log("myPic");
 
-            $(".divAccesso").remove()
-            // tolgo l'intestazione 
-            if ($("#divProfilo")[0] == null) {//onaccessGranted potrebbe essere chiamata dopo nuovo mess con già la foto profilo
-                $("body").prepend(`
-        <div class="row">
-            <div class="col-10">
-            </div>
-            <div class="col-2">
-                <img src="${picc}" id=picture style="border-radius: 50%;width:64px;height:64px">
-                <div id=divProfilo style="display:none;background-color:white;border-radius: 5%"> 
-                    <a href="/user/${id.toString()}"> vedi il profilo</a><br>
-                    <span id=logout>logout</span><div></div>
-                </div>
-            </div>
-        </div>`);
-                $("#picture").click(() => {
-                    $("#divProfilo").toggle(100)
-                });
-                $("#logout").click(() => {
-                    $.post("/logout");
-                    $("#logout").next().html("OK!").css("background-color", "green");
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1000)
-                });
-            }
-        });
+                $(".divAccesso").remove()
+                // tolgo l'intestazione 
+                if ($("#divProfilo")[0] == null) {//onaccessGranted potrebbe essere chiamata dopo nuovo mess con già la foto profilo
+                    $("body").prepend(`
+                    <div class="row">
+                        <div class="col-10">
+                        </div>
+                        <div class="col-2">
+                            <img src="${picc}" id=picture style="border-radius: 50%;width:64px;height:64px">
+                            <div id=divProfilo style="display:none;background-color:white;border-radius: 5%"> 
+                                <a href="/user/${id.toString()}"> vedi il profilo</a><br>
+                                <span id=logout>logout</span><div></div>
+                            </div>
+                        </div>
+                    </div>`);
+                    $("#picture").click(() => {
+                        $("#divProfilo").toggle(100)
+                    });
+                    $("#logout").click(() => {
+                        $.post("/logout");
+                        $("#logout").next().html("OK!").css("background-color", "green");
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000)
+                    });
+                }
+            });
+        } else singleton3 = false
+    }
+
+    function ricaricaThreads() {
+        // $("#threads").html("");
+        getAllThreads();
+    }
+
+    function printNota(nota, opts) {
+        return `<div class="nota">    
+            <br><small>${new Date(nota.Date).toLocaleDateString()}</small>
+            ${opts.showAuthor ? `<a href="/user/${nota.by.toString()}"> ${nota.ByName} </a>scrive:` : ""}
+            <br><textarea id=${nota._id}>${nota.Text}</textarea> <div style="display:inline;"></div> 
+            ${opts.fb ? `<img src="/share_icon.svg" class ="my_share_button" alt="share with facebook" height="20" width="20">` : ""}
+            ${opts.goto ? `<img onclick="goto('${nota._id}')" src="/goto_icon.svg" alt="see it" height="20" width="20">` : ""}
+            ${opts.modificabile ? `<img class="perModificare" onclick="modificaNota('${nota._id}')" src="/edit_icon.svg" alt="edit" height="20" width="20">` : ""}
+            ${opts.con_masto ? `<img src="/toot_icon.svg" data-cosa="${nota._id}" class="masto_share_button" alt="repost on mastodont" height="20" width="20">` : ""}
+            <div style="display:inline"></div>
+            ${opts.modificabile ? `<img data-post-by="${nota.by}" class="perModificare" onclick="delNota('${nota._id}')" src="/delete_icon.svg" alt="edit" height="20" width="20">` : ""}
+            <br>
+        </div>`
     }
 
 
     function getAllThreads() {
+        console.log("getAllThreads");
 
         $.post("/allQuestions").then((note, textStatus, request) => {
 
             let con_masto = request.getResponseHeader("x-masto-logged") == "yes"
 
-            if (request.getResponseHeader("x-logged") != "no")
+            let singleton3 = true
+            $("#loginWithTG").click(async () => {
+                if (singleton3) {
+                    singleton3 = false;
+                    let id;
+                    try {
+                        id = await $.get("/getTempId4TG")
+                    } catch (error) {
+                        console.log(`error`, error)
+                    }
+                    $("#loginWithTG").html(`Accedi via <a href="t.me/pippofalapizza">telegram bot</a> con id=${id}`);
+                }
+            });
+
+            logged = request.getResponseHeader("x-logged") != "no"
+            if (logged)
                 onaccessGranted(request.getResponseHeader("x-logged"))
+
             if (note != "nulla salvato") {
+                $("#threads").html("");
                 note.forEach(nota => {
-                    $("#threads").append(`
-                <div>    
-                    <br><a href="/user/${nota.by.toString()}"> ${nota.ByName} </a>scrive:
-                    <br><textarea id=${nota._id}>${nota.Text}</textarea> <div style="display:inline;"></div> 
-                    <img onclick="goto('${nota._id}')" src="/goto_icon.svg" alt="see it" height="20" width="20">
-                    <img data-post-by="${nota.by}" class="perModificare"  style="display:none" onclick="modificaNota('${nota._id}')" src="/edit_icon.svg" alt="edit" height="20" width="20">
-                    ${con_masto ? `<img src="/toot_icon.svg" data-cosa="${nota._id}" class="masto_share_button" alt="repost on mastodont" height="20" width="20">` : ""}
-                    <div style="display:inline"></div>
-                    <img data-post-by="${nota.by}" class="perModificare"  style="display:none" onclick="delNota('${nota._id}')" src="/delete_icon.svg" alt="edit" height="20" width="20">                
-                    <br>
-                    </div>
-                `)
+                    $("#threads").append(printNota(nota, { modificabile: logged, goto: true, masto: con_masto, fb: false, showAuthor: true }))
+                    // metto FB
+                    // metto FB
+                    // metto FB
                 });
 
                 if (con_masto)

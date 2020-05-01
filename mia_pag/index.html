@@ -11,6 +11,20 @@
     <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
     <script language="javascript" type="text/javascript" src="./script.js"></script>
 
+    <style>
+        .nota {
+            font-family: roboto condensed, serif;
+        }
+
+        textarea {
+            width: 75%;
+            height: 120px;
+            border: 3px solid #796969;
+            padding: 5px;
+            font-family: Tahoma, sans-serif;
+        }
+    </style>
+
 </head>
 
 <body style="background-color:grey">
@@ -23,7 +37,8 @@
         </div>
         <div class="row divAccesso">
             <div class="col-lg" style="background-color:yellowgreen">
-                Utenza:<input type="text" id="Codice"><br>
+                Nome:<input type="text" id="Codice"><br>
+                Indirizzo di Posta:<input type="email" id="mail"><br>
                 Codice d'accesso:<input type="password" id="passw">
                 <input type="button" value="Fai l'accesso" id="submitLogin">
                 <input type="button" value="registrati" id="submitRegistrati">
@@ -37,11 +52,11 @@
                     href="https://www.facebook.com/v6.0/dialog/oauth?client_id=2546945782289657&redirect_uri=http://localhost:3000/fromFB&state=123">Accedi
                     con
                     Facebook</a>
-                <!--HARDCODED https://my-forum.glitch.mes TRA LOCALHOST e MY-FORUM -->
-                <!--HARDCODED https://my-forum.glitch.mes TRA LOCALHOST e MY-FORUM -->
                 <a
                     href="https://botsin.space/oauth/authorize?redirect_uri=http://localhost:3000%2FfromMasto&response_type=code&client_id=R75I-UhAAzjOsLV212eRqmUphbjURRS1GUpWv6bvyqM&scope=write+read">
                     Accedi Con Mastodon</a>
+
+                <div id="loginWithTG">Accedi con il bot Telegram</div>
             </div>
         </div>
         <div class="row">
@@ -52,6 +67,7 @@
                         fai una nuova domanda:
                         <input type="text" placeholder="fai una nuova domanda" id="domanda">
                         <input type="button" id="nuova_domanda" value="vai">
+                        <br>
                         <br>
                     </div>
                 </div>
@@ -70,6 +86,13 @@
         <div id="threads"></div>
     </div>
 
+    <button onclick="goBack()">Go Back</button>
 </body>
+
+<script>
+    function goBack() {
+        window.history.back();
+    }
+</script>
 
 </html>

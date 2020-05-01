@@ -1,6 +1,7 @@
 var express = require("express");
 var assert = require("assert");
 const { check, validationResult } = require('express-validator');
+const fileUpload = require('express-fileupload');
 var bodyParser = require("body-parser");
 const crypto = require("crypto");
 const Mastodon = require('mastodon-api');
@@ -9,21 +10,27 @@ const cors = require("cors");
 const fs = require("fs");
 const nodemailer = require("nodemailer");
 const MongoClient = require("mongodb").MongoClient;
+const Telegraf = require('telegraf');
+const tsession = require('telegraf/session')
+const { Extra, Markup } = Telegraf;
+require('dotenv').config()
+const bot = new Telegraf(process.env.TELEGRAM_TOKEN);
+bot.use(tsession())
 var app = express();
 app.use(bodyParser.urlencoded({ extended: false, limit: 50 * 1024 * 1024 }));
 app.use(bodyParser.json({
     limit: 50 * 1024
 }));
+app.use(fileUpload());
 const session = require('express-session')
 const RedisStore = require('connect-redis')(session)
 const Redis = require('ioredis')
 const { ObjectId } = require("mongodb");
-require('dotenv').config()
 app.use(express.static("mia_pag"));
 app.use(express.static("public")); //il suo file a.b è raggiungibile con /a.b
 app.use(cors())
 "use strict";
-app.listen(3000);
+app.listen(port = 3000);
 const client = new Redis({})
 const store = new RedisStore({ client })
 const cookie_name = "sid"
@@ -36,8 +43,7 @@ app.use(
         resave: false,
         secret: `quiet, pal! it's a secret!`,
         cookie: {
-            maxAge: 1000 * 60 * 60 * 1,
-            // expires: new Date(Date.now() + 1000 * 60 * 30),//comanda l'ultimo (expire)
+            maxAge: 1000 * 60 * 60 * 1, //If the session cookie has a expires date, connect-redis will use it as the TTL.
             sameSite: true,
             secure: process.env.NODE_ENV === 'production'
         }
@@ -47,7 +53,7 @@ app.use(
 if (process.env.NODE_ENV == 'production')
     home_sito = "https://my-forum.glitch.me"
 else
-    home_sito = "http://localhost:3000"
+    home_sito = "http://localhost:" + port
 
 const uri = `mongodb+srv://forum:${process.env.MONGO_PASS}@miocluster2-igwb8.mongodb.net/test?retryWrites=true&w=majority`;
 //  todo gli STATE del redirect validi in funzione del tempo(cambiano con, non lo stesso sempre)
@@ -56,6 +62,20 @@ const uri = `mongodb+srv://forum:${process.env.MONGO_PASS}@miocluster2-igwb8.mon
 // '5e726f0534058302ceb2ccc2' è il _id pescato da una query
 // ObjectId('5e726f0534058302ceb2ccc2') == '5e726f0534058302ceb2ccc2' sì
 // ObjectId('5e726f0534058302ceb2ccc2') == ObjectId(ObjectId('5e726f0534058302ceb2ccc2')) sì
+
+// passw lunga
+// passw lunga
+// email unica
+// email unica
+
+// PROBLEMONE: VEDO I COTROLLI CrUD SU MESS NON MIEI
+// PROBLEMONE: VEDO I COTROLLI CrUD SU MESS NON MIEI
+// PROBLEMONE: VEDO I COTROLLI CrUD SU MESS NON MIEI
+// PROBLEMONE: VEDO I COTROLLI CrUD SU MESS NON MIEI
+// PROBLEMONE: VEDO I COTROLLI CrUD SU MESS NON MIEI
+// PROBLEMONE: VEDO I COTROLLI CrUD SU MESS NON MIEI
+// PROBLEMONE: VEDO I COTROLLI CrUD SU MESS NON MIEI
+
 
 // i temp token che arrivano all'endoint nostro sono usabili una sola volta
 function h(s) {
@@ -66,11 +86,22 @@ function h(s) {
 
 function loggedChecker(req, res, next) {
     console.log("req.session.lui", req.session.lui)
-    if (req.session.lui !== undefined)
+    if (req.session.lui != undefined && (req.session.lui.confirmed === undefined || req.session.lui.confirmed !== false)) {
         next()
-    else
+    } else
         res.sendStatus(401)
 }
+
+// anteprima icona utente
+// anteprima icona utente
+// anteprima icona utente
+// ricaggio mypicc
+// ricaggio mypicc
+// ricaggio mypicc
+
+// PICC MODIFICABILE
+// PICC MODIFICABILE
+// PICC MODIFICABILE
 
 async function infoSuDiMeGH(token) {
     let url = `https://api.github.com/user`
@@ -149,6 +180,7 @@ app.get("/fromGH", async (req, res) => {
                 res.sendStatus(500);
                 return;
             }
+            db.close()
         });
 });
 // estraggo pic da gh
@@ -220,8 +252,7 @@ app.get("/fromFB", async (req, res) => {
             console.log(`error`, error);
             res.sendStatus(500);
         })
-
-
+    db.close()
 });
 // share with fb ache sulle altre pagine
 // share with fb ache sulle altre pagine
@@ -293,6 +324,7 @@ app.get("/fromMasto", async (req, res) => {
                     masto: M
                 }
             }
+            db.close()
             res.redirect("/")
         });
     })
@@ -326,13 +358,20 @@ app.get("/rechaptaPhotos", async (req, res) => {
     res.sendFile(`./files4rechapta/${randPicName}`, { root: __dirname })
 })
 
+// store.all((error, sessions) => {
+//     console.log(`sessions`, sessions);
+// })
+// store.clear(err => console.log(`err`, err))
+
 
 var ARR_AUTH_TOKENS = {};
 var access_tokens = {};
 app.get("/login", async (req, res) => {
+    console.log("login");
+
     var Name = req.query.utente;
     var pass = req.query.passw;
-
+    console.log(`req.sessionID`, req.sessionID)
     var redirect_uri = req.query.redirect_uri
     var client_id = req.query.client_id
     var scope = req.query.scope
@@ -361,11 +400,174 @@ app.get("/login", async (req, res) => {
     db.close()
 });
 
+// gesitrare app
+// gesitrare app
+function loggedApi(req, res, next) {
+    if (true)
+        next()
+    else
+        res.sendStatus(401)
+}
+
+app.get("/api/all", loggedApi, async (req, res) => {
+
+    try {
+        var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+        var dati = await db.db("forum").collection("messaggi").find({}).toArray();
+        res.json(dati);
+    } catch (error) {
+        console.log(`error`, error);
+        res.sendStatus(500);
+    }
+});
+
+app.post("/api", loggedApi, async (req, res, next) => {
+
+    try {
+        var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+        var arr = [{ _id: { $exists: true } }]
+
+        if (req.body.id)
+            arr.push(
+                {
+                    _id: ObjectId(req.body.id)
+                }
+            );
+        else {
+            if (req.body.from && req.body.to)
+                arr.push(
+                    {
+                        Date: { $gte: new Date(req.body.from) }
+                    },
+                    {
+                        Date: { $lte: new Date(req.body.to) }
+                    }
+                );
+            if (req.body.byUser)
+                arr.push(
+                    {
+                        by: ObjectId(req.body.byUser)
+                    }
+                );
+            if (req.body.replyTo)
+                arr.push(
+                    {
+                        replyTo: ObjectId(req.body.replyTo)
+                    }
+                );
+            if (req.body.textEq)
+                arr.push(
+                    {
+                        Text: req.body.textEq
+                    }
+                );
+            if (req.body.textContains)
+                arr.push(
+                    {
+                        Text: { $regex: ".*" + req.body.textContains + ".*" }
+                    }
+                );
+            if (req.body.textMatch)
+                arr.push(
+                    {
+                        Text: { $regex: req.body.textMatch }
+                    }
+                );
+        }
+        var dati = await db.db("forum").collection("messaggi").find({ $and: arr }).toArray();
+
+
+
+
+        res.json(dati);
+    } catch (error) {
+        console.log(`error`, error);
+        res.sendStatus(500);
+    }
+});
+
+
+app.get("/getTempId4TG", (req, res) => {
+    let shortId = crypto.randomBytes(16).toString("hex").substr(0, 6)
+    client.set(shortId, req.sessionID)
+    res.send(shortId)
+})
+
+
+bot.start((ctx) => ctx.replyWithHTML("<pre>Willcommen! type in \n /login \n to log-in in my-forum!</pre>"));
+bot.help((ctx) => ctx.replyWithHTML("<pre>Willcommen! type in \n /login \n to log-in in my-forum!</pre>"));
+bot.command('login', async (ctx) => {
+    ctx.replyWithHTML("manda l'id (quello dato sul sito)")
+});
+
+// quando l'user fa login qui mette lo shortId che corrisponde al sessionID della sua sess sul sito, sess che segno autenticata
+
+bot.on('text', async (ctx) => {
+    // console.log(`text`, ctx.message.text)
+    // console.log(`sender`, ctx.from)
+    if (ctx.message.text.match(/.+@.+\..+/)) {//ci ha mandato una mail
+        // controllo from.id==salvato.id
+        // controllo from.id==salvato.id
+        let userOnTelegram = {
+            username: ctx.from.username,
+            id: ctx.from.id
+        }
+
+        try {
+            var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+            var lui = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(userOnTelegram.id.toString().padStart(24, "0")) })
+            // console.log(`lui`, lui);
+            if (lui) { //se c'era già
+
+                let sessidSulSito = await client.get(ctx.session.id)
+                await client.set(sessidSulSito, {
+                    IDUtente: ObjectId(userOnTelegram.id.toString().padStart(24, "0")),
+                    Utente: lui.Name,
+                });
+
+            } else {
+                var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+                await db.db("forum").collection("utenti").insertOne(
+                    {
+                        _id: ObjectId(userOnTelegram.id.toString().padStart(24, "0")),
+                        Name: userOnTelegram.username.toString().replace(" ", "_"),
+                        Email: userOnTelegram.email,
+                    });
+
+                let sessidSulSito = await client.get(ctx.session.id)
+                await client.set(sessidSulSito, {
+                    IDUtente: ObjectId(userOnTelegram.id.toString().padStart(24, "0")),
+                    Utente: lui.Name,
+                });
+            }
+            ctx.reply(`fatto ${ctx.from.username}!`)
+        } catch (error) {
+            console.log(`error`, error);
+            return;
+        }
+    } if (ctx.message.text.match(/^id .{6}$/)) {//è l'id 
+        ctx.session.id = ctx.message.text.substring(3)
+        console.log(`ctx.message.text.substring(3)`, ctx.message.text.substring(3))
+        ctx.replyWithHTML(`<pre>ok, ora se vuoi REGISTRARTI manda l'inidirizzo di posta a cui vuoi essere contattato se qualcuno ti menziona sul forum.
+    Oppore manda una stringa vuota come messaggio</pre>`);
+    } else ctx.replyWithHTML("<pre>Willcommen! type in \n /login \n to log-in in my-forum!</pre>")
+})
+bot.launch()
+bot.startPolling();
+
+
+
+// crea webhook con token
+// faccio scegliere per cosa osserva
+// tipo un nuovo post o un post di uno o @uno
+
+
+
 //se è loggato gli metto l'header che lo specifica
 // funz usata per appendere l'header a /allQuestions, così lo script dalla req capisce se è loggato
 function isLogged(req, res, next) {
     // console.log(`req.session.lui`, req.session.lui);
-    if (req.session.lui) {
+    if (req.session.lui != undefined && (req.session.lui.confirmed === undefined || req.session.lui.confirmed !== false)) {
         res.setHeader("X-logged", req.session.lui.IDUtente)
         if (req.session.lui.masto)
             res.setHeader("X-masto-logged", "yes")
@@ -381,6 +583,7 @@ app.post("/addUser", [check('utente').escape()], async (req, res) => {
     var pass = req.body.passw;
     let photoId = req.body.photoId
     let guess = req.body.guess
+    let mail = req.body.mail
 
     var salt = crypto.randomBytes(32).toString("hex");
 
@@ -398,16 +601,22 @@ app.post("/addUser", [check('utente').escape()], async (req, res) => {
                 Name: name,
                 Salt: salt,
                 HashedPwd: h(salt + pass),
+                mail,
+                confirmed: false
             };
             try {
                 var user = await db.db("forum").collection("utenti").insertOne(nuovo_utente, { safe: true, upsert: true });
                 user = user.ops[0]
                 assert.notEqual(user, null)
+                console.log(`req.sessionID che vuole iscriv`, req.sessionID)
                 req.session.lui = {
                     IDUtente: user._id,
                     Utente: user.Name,
+                    mail,
+                    confirmed: false
                 }
-                res.status(201).send(req.session.lui.IDUtente);
+                toConfirm(mail, req)
+                res.status(201).send("check your inbox to confirm your email address.");
             } catch (error) {
                 console.log(`error`, error);
                 res.sendStatus(500);
@@ -418,8 +627,35 @@ app.post("/addUser", [check('utente').escape()], async (req, res) => {
     } catch (error) {
         console.log(`error`, error);
         res.sendStatus(500);
+        db.close()
     }
 });
+
+
+function toConfirm(to, req) {
+    let rand = crypto.randomBytes(64).toString("hex")
+    console.log(`req.sessionID`, req.sessionID)
+    client.set(rand, req.session.lui.IDUtente)// ttl= xx minuti della sess
+    sendMail(`conferma la tua casella di posta, premi qua: ${home_sito}/confermaMail?code=${rand}`, "conferma l'iscrizione a " + home_sito, to)
+}
+
+app.get("/confermaMail", async (req, res) => {
+    let code = req.query.code
+    let who = await client.get(code) // CODE => IDUtente da segnare ok
+    try {
+        // è una sess diversa da quella del registra
+        var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+        var done = await db.db("forum").collection("utenti").updateOne({ _id: ObjectId(who) }, { $set: { confirmed: true } }, { safe: true, upsert: true });
+        if (done.result.nModified != 1)
+            throw Error("ops")
+    } catch (error) {
+        console.log(`error`, error)
+        res.sendStatus(500)
+        return;
+    }
+    res.redirect("/")
+});
+
 
 app.post("/logout", loggedChecker, async (req, res) => {
     req.session.destroy((err) => console.log(err));
@@ -472,10 +708,10 @@ app.post("/newQuestion", [check("domanda").escape()], loggedChecker, async (req,
     } catch (error) {
         console.log(`error`, error);
     }
-
+    db.close()
 });
 
-function sendMail(mess, to) {
+function sendMail(mess, subject, to) {
     var transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -486,7 +722,7 @@ function sendMail(mess, to) {
     var mailOptions = {
         from: process.env.MAIL,
         to,
-        subject: "ti hanno citato",
+        subject,
         text: mess
     };
     transporter.sendMail(mailOptions, function (error, info) {
@@ -497,6 +733,9 @@ function sendMail(mess, to) {
         }
     });
 }
+// notifica in alto (menzioni)
+// notifica in alto (consigliati)
+// notifica in alto
 
 app.post("/newReply", [check("text").escape()], loggedChecker, async (req, res) => {
 
@@ -510,10 +749,12 @@ app.post("/newReply", [check("text").escape()], loggedChecker, async (req, res) 
             let chi = testo.substring(pos + 1, pos + 2 + end)
             console.log(chi);
             var lui = await db.db("forum").collection("utenti").findOne({ Name: chi });
-            console.log(`lui.Email`, lui.Email);
-            if (lui.Email) {
-                sendMail(`sei stato citato da ${req.session.lui.Utente}.\n${req.session.lui.Utente} scrive: "${testo}" \nvedi il messaggio: ${home_sito}/thread/${ObjectId(req.body.replyTo)}`, lui.Email)
+            console.log(`lui.mail`, lui.mail);
+            if (lui.mail) {
+                sendMail(`sei stato citato da ${req.session.lui.Utente}.\n${req.session.lui.Utente} scrive: "${testo}" \nvedi il messaggio: ${home_sito}/thread/${ObjectId(req.body.replyTo)}`, "ti hanno citato", lui.mail)
             }
+            // notifica in alto
+            // notifica in alto
             // notifica in alto
         }
 
@@ -529,6 +770,7 @@ app.post("/newReply", [check("text").escape()], loggedChecker, async (req, res) 
     } catch (error) {
         console.log(`error`, error);
     }
+    db.close()
 });
 
 app.post("/allUsers", async (req, res) => {
@@ -538,7 +780,7 @@ app.post("/allUsers", async (req, res) => {
         var dati = await db
             .db("forum")
             .collection("utenti")
-            .find({})
+            .find({ confirmed: { $eq: true } })
             .project({ Name: 1 })
             .toArray();
 
@@ -547,6 +789,7 @@ app.post("/allUsers", async (req, res) => {
         console.log(`error`, error);
         res.sendStatus(500);
     }
+    db.close()
 });
 var Page = require("./userPage")
 var LoggedPage = require("./userPageLogged")
@@ -570,7 +813,7 @@ app.get("/user/:uid", async (req, res) => {
     db.close()
 
     if (!hisData) {//user non c'è
-        res.send("pagina non disponibile. utente cancellato?")
+        res.send("pagina non disponibile. utente cancellato? <button onclick=\"goBack()\">Go Back</button><script>function goBack() {window.history.back();}</script> ")
         return;
     }
 
@@ -616,17 +859,18 @@ app.get("/myPic", loggedChecker, async (req, res) => {
     res.send(him.picUrl || "https://raw.githubusercontent.com/Infernus101/ProfileUI/0690f5e61a9f7af02c30342d4d6414a630de47fc/icon.png")
 });
 
-app.get("/modificaPicc", loggedChecker, async (req, res) => {
+app.post("/modificaPic", loggedChecker, async (req, res) => {
     try {
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-        picc = req.files.picc
-        if (picc) {
-            picc.mv("/public/" + picc.name)
-            let done = await db.db("forum").collection("utenti").findOneAndUpdate({ _id: ObjectId(req.session.lui.IDUtente) }, { $set: { picUrl: "/public/" + picc.name } })
-            console.log(`done`, done);
+        if (req.files) {
+            picc = req.files.newPicc
+            picc.mv("./public/" + picc.name)
+            let done = await db.db("forum").collection("utenti").findOneAndUpdate({ _id: ObjectId(req.session.lui.IDUtente) }, { $set: { picUrl: home_sito + "/" + picc.name } })
+            console.log(`done1`, done);
         } else {
+            console.log("else");
 
-            let done = await db.db("forum").collection("utenti").findOneAndUpdate({ _id: ObjectId(req.session.lui.IDUtente) }, { $set: { picUrl: "/public/" + picc.name } })
+            let done = await db.db("forum").collection("utenti").findOneAndUpdate({ _id: ObjectId(req.session.lui.IDUtente) }, { $set: { picUrl: req.body.newPicUrl } })
             console.log(`done`, done);
         }
         res.sendStatus(200)
@@ -657,6 +901,7 @@ app.post("/allQuestions", isLogged, async (req, res) => {
             }
             return post
         }));
+        db.close()
         // console.log("dati",dati)
         res.json(dati.reverse());//dal + nuovo
     } catch (error) {
@@ -718,6 +963,7 @@ app.post("/modificaNota", [check("text").escape()], loggedChecker, async (req, r
         var dati = await db.db("forum").collection("messaggi").findOneAndUpdate({ by: ObjectId(req.session.lui.IDUtente), _id: ObjectId(req.body.id) }, { $set: { Text: newText } })
         var dopo = await db.db("forum").collection("messaggi").findOne({ by: ObjectId(req.session.lui.IDUtente), _id: ObjectId(req.body.id) })
         res.sendStatus(200)
+        db.close()
     } catch (error) {
         console.log(`error`, error);
         res.sendStatus(500);
@@ -731,6 +977,7 @@ app.post("/delNota", loggedChecker, async function (req, res) {
         if (done.deletedCount != 1)
             throw Error("oops")
         res.sendStatus(200)
+        db.close()
     } catch (error) {
         console.log(`error`, error);
         res.sendStatus(500);

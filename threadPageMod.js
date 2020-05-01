@@ -10,26 +10,58 @@ function page(op_id, posts, IDUtente, con_masto) {
         <title>${posts[0].Text}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <style>
+        .nota {
+            font-family: roboto condensed, serif;
+        }
+
+        textarea {
+            width: 75%;
+            height: 120px;
+            border: 3px solid #796969;
+            padding: 5px;
+            font-family: Tahoma, sans-serif;
+        }
+    </style>
     </head>
     <body style="background-color:grey">
     <div id="fb-root"></div>
     `;
 
+    function printNota(nota, opts) {
+        return `<div>    
+            <br><small>${new Date(nota.Date).toLocaleDateString()}</small>
+            ${opts.showAuthor ? `<a href="/user/${nota.by.toString()}"> ${nota.ByName} </a>scrive:` : ""}
+            <br><textarea id=${nota._id}>${nota.Text}</textarea> <div style="display:inline;"></div> 
+            ${opts.fb ? `<img src="/share_icon.svg" class ="my_share_button" alt="share with facebook" height="20" width="20">` : ""}
+            ${opts.goto ? `<img onclick="goto('${nota._id}')" src="/goto_icon.svg" alt="see it" height="20" width="20">` : ""}
+            ${opts.modificabile ? `<img class="perModificare" onclick="modificaNota('${nota._id}')" src="/edit_icon.svg" alt="edit" height="20" width="20">` : ""}
+            ${opts.con_masto ? `<img src="/toot_icon.svg" data-cosa="${nota._id}" class="masto_share_button" alt="repost on mastodont" height="20" width="20">` : ""}
+            <div style="display:inline"></div>
+            ${opts.modificabile ? `<img data-post-by="${nota.by}" class="perModificare" onclick="delNota('${nota._id}')" src="/delete_icon.svg" alt="edit" height="20" width="20">` : ""}
+            <br>
+        </div>`
+    }
+
+
     posts.forEach(nota => {
-        s += `<div><br><small>${nota.Date.toLocaleDateString()}</small><br>${nota.isOP ? "(OP) " : ""}<a href="/user/${nota.by}"> ${nota.ByName} </a>scrive:<br>
-        <textarea id=${nota._id}>${nota.Text}</textarea><div style="display:inline;"></div> 
-        <img class="perModificare"  style="display:${IDUtente == nota.by ? "inline" : "none"}" onclick="modificaNota('${nota._id}')" src="/edit_icon.svg" alt="edit" height="20" width="20">
-        <img src="/share_icon.svg" class ="my_share_button" alt="share with facebook" height="20" width="20">
-        ${con_masto ? `<img src="/toot_icon.svg" data-cosa="${nota._id}" class="masto_share_button" alt="repost on mastodont" height="20" width="20">` : ""}
-        <div style="display:inline"></div>
-        <img data-post-by="${nota.by}" class="perModificare" onclick="delNota('${nota._id}')" style="display:${IDUtente == nota.by ? "inline" : "none"}" src="/delete_icon.svg" alt="edit" height="20" width="20">                
-        </div><br>`;
+        // s += `<div><br><small>${nota.Date.toLocaleDateString()}</small><br>${nota.isOP ? "(OP) " : ""}<a href="/user/${nota.by}"> ${nota.ByName} </a>scrive:<br>
+        // <textarea id=${nota._id}>${nota.Text}</textarea><div style="display:inline;"></div> 
+        // <img class="perModificare"  style="display:${IDUtente == nota.by ? "inline" : "none"}" onclick="modificaNota('${nota._id}')" src="/edit_icon.svg" alt="edit" height="20" width="20">
+        // <img src="/share_icon.svg" class ="my_share_button" alt="share with facebook" height="20" width="20">
+        // ${con_masto ? `<img src="/toot_icon.svg" data-cosa="${nota._id}" class="masto_share_button" alt="repost on mastodont" height="20" width="20">` : ""}
+        // <div style="display:inline"></div>
+        // <img data-post-by="${nota.by}" class="perModificare" onclick="delNota('${nota._id}')" style="display:${IDUtente == nota.by ? "inline" : "none"}" src="/delete_icon.svg" alt="edit" height="20" width="20">                
+        // </div><br>`;
+        // IDUtente c'è se user è loggato
+        s += printNota(nota, { goto: false, fb: true, showAuthor: true, masto: con_masto, modificabile: IDUtente == nota.by })
     })
 
     s += `    
 
     <br><br>reply with: <textarea id=reply></textarea> <input type=button id=Pubblica value=Pubblica!>
-
+    
+    <button onclick="goBack()">Go Back</button>
     </body>
 </html>
 
@@ -90,6 +122,10 @@ function page(op_id, posts, IDUtente, con_masto) {
             //la vedo
             //la vedo
         });
+
+        function goBack() {
+            window.history.back();
+          }
         
     });
 

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+    <script language="javascript" type="text/javascript" src="./script.js"></script>
+
+</head>
+
+<body style="background-color:grey">
+
+    <div class="container">
+        <div class="row divAccesso">
+            <div class="col-md" style="background-color:yellowgreen">
+                Fai l'accesso
+            </div>
+        </div>
+        <div class="row divAccesso">
+            <div class="col-lg" style="background-color:yellowgreen">
+                Utenza:<input type="text" id="Codice"><br>
+                Codice d'accesso:<input type="password" id="passw">
+                <input type="button" value="Fai l'accesso" id="submitLogin">
+                <input type="button" value="registrati" id="submitRegistrati">
+                <div id="rechapta" style="display: none;">
+                    is a tortoise?:<input type="radio" name="m_radio" value="tortoise"><br>
+                    is a seagull?:<input type="radio" name="m_radio" value="seagull">
+                </div>
+                <a href="https://github.com/login/oauth/authorize?client_id=9468a9a53590c81cc3b9">Accedi con
+                    GitHub</a>
+                <a
+                    href="https://www.facebook.com/v6.0/dialog/oauth?client_id=2546945782289657&redirect_uri=http://localhost:3000/fromFB&state=123">Accedi
+                    con
+                    Facebook</a>
+                <!--HARDCODED https://my-forum.glitch.mes TRA LOCALHOST e MY-FORUM -->
+                <!--HARDCODED https://my-forum.glitch.mes TRA LOCALHOST e MY-FORUM -->
+                <a
+                    href="https://botsin.space/oauth/authorize?redirect_uri=http://localhost:3000%2FfromMasto&response_type=code&client_id=R75I-UhAAzjOsLV212eRqmUphbjURRS1GUpWv6bvyqM&scope=write+read">
+                    Accedi Con Mastodon</a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg" style="background-color:rgb(11, 145, 11)">
+                <div id="AddMessage" style="display: none;">
+                    <div>
+                        <br>
+                        fai una nuova domanda:
+                        <input type="text" placeholder="fai una nuova domanda" id="domanda">
+                        <input type="button" id="nuova_domanda" value="vai">
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <img style="display:none" src="/edit_icon.svg" height="20" width="20">
+    <!-- 4 chaching purposes -->
+
+    <div class="container">
+        visualizza gli altri utenti ;)<br>
+        <div id="utenti"></div><br>
+        Discussioni recenti:<br>
+        <div id="threads"></div>
+    </div>
+
+</body>
+
+</html>
