@@ -1,4 +1,4 @@
-module.exports = { page: page };
+module.exports = { page: page };//pagina dell'utente vista da lui (loggato)
 
 function editIcon(id) {
     return `<img id="${id}" src="/edit_icon.svg" alt=" edit" height="20" width="20">`
@@ -7,7 +7,7 @@ function delIcon(id) {
     return `<img id="${id}" src="/delete_icon.svg" alt=" edit" height="20" width="20">`
 }
 
-function page(uid, hisData, hisPosts, con_masto) {
+function page(id, hisData, hisPosts, con_masto) {
     let s = `<!DOCTYPE html>
     <html>
     <head>
@@ -25,8 +25,9 @@ function page(uid, hisData, hisPosts, con_masto) {
             font-family: roboto condensed, serif;
         }
 
-        textarea {
-            width: 75%;
+        div[contenteditable="true"] {
+            background-color: bisque;
+            width: 55%;
             height: 120px;
             border: 3px solid #796969;
             padding: 5px;
@@ -34,14 +35,41 @@ function page(uid, hisData, hisPosts, con_masto) {
         }
         </style>
     </head>
+
     <body style="background-color:grey">
+
+        <div class="row">
+            <div class="col-10">
+            </div>
+            <div class="col-2">
+                <div id=divProfilo style="display:none;background-color:white;border-radius: 5%"> 
+                    <a href="/user/${id}"> vedi il profilo</a><br>
+                    <span id=logout>logout</span><div></div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-lg" style="background-color:rgb(11, 145, 11)">
+                <div id="AddMessage">
+                    <div>
+                        <br>
+                        fai una nuova domanda:
+                        <input type="text" placeholder="fai una nuova domanda" id="domanda">
+                        <input type="button" id="nuova_domanda" value="vai">
+                        <br>
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <b><span>Pagina di ${hisData.Name}</span></b>${editIcon("pic")}<br><br>
         <img src="${hisData.picUrl}" alt="profile pic" height="152" width="152">
         <br>
         <iframe id="upload_target" name="upload_target" src="#" style="width:0;height:0;border:0px solid #fff;"></iframe>                 
         <form action="/modificaPic" target="upload_target" enctype="multipart/form-data" id=modificaPic method=post>
-            Carica nuova immagine:            
+            Carica nuova immagine:
             <input type="file" name="newPicc" id="fileToUpload"><br> o il link a questa:
             <input type="text" name=newPicUrl><br>
             <input type="submit" value="carica">
@@ -57,7 +85,7 @@ function page(uid, hisData, hisPosts, con_masto) {
         return `<div>    
             <br><small>${new Date(nota.Date).toLocaleDateString()}</small>
             ${opts.showAuthor ? `<a href="/user/${nota.by.toString()}"> ${nota.ByName} </a>scrive:` : ""}
-            <br><textarea id=${nota._id}>${nota.Text}</textarea> <div style="display:inline;"></div> 
+            <br><div contenteditable="true"  id=${nota._id}>${nota.Text}</div> <div style="display:inline;"></div> 
             ${opts.fb ? `<img src="/share_icon.svg" class ="my_share_button" alt="share with facebook" height="20" width="20">` : ""}
             ${opts.goto ? `<img onclick="goto('${nota._id}')" src="/goto_icon.svg" alt="see it" height="20" width="20">` : ""}
             ${opts.modificabile ? `<img class="perModificare" onclick="modificaNota('${nota._id}')" src="/edit_icon.svg" alt="edit" height="20" width="20">` : ""}
@@ -76,10 +104,25 @@ function page(uid, hisData, hisPosts, con_masto) {
     else s += "<i>sembra che l'utente non abbia ancora scritto niente.</i>"
 
     s += `        
-                <button onclick="goBack()">Go Back</button>
+                <center><button onclick="goBack()">Go Back</button></center>
             </body>
     
             <script>
+
+            $("#nuova_domanda").click(() => {
+                $.post("/newQuestion", { domanda: $("#domanda").val() })
+                    .done(() => {
+                        location.reload();                        
+                    })
+            });
+            
+            $("#logout").click(() => {
+                $.post("/logout");
+                $("#logout").next().html("OK!").css("background-color", "green");
+                setTimeout(() => {
+                    location.reload();
+                }, 1000)
+            });
 
             function goBack() {
                 window.history.back();
@@ -87,14 +130,18 @@ function page(uid, hisData, hisPosts, con_masto) {
 
             $(() => {
 
+                $("#modificaPic").submit(()=>alert("ricarica la pagina per vedere la nuova pic"))
+
+
+// todo picUrl non da richiedere ma prevedibile /user/123/picc con 302 magari
                 $("#pic").click(() => {
                     $("span:eq(0)").html(\`Pagina di 
                     <input type="text" id=nome placeholder=${hisData.Name}>
                     <input type="button" id="nuovoNome" value="vai">
                     \`);
                     $("#nuovoNome").click(() => {
-                        $.post("/nuovoNome", { nome: $("#nome").val() }).then(() => {
-                            $("span:eq(0)").html(\`<span>Pagina di \${$("#nome").val()}</span>\`);
+                        $.post("/nuovoNome", { nome: $("#nome").text() }).then(() => {
+                            $("span:eq(0)").html(\`<span>Pagina di \${$("#nome").text()}</span>\`);
                         })
                     })            
                 });        
@@ -124,8 +171,8 @@ function page(uid, hisData, hisPosts, con_masto) {
             });
 
             function modificaNota(chi) {
-                console.log($("#" + chi).val())
-                $.post("/modificaNota", { id: "" + chi, text: $("#" + chi).val() }).then(() => {
+                console.log($("#" + chi).text())
+                $.post("/modificaNota", { id: "" + chi, text: $("#" + chi).text() }).then(() => {
                     $("#" + chi).next().html("OK!").css("background-color", "green");
                     setTimeout(() => {
                         $("#" + chi).next().html("");
@@ -135,8 +182,8 @@ function page(uid, hisData, hisPosts, con_masto) {
             }
 
             function delNota(chi) {
-                console.log($("#" + chi).val())
-                $.post("/delNota", { id: "" + chi, text: $("#" + chi).val() }).then(() => {
+                console.log($("#" + chi).text())
+                $.post("/delNota", { id: "" + chi }).then(() => {
                     $("#" + chi).next().html("OK!").css("background-color", "green");
                     setTimeout(() => {
                         $("#" + chi).parent().remove()

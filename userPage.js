@@ -14,8 +14,8 @@ function page(uid, hisData, hisPosts) {
             font-family: roboto condensed, serif;
         }
 
-        textarea {
-            width: 75%;
+        div[contenteditable="true"] {
+            width: 55%;
             height: 120px;
             border: 3px solid #796969;
             padding: 5px;
@@ -36,7 +36,7 @@ function page(uid, hisData, hisPosts) {
         return `<div>    
             <br><small>${new Date(nota.Date).toLocaleDateString()}</small>
             ${opts.showAuthor ? `<a href="/user/${nota.by.toString()}"> ${nota.ByName} </a>scrive:` : ""}
-            <br><textarea id=${nota._id}>${nota.Text}</textarea> <div style="display:inline;"></div> 
+            <br><div contenteditable="true" id=${nota._id}>${nota.Text}</div> <div style="display:inline;"></div> 
             ${opts.fb ? `<img src="/share_icon.svg" class ="my_share_button" alt="share with facebook" height="20" width="20">` : ""}
             ${opts.goto ? `<img onclick="goto('${nota._id}')" src="/goto_icon.svg" alt="see it" height="20" width="20">` : ""}
             ${opts.modificabile ? `<img class="perModificare" onclick="modificaNota('${nota._id}')" src="/edit_icon.svg" alt="edit" height="20" width="20">` : ""}

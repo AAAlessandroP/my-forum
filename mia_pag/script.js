@@ -98,44 +98,40 @@ $(async function () {
 
         if (singleton3) {
             singleton3 = false;
-            m_id = id
 
-            console.log(`onaccessGranted`);
+            console.log(`onaccessGranted`, id);
 
             $("#AddMessage").show(1000)
             ricaricaThreads() //così adesso ci saranno i  pulsanti del, mod ecc
 
 
-            $.get("/myPic").then(picc => {
-                console.log("myPic");
 
-                $(".divAccesso").remove()
-                // tolgo l'intestazione 
-                if ($("#divProfilo")[0] == null) {//onaccessGranted potrebbe essere chiamata dopo nuovo mess con già la foto profilo
-                    $("body").prepend(`
+            $(".divAccesso").remove()
+            // tolgo l'intestazione 
+            if ($("#divProfilo")[0] == null) {//onaccessGranted potrebbe essere chiamata dopo nuovo mess con già la foto profilo
+                $("body").prepend(`
                     <div class="row">
                         <div class="col-10">
                         </div>
                         <div class="col-2">
-                            <img src="${picc}" id=picture style="border-radius: 50%;width:64px;height:64px">
+                            <img src="/user/${id}/pic" id=picture style="border-radius: 50%;width:64px;height:64px">
                             <div id=divProfilo style="display:none;background-color:white;border-radius: 5%"> 
-                                <a href="/user/${id.toString()}"> vedi il profilo</a><br>
+                                <a href="/user/${id}"> vedi il profilo</a><br>
                                 <span id=logout>logout</span><div></div>
                             </div>
                         </div>
                     </div>`);
-                    $("#picture").click(() => {
-                        $("#divProfilo").toggle(100)
-                    });
-                    $("#logout").click(() => {
-                        $.post("/logout");
-                        $("#logout").next().html("OK!").css("background-color", "green");
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1000)
-                    });
-                }
-            });
+                $("#picture").click(() => {
+                    $("#divProfilo").toggle(100)
+                });
+                $("#logout").click(() => {
+                    $.post("/logout");
+                    $("#logout").next().html("OK!").css("background-color", "green");
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000)
+                });
+            }
         } else singleton3 = false
     }
 
@@ -148,7 +144,7 @@ $(async function () {
         return `<div class="nota">    
             <br><small>${new Date(nota.Date).toLocaleDateString()}</small>
             ${opts.showAuthor ? `<a href="/user/${nota.by.toString()}"> ${nota.ByName} </a>scrive:` : ""}
-            <br><textarea id=${nota._id}>${nota.Text}</textarea> <div style="display:inline;"></div> 
+            <br><div contenteditable="true" id=${nota._id}>${nota.Text}</div> <div style="display:inline;"></div> 
             ${opts.fb ? `<img src="/share_icon.svg" class ="my_share_button" alt="share with facebook" height="20" width="20">` : ""}
             ${opts.goto ? `<img onclick="goto('${nota._id}')" src="/goto_icon.svg" alt="see it" height="20" width="20">` : ""}
             ${opts.modificabile ? `<img class="perModificare" onclick="modificaNota('${nota._id}')" src="/edit_icon.svg" alt="edit" height="20" width="20">` : ""}
@@ -169,35 +165,43 @@ $(async function () {
 
             let singleton3 = true
             $("#loginWithTG").click(async () => {
+
+
+
                 if (singleton3) {
                     singleton3 = false;
                     let id;
                     try {
+                        if (typeof (EventSource) !== "undefined") {
+                            var source = new EventSource("/events");
+                            source.onmessage = function (event) {
+                                // è loggato adesso!
+                                // console.log(event.data.replace(/('|")/g, ""))
+                                onaccessGranted(event.data.replace(/('|")/g, ""))
+                            };
+                        }
                         id = await $.get("/getTempId4TG")
                     } catch (error) {
                         console.log(`error`, error)
                     }
-                    $("#loginWithTG").html(`Accedi via <a href="t.me/pippofalapizza">telegram bot</a> con id=${id}`);
+                    $("#loginWithTG").html(`Accedi via <a href="https://t.me/pippofalapizza">telegram bot</a> con id=${id}`);
                 }
             });
 
-            logged = request.getResponseHeader("x-logged") != "no"
-            if (logged)
+            let m_id = request.getResponseHeader("x-logged")
+            if (m_id != "no")
                 onaccessGranted(request.getResponseHeader("x-logged"))
 
             if (note != "nulla salvato") {
                 $("#threads").html("");
                 note.forEach(nota => {
-                    $("#threads").append(printNota(nota, { modificabile: logged, goto: true, masto: con_masto, fb: false, showAuthor: true }))
-                    // metto FB
-                    // metto FB
-                    // metto FB
+                    $("#threads").append(printNota(nota, { modificabile: m_id == nota.by, goto: true, masto: con_masto, fb: false, showAuthor: true }))
                 });
 
                 if (con_masto)
                     $('.masto_share_button').click(function (e) {
                         console.log(e.target)
-                        $.post("/tootIt", { testo: $("#" + e.target.getAttribute("data-cosa")).val() }).then(() => {
+                        $.post("/tootIt", { testo: $("#" + e.target.getAttribute("data-cosa")).text() }).then(() => {
                             $(e.target).next().html("OK!").css("background-color", "green");
                             setTimeout(() => {
                                 $(e.target).next().html("")
@@ -218,8 +222,10 @@ function goto(chi) {
 }
 
 function modificaNota(chi) {
-    console.log($("#" + chi).val())
-    $.post("/modificaNota", { id: "" + chi, text: $("#" + chi).val() }).then(() => {
+    console.log(`chi`, chi)
+    console.log(`$("#" + chi)`, $("#" + chi))
+    console.log($("#" + chi).text())
+    $.post("/modificaNota", { id: "" + chi, text: $("#" + chi).text() }).then(() => {
         $("#" + chi).next().html("OK!").css("background-color", "green");
         setTimeout(() => {
             $("#" + chi).next().html("");
@@ -229,8 +235,8 @@ function modificaNota(chi) {
 }
 
 function delNota(chi) {
-    console.log($("#" + chi).val())
-    $.post("/delNota", { id: "" + chi, text: $("#" + chi).val() }).then(() => {
+    console.log($("#" + chi).text())
+    $.post("/delNota", { id: "" + chi, text: $("#" + chi).text() }).then(() => {
         $("#" + chi).next().html("OK!").css("background-color", "green");
         setTimeout(() => {
             $("#" + chi).parent().remove()

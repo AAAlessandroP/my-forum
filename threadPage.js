@@ -15,8 +15,9 @@ function page(op_id, posts, IDUtente, con_masto) {
             font-family: roboto condensed, serif;
         }
 
-        textarea {
-            width: 75%;
+        div[contenteditable="true"] {
+            background-color: bisque;
+            width: 55%;
             height: 120px;
             border: 3px solid #796969;
             padding: 5px;
@@ -32,7 +33,7 @@ function page(op_id, posts, IDUtente, con_masto) {
         return `<div>    
             <br><small>${new Date(nota.Date).toLocaleDateString()}</small>
             ${opts.showAuthor ? `<a href="/user/${nota.by.toString()}"> ${nota.ByName} </a>scrive:` : ""}
-            <br><textarea id=${nota._id}>${nota.Text}</textarea> <div style="display:inline;"></div> 
+            <br><div contenteditable="true" id=${nota._id}>${nota.Text}</div> <div style="display:inline;"></div> 
             ${opts.fb ? `<img src="/share_icon.svg" class ="my_share_button" alt="share with facebook" height="20" width="20">` : ""}
             ${opts.goto ? `<img onclick="goto('${nota._id}')" src="/goto_icon.svg" alt="see it" height="20" width="20">` : ""}
             ${opts.modificabile ? `<img class="perModificare" onclick="modificaNota('${nota._id}')" src="/edit_icon.svg" alt="edit" height="20" width="20">` : ""}
@@ -45,14 +46,6 @@ function page(op_id, posts, IDUtente, con_masto) {
 
 
     posts.forEach(nota => {
-        // s += `<div><br><small>${nota.Date.toLocaleDateString()}</small><br>${nota.isOP ? "(OP) " : ""}<a href="/user/${nota.by}"> ${nota.ByName} </a>scrive:<br>
-        // <textarea id=${nota._id}>${nota.Text}</textarea><div style="display:inline;"></div> 
-        // <img class="perModificare"  style="display:${IDUtente == nota.by ? "inline" : "none"}" onclick="modificaNota('${nota._id}')" src="/edit_icon.svg" alt="edit" height="20" width="20">
-        // <img src="/share_icon.svg" class ="my_share_button" alt="share with facebook" height="20" width="20">
-        // ${con_masto ? `<img src="/toot_icon.svg" data-cosa="${nota._id}" class="masto_share_button" alt="repost on mastodont" height="20" width="20">` : ""}
-        // <div style="display:inline"></div>
-        // <img data-post-by="${nota.by}" class="perModificare" onclick="delNota('${nota._id}')" style="display:${IDUtente == nota.by ? "inline" : "none"}" src="/delete_icon.svg" alt="edit" height="20" width="20">                
-        // </div><br>`;
         // IDUtente c'è se user è loggato
         s += printNota(nota, { goto: false, fb: true, showAuthor: true, masto: con_masto, modificabile: IDUtente == nota.by })
     })
@@ -81,11 +74,7 @@ function page(op_id, posts, IDUtente, con_masto) {
 
     <script>
     $(function () {
-// SHARE ANCHE RISPOSTE
-// SHARE ANCHE RISPOSTE
-// SHARE ANCHE RISPOSTE
-// SHARE ANCHE RISPOSTE
-// SHARE ANCHE RISPOSTE
+
         $('.my_share_button').click(function(e){
             try{
                 e.preventDefault();
@@ -116,11 +105,9 @@ function page(op_id, posts, IDUtente, con_masto) {
         });
         `: ""}
 
-        $("#Pubblica").click(()=>{
-            $.post("/newReply",{replyTo:"${op_id}" , text:$("#reply").val()})
-            //la vedo
-            //la vedo
-            //la vedo
+        $("#Pubblica").click(async()=>{
+            await $.post("/newReply",{replyTo:"${op_id}" , text:$("#reply").text()})
+            window.location.reload()
         });
 
         function goBack() {
@@ -132,8 +119,8 @@ function page(op_id, posts, IDUtente, con_masto) {
 
 
     function modificaNota(chi) {
-        console.log($("#" + chi).val())
-        $.post("/modificaNota", { id: "" + chi, text: $("#" + chi).val() }).then(() => {
+        console.log($("#" + chi).text())
+        $.post("/modificaNota", { id: "" + chi, text: $("#" + chi).text() }).then(() => {
             $("#" + chi).next().html("OK!").css("background-color", "green");
             setTimeout(() => {
                 $("#" + chi).next().html("");
@@ -143,8 +130,8 @@ function page(op_id, posts, IDUtente, con_masto) {
     }
 
     function delNota(chi) {
-        console.log($("#" + chi).val())
-        $.post("/delNota", { id: "" + chi, text: $("#" + chi).val() }).then(() => {
+        console.log($("#" + chi).text())
+        $.post("/delNota", { id: "" + chi }).then(() => {
             $("#" + chi).next().html("OK!").css("background-color", "green");
             setTimeout(() => {
                 $("#" + chi).parent().remove()

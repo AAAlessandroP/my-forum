@@ -13,6 +13,7 @@ const MongoClient = require("mongodb").MongoClient;
 const Telegraf = require('telegraf');
 const tsession = require('telegraf/session')
 const { Extra, Markup } = Telegraf;
+const sse = require('connect-sse')();
 require('dotenv').config()
 const bot = new Telegraf(process.env.TELEGRAM_TOKEN);
 bot.use(tsession())
@@ -39,7 +40,8 @@ app.use(
         store,
         unset: "destroy",
         name: cookie_name,
-        saveUninitialized: false,
+        saveUninitialized: true,//a true permette di mantenere la sessione anche se req.session non viene toccato, altrimenti tutte le richieste che non modificano req.session sarebbero indistinguibili (salvo una precedente req che lo facesse)
+        // con saveUninitialized: true la sessione permane anche tra + req che non toccano req.session
         resave: false,
         secret: `quiet, pal! it's a secret!`,
         cookie: {
@@ -49,13 +51,23 @@ app.use(
         }
     })
 )
-
+// posso manipolare le sessioni a mano con STORE.get() e STORE.set(), lui le salva lì
 if (process.env.NODE_ENV == 'production')
     home_sito = "https://my-forum.glitch.me"
 else
     home_sito = "http://localhost:" + port
 
 const uri = `mongodb+srv://forum:${process.env.MONGO_PASS}@miocluster2-igwb8.mongodb.net/test?retryWrites=true&w=majority`;
+(async () => {
+    try {
+        var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+        var tutti = await db.db("forum").collection("utenti").find({}).toArray()
+        console.log(`tutti`, tutti)
+    } catch (error) {
+        console.log(`error`, error)
+    }
+})//()
+
 //  todo gli STATE del redirect validi in funzione del tempo(cambiano con, non lo stesso sempre)
 //  todo gli STATE del redirect validi in funzione del tempo(cambiano con, non lo stesso sempre)
 //  todo gli STATE del redirect validi in funzione del tempo(cambiano con, non lo stesso sempre)
@@ -67,15 +79,6 @@ const uri = `mongodb+srv://forum:${process.env.MONGO_PASS}@miocluster2-igwb8.mon
 // passw lunga
 // email unica
 // email unica
-
-// PROBLEMONE: VEDO I COTROLLI CrUD SU MESS NON MIEI
-// PROBLEMONE: VEDO I COTROLLI CrUD SU MESS NON MIEI
-// PROBLEMONE: VEDO I COTROLLI CrUD SU MESS NON MIEI
-// PROBLEMONE: VEDO I COTROLLI CrUD SU MESS NON MIEI
-// PROBLEMONE: VEDO I COTROLLI CrUD SU MESS NON MIEI
-// PROBLEMONE: VEDO I COTROLLI CrUD SU MESS NON MIEI
-// PROBLEMONE: VEDO I COTROLLI CrUD SU MESS NON MIEI
-
 
 // i temp token che arrivano all'endoint nostro sono usabili una sola volta
 function h(s) {
@@ -363,6 +366,11 @@ app.get("/rechaptaPhotos", async (req, res) => {
 // })
 // store.clear(err => console.log(`err`, err))
 
+// TODO AUTH 3e PARTI mie
+// TODO AUTH 3e PARTI mie
+// TODO AUTH 3e PARTI mie
+// TODO AUTH 3e PARTI mie
+// TODO AUTH 3e PARTI mie
 
 var ARR_AUTH_TOKENS = {};
 var access_tokens = {};
@@ -371,7 +379,6 @@ app.get("/login", async (req, res) => {
 
     var Name = req.query.utente;
     var pass = req.query.passw;
-    console.log(`req.sessionID`, req.sessionID)
     var redirect_uri = req.query.redirect_uri
     var client_id = req.query.client_id
     var scope = req.query.scope
@@ -400,6 +407,7 @@ app.get("/login", async (req, res) => {
     db.close()
 });
 
+// gesitrare app
 // gesitrare app
 // gesitrare app
 function loggedApi(req, res, next) {
@@ -487,7 +495,7 @@ app.post("/api", loggedApi, async (req, res, next) => {
 });
 
 
-app.get("/getTempId4TG", (req, res) => {
+app.get("/getTempId4TG", sse, (req, res) => {
     let shortId = crypto.randomBytes(16).toString("hex").substr(0, 6)
     client.set(shortId, req.sessionID)
     res.send(shortId)
@@ -497,19 +505,40 @@ app.get("/getTempId4TG", (req, res) => {
 bot.start((ctx) => ctx.replyWithHTML("<pre>Willcommen! type in \n /login \n to log-in in my-forum!</pre>"));
 bot.help((ctx) => ctx.replyWithHTML("<pre>Willcommen! type in \n /login \n to log-in in my-forum!</pre>"));
 bot.command('login', async (ctx) => {
-    ctx.replyWithHTML("manda l'id (quello dato sul sito)")
+    ctx.replyWithHTML("manda l'id (quello dato sul sito) in formato: id 123ad2")
+});
+
+var arrRisolutore = {}
+function risolutore(sid, callbRisolvi, exec) {
+    if (callbRisolvi)
+        arrRisolutore[sid] = callbRisolvi
+    if (exec) {
+        arrRisolutore[sid]()
+        delete arrRisolutore[sid];
+    }
+}
+
+app.get('/events', sse, function (req, res, next) {
+    new Promise((resolve, reject) => {
+        risolutore(req.sessionID, () => resolve("ok ok")) // la chiamata fa risolvere la promise e far ritornare /events
+    }).then(() => next())
+}, (req, res) => {
+    store.get(req.sessionID, (error, s) => {
+        console.log(`s`, s)
+        res.json(s.lui.IDUtente)
+    });
+    // res.send(req.session.lui.IDUtente) NO MA ^
 });
 
 // quando l'user fa login qui mette lo shortId che corrisponde al sessionID della sua sess sul sito, sess che segno autenticata
-
+// todo: rettifica mail magari?
 bot.on('text', async (ctx) => {
-    // console.log(`text`, ctx.message.text)
-    // console.log(`sender`, ctx.from)
+
+
     if (ctx.message.text.match(/.+@.+\..+/)) {//ci ha mandato una mail
-        // controllo from.id==salvato.id
-        // controllo from.id==salvato.id
+
         let userOnTelegram = {
-            username: ctx.from.username,
+            username: ctx.from.username.toString().replace(" ", "_"),
             id: ctx.from.id
         }
 
@@ -517,40 +546,88 @@ bot.on('text', async (ctx) => {
             var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
             var lui = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(userOnTelegram.id.toString().padStart(24, "0")) })
             // console.log(`lui`, lui);
-            if (lui) { //se c'era già
+            if (!lui) { //è nuovo utente 
 
-                let sessidSulSito = await client.get(ctx.session.id)
-                await client.set(sessidSulSito, {
-                    IDUtente: ObjectId(userOnTelegram.id.toString().padStart(24, "0")),
-                    Utente: lui.Name,
+                // gli prendo la propic e la salvo e metto come sua pic nel sito
+                let pics = await bot.telegram.getUserProfilePhotos(ctx.update.message.chat.id)
+                let link = await bot.telegram.getFileLink(pics.photos[0][0].file_id)// è il link (valido per 1 ora) alla sua pima pic di profilo
+                const img = await fetch(link);
+                let imgageBlob = await img.arrayBuffer()
+                fs.writeFile("./public/" + userOnTelegram.username, Buffer.from(imgageBlob), function (err) {
+                    if (err) throw Error(err)
                 });
 
-            } else {
                 var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
                 await db.db("forum").collection("utenti").insertOne(
                     {
                         _id: ObjectId(userOnTelegram.id.toString().padStart(24, "0")),
-                        Name: userOnTelegram.username.toString().replace(" ", "_"),
-                        Email: userOnTelegram.email,
+                        Name: userOnTelegram.username,
+                        Email: ctx.message.text,
+                        chatId: ctx.chat.id,
+                        picUrl: home_sito + "/" + userOnTelegram.username,
+                        confirmed: false
                     });
 
-                let sessidSulSito = await client.get(ctx.session.id)
-                await client.set(sessidSulSito, {
-                    IDUtente: ObjectId(userOnTelegram.id.toString().padStart(24, "0")),
-                    Utente: lui.Name,
-                });
+                // gli metto la sess autorizzata 
+                client.get(ctx.session.id, (err, sessidSulSito) => {
+                    store.get(sessidSulSito, (error, precSess) => {
+                        precSess.lui = {
+                            IDUtente: ObjectId(userOnTelegram.id.toString().padStart(24, "0")),
+                            Utente: lui.Name,
+                            confirmed: false
+                        }
+                        store.set(sessidSulSito, precSess,
+                            () => risolutore(sessidSulSito, null, 1));
+                        ctx.reply(`fatto ${ctx.from.username}!`)
+                    });
+                })
+
+                toConfirm(ctx.message.text, ObjectId(userOnTelegram.id.toString().padStart(24, "0")))
+                ctx.reply(`fatto ${ctx.from.username}! now check your inbox to confirm your email address.`)
             }
-            ctx.reply(`fatto ${ctx.from.username}!`)
         } catch (error) {
             console.log(`error`, error);
             return;
         }
     } if (ctx.message.text.match(/^id .{6}$/)) {//è l'id 
-        ctx.session.id = ctx.message.text.substring(3)
-        console.log(`ctx.message.text.substring(3)`, ctx.message.text.substring(3))
-        ctx.replyWithHTML(`<pre>ok, ora se vuoi REGISTRARTI manda l'inidirizzo di posta a cui vuoi essere contattato se qualcuno ti menziona sul forum.
-    Oppore manda una stringa vuota come messaggio</pre>`);
-    } else ctx.replyWithHTML("<pre>Willcommen! type in \n /login \n to log-in in my-forum!</pre>")
+
+        try {
+            let userOnTelegram = {
+                username: ctx.from.username.toString().replace(" ", "_"),
+                id: ctx.from.id
+            }
+            var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+            var lui = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(userOnTelegram.id.toString().padStart(24, "0")) })
+
+            if (lui) { //se c'era già
+
+                // gli metto la sess autorizzata
+                client.get(ctx.message.text.substring(3), (err, sessidSulSito) => {
+
+                    store.get(sessidSulSito, (error, precSess) => {
+                        precSess.lui = {
+                            IDUtente: ObjectId(userOnTelegram.id.toString().padStart(24, "0")),
+                            Utente: lui.Name,
+                        }
+                        store.set(sessidSulSito, precSess,
+                            () => risolutore(sessidSulSito, null, 1));
+
+                        ctx.reply(`fatto ${ctx.from.username}!`)
+                    });
+                })
+
+
+            } else {
+                ctx.session.id = ctx.message.text.substring(3)//così quando arriva la mail posso salvare anche l'id
+                ctx.replyWithHTML(`ok dato che vuoi registrarti manda l'inidirizzo di posta a cui vuoi essere contattato se qualcuno ti menziona sul forum.`);
+            }
+        } catch (error) {
+            console.log(`error`, error)
+            ctx.reply("ops, errore")
+        }
+
+    } else
+        ctx.replyWithHTML("<pre>Willcommen! type in the id given by the my-forum's login page.</pre>")
 })
 bot.launch()
 bot.startPolling();
@@ -566,7 +643,9 @@ bot.startPolling();
 //se è loggato gli metto l'header che lo specifica
 // funz usata per appendere l'header a /allQuestions, così lo script dalla req capisce se è loggato
 function isLogged(req, res, next) {
-    // console.log(`req.session.lui`, req.session.lui);
+    store.get(req.sessionID, function (err, result) {
+        console.log(result);
+    });
     if (req.session.lui != undefined && (req.session.lui.confirmed === undefined || req.session.lui.confirmed !== false)) {
         res.setHeader("X-logged", req.session.lui.IDUtente)
         if (req.session.lui.masto)
@@ -615,7 +694,7 @@ app.post("/addUser", [check('utente').escape()], async (req, res) => {
                     mail,
                     confirmed: false
                 }
-                toConfirm(mail, req)
+                toConfirm(mail, req.session.lui.IDUtente)
                 res.status(201).send("check your inbox to confirm your email address.");
             } catch (error) {
                 console.log(`error`, error);
@@ -631,11 +710,9 @@ app.post("/addUser", [check('utente').escape()], async (req, res) => {
     }
 });
 
-
-function toConfirm(to, req) {
+function toConfirm(to, IDUtente) {
     let rand = crypto.randomBytes(64).toString("hex")
-    console.log(`req.sessionID`, req.sessionID)
-    client.set(rand, req.session.lui.IDUtente)// ttl= xx minuti della sess
+    client.set(rand, IDUtente)// ttl= xx minuti della sess
     sendMail(`conferma la tua casella di posta, premi qua: ${home_sito}/confermaMail?code=${rand}`, "conferma l'iscrizione a " + home_sito, to)
 }
 
@@ -646,8 +723,14 @@ app.get("/confermaMail", async (req, res) => {
         // è una sess diversa da quella del registra
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
         var done = await db.db("forum").collection("utenti").updateOne({ _id: ObjectId(who) }, { $set: { confirmed: true } }, { safe: true, upsert: true });
+        var lui = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(who) })
+
         if (done.result.nModified != 1)
             throw Error("ops")
+        req.session.lui = {
+            IDUtente: ObjectId(who),
+            Utente: lui.Name,
+        }
     } catch (error) {
         console.log(`error`, error)
         res.sendStatus(500)
@@ -655,7 +738,6 @@ app.get("/confermaMail", async (req, res) => {
     }
     res.redirect("/")
 });
-
 
 app.post("/logout", loggedChecker, async (req, res) => {
     req.session.destroy((err) => console.log(err));
@@ -704,7 +786,6 @@ app.post("/newQuestion", [check("domanda").escape()], loggedChecker, async (req,
         var done = await db.db("forum").collection("messaggi").insertOne(nuovaDomanda);
         assert.equal(done.insertedCount, 1)
         res.sendStatus(200)
-        console.log(`done`, done);
     } catch (error) {
         console.log(`error`, error);
     }
@@ -736,27 +817,43 @@ function sendMail(mess, subject, to) {
 // notifica in alto (menzioni)
 // notifica in alto (consigliati)
 // notifica in alto
+// notifica in alto
+
+//qualcuno è stato citato?
+
+// e con più @ ??
+// e con più @ ??
+// e con più @ ??
+async function verificaCitati(testo, nomeUtenteCheScrive, replyTo) {
+    console.log(`testo`, testo)
+    testo = testo.replace(/\n/, "")
+    console.log(`testo`, testo)
+    let pos = testo.toString().search("@")
+    if (pos !== -1) {
+        console.log(`pos`, pos)
+        console.log(`testo.substring(pos)`, testo.substring(pos + 1));
+        let chi = /(\w*)( .+|$)/.exec(testo.substring(pos + 1))[1]
+        var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+        var lui = await db.db("forum").collection("utenti").findOne({ Name: chi });
+        if (lui.Email) {
+            sendMail(`sei stato citato da ${nomeUtenteCheScrive}.\n${nomeUtenteCheScrive} scrive: "${testo}" \nvedi il messaggio: ${home_sito}/thread/${ObjectId(replyTo)}`, "ti hanno citato", lui.Email)
+        }
+        if (lui.chatId)
+            await bot.telegram.sendMessage(lui.chatId, `sei stato citato da ${nomeUtenteCheScrive}.\n${nomeUtenteCheScrive} scrive: "${testo}" \nvedi il messaggio: ${home_sito}/thread/${ObjectId(replyTo)}`)
+        // notifica in alto
+        // notifica in alto
+        // notifica in alto
+        return testo.replace("@" + chi, `<a href="/user/${lui._id}">${chi}</a>`)
+    } else
+        return testo;
+}
 
 app.post("/newReply", [check("text").escape()], loggedChecker, async (req, res) => {
 
     try {
         var testo = req.body.text;
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-        //qualcuno è stato citato?
-        if (pos = testo.toString().search("@") !== -1) {
-            console.log(`testo.substring(pos)`, testo.substring(pos + 1));
-            let end = testo.substring(pos + 1).search(/.\b./)
-            let chi = testo.substring(pos + 1, pos + 2 + end)
-            console.log(chi);
-            var lui = await db.db("forum").collection("utenti").findOne({ Name: chi });
-            console.log(`lui.mail`, lui.mail);
-            if (lui.mail) {
-                sendMail(`sei stato citato da ${req.session.lui.Utente}.\n${req.session.lui.Utente} scrive: "${testo}" \nvedi il messaggio: ${home_sito}/thread/${ObjectId(req.body.replyTo)}`, "ti hanno citato", lui.mail)
-            }
-            // notifica in alto
-            // notifica in alto
-            // notifica in alto
-        }
+        testo = await verificaCitati(testo, req.session.lui.Utente, req.body.replyTo)
 
         let nuovaDomanda = {
             replyTo: ObjectId(req.body.replyTo),
@@ -808,9 +905,9 @@ app.get("/user/:uid", async (req, res) => {
     }
     var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
     let hisData = await db.db("forum").collection("utenti").findOne({ _id: uid })
-    let all = await db.db("forum").collection("utenti").find({}).toArray()
     let hisPosts = await db.db("forum").collection("messaggi").find({ by: uid }).toArray()
     db.close()
+    hisPosts = hisPosts.reverse() //ord crono inverso
 
     if (!hisData) {//user non c'è
         res.send("pagina non disponibile. utente cancellato? <button onclick=\"goBack()\">Go Back</button><script>function goBack() {window.history.back();}</script> ")
@@ -850,13 +947,10 @@ app.post("/delProfile", loggedChecker, async (req, res) => {
     db.close()
 });
 
-// da rimuovere: /user/id/pic porta alla pic e non è + necessario v
-// da rimuovere: /user/id/pic porta alla pic e non è + necessario v
-app.get("/myPic", loggedChecker, async (req, res) => {
-    console.log(`req.session.lui.IDUtente`, ObjectId(req.session.lui.IDUtente))
+app.get("/user/:uid/pic", loggedChecker, async (req, res) => {
     var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
     let him = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(req.session.lui.IDUtente) })
-    res.send(him.picUrl || "https://raw.githubusercontent.com/Infernus101/ProfileUI/0690f5e61a9f7af02c30342d4d6414a630de47fc/icon.png")
+    res.redirect(him.picUrl || "https://raw.githubusercontent.com/Infernus101/ProfileUI/0690f5e61a9f7af02c30342d4d6414a630de47fc/icon.png")
 });
 
 app.post("/modificaPic", loggedChecker, async (req, res) => {
@@ -910,7 +1004,7 @@ app.post("/allQuestions", isLogged, async (req, res) => {
     }
 });
 
-var ThreadPage = require("./threadPageMod")
+var ThreadPage = require("./threadPage")
 app.get("/thread/:id", async (req, res) => {
     var question_id = req.params.id
 
@@ -957,11 +1051,12 @@ app.use(bodyParser.text({ type: 'text' }))
 app.post("/modificaNota", [check("text").escape()], loggedChecker, async (req, res) => {
     let newText = req.body.text //html sanitized
     console.log(`newText`, newText);
+
     try {
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
         var prima = await db.db("forum").collection("messaggi").findOne({ by: ObjectId(req.session.lui.IDUtente), _id: ObjectId(req.body.id) })
-        var dati = await db.db("forum").collection("messaggi").findOneAndUpdate({ by: ObjectId(req.session.lui.IDUtente), _id: ObjectId(req.body.id) }, { $set: { Text: newText } })
-        var dopo = await db.db("forum").collection("messaggi").findOne({ by: ObjectId(req.session.lui.IDUtente), _id: ObjectId(req.body.id) })
+        newText = await verificaCitati(newText, req.session.lui.Utente, prima.replyTo ? prima.replyTo : prima._id)
+        await db.db("forum").collection("messaggi").findOneAndUpdate({ by: ObjectId(req.session.lui.IDUtente), _id: ObjectId(req.body.id) }, { $set: { Text: newText } })
         res.sendStatus(200)
         db.close()
     } catch (error) {
