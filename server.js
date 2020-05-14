@@ -81,6 +81,8 @@ const uri = `mongodb+srv://forum:${process.env.MONGO_PASS}@miocluster2-igwb8.mon
 // email unica
 
 // i temp token che arrivano all'endoint nostro sono usabili una sola volta
+// i temp token che arrivano all'endoint nostro sono usabili una sola volta
+// i temp token che arrivano all'endoint nostro sono usabili una sola volta
 function h(s) {
     var hash = crypto.createHash("sha256");
     hash.update(s);
@@ -88,7 +90,9 @@ function h(s) {
 }
 
 function loggedChecker(req, res, next) {
-    console.log("req.session.lui", req.session.lui)
+    // console.log("req.session.lui", req.session.lui)
+    console.log(`req.sessionID`, req.sessionID)
+
     if (req.session.lui != undefined && (req.session.lui.confirmed === undefined || req.session.lui.confirmed !== false)) {
         next()
     } else
@@ -98,13 +102,7 @@ function loggedChecker(req, res, next) {
 // anteprima icona utente
 // anteprima icona utente
 // anteprima icona utente
-// ricaggio mypicc
-// ricaggio mypicc
-// ricaggio mypicc
 
-// PICC MODIFICABILE
-// PICC MODIFICABILE
-// PICC MODIFICABILE
 
 async function infoSuDiMeGH(token) {
     let url = `https://api.github.com/user`
@@ -361,11 +359,6 @@ app.get("/rechaptaPhotos", async (req, res) => {
     res.sendFile(`./files4rechapta/${randPicName}`, { root: __dirname })
 })
 
-// store.all((error, sessions) => {
-//     console.log(`sessions`, sessions);
-// })
-// store.clear(err => console.log(`err`, err))
-
 // TODO AUTH 3e PARTI mie
 // TODO AUTH 3e PARTI mie
 // TODO AUTH 3e PARTI mie
@@ -407,9 +400,66 @@ app.get("/login", async (req, res) => {
     db.close()
 });
 
-// gesitrare app
-// gesitrare app
-// gesitrare app
+app.post("/getToken", async (req, res) => {
+    var AUTH_TOKEN = req.body.AUTH_TOKEN;
+    var client_id = req.body.client_id;
+    var client_secret = req.body.client_secret;
+    // TODO gestione scope
+    // TODO gestione scope
+    // TODO gestione scope
+    // TODO gestione scope
+
+    var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    var client = await db.db("forum").collection("apps").findOne({ _id: ObjectId(client_id), client_secret: h(client_secret.toString()) });
+    // la metto hasciata la passw
+
+    console.log(client)
+    console.log(ARR_AUTH_TOKENS[AUTH_TOKEN])
+
+    if (client && ARR_AUTH_TOKENS[AUTH_TOKEN]) {
+        console.log("access granted ")
+        var token = crypto.randomBytes(256).toString("hex");
+        access_tokens[token] = ARR_AUTH_TOKENS[AUTH_TOKEN]
+        setTimeout(() => {
+            delete access_tokens[token];
+        }, 1000 * 60 * 60 * 24);//dopo 1gg scade il token
+        delete ARR_AUTH_TOKENS[AUTH_TOKEN];
+        res.json({ access_token: token, key: access_tokens[token].toCipher })//key è la stringa che il client usa per cifrare i dati dell'utente
+    } else res.sendStatus(401)
+    db.close()
+});
+
+
+// TODO pagina : dev > registra app oauth con rechapta
+// TODO pagina : dev > registra app oauth con rechapta
+// TODO pagina : dev > registra app oauth con rechapta
+app.post("/registraApi", async (req, res) => {
+    var client_secret = req.body.client_secret;
+    var name = req.body.name;
+    let shortId = crypto.randomBytes(126).toString("hex")
+    client.set(shortId, JSON.stringify({ client_secret, name }))
+    sendMail(`vuoi accettare: ${name} ?
+    se sì: ${home_sito}/registraApiOk/${shortId}`, "new oauth app", process.env.MIA_MAIL)
+    res.sendStatus(200)
+});
+
+// store.clear(() => { })
+
+app.get("/registraApiOk/:id", (req, res, next) => {
+    console.log(req.sessionID);
+
+    if (req.session.lui && req.session.lui.Utente == "ale")//sono il capo supremo
+        next()
+    else
+        res.sendStatus(401)
+}, async (req, res) => {
+    var id = req.params.id;
+    let m_client = await client.get(id)
+    await client.del(id)
+    console.log(`m_client`, m_client)
+    res.sendStatus(201)
+});
+
 function loggedApi(req, res, next) {
     if (true)
         next()
@@ -494,7 +544,7 @@ app.post("/api", loggedApi, async (req, res, next) => {
     }
 });
 
-
+//chiamato dalla pag
 app.get("/getTempId4TG", sse, (req, res) => {
     let shortId = crypto.randomBytes(16).toString("hex").substr(0, 6)
     client.set(shortId, req.sessionID)
@@ -524,10 +574,8 @@ app.get('/events', sse, function (req, res, next) {
     }).then(() => next())
 }, (req, res) => {
     store.get(req.sessionID, (error, s) => {
-        console.log(`s`, s)
         res.json(s.lui.IDUtente)
     });
-    // res.send(req.session.lui.IDUtente) NO MA ^
 });
 
 // quando l'user fa login qui mette lo shortId che corrisponde al sessionID della sua sess sul sito, sess che segno autenticata
@@ -746,31 +794,6 @@ app.post("/logout", loggedChecker, async (req, res) => {
     })
     res.clearCookie(cookie_name)
     res.sendStatus(200)
-});
-
-// loggedChecker??
-app.post("/getToken", loggedChecker, async (req, res) => {
-    var AUTH_TOKEN = req.body.AUTH_TOKEN;
-    var client_id = req.body.client_id;
-    var client_secret = req.body.client_secret;
-    // TODO gestione scope
-    // TODO gestione scope
-    // TODO gestione scope
-    // TODO gestione scope
-
-    var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-    var client = await db.db("forum").collection("apps").findOne({ _id: ObjectId(client_id), client_secret: client_secret.toString() });
-    console.log(client)
-    console.log(ARR_AUTH_TOKENS[AUTH_TOKEN])
-
-    if (client && ARR_AUTH_TOKENS[AUTH_TOKEN]) {
-        console.log("access granted ")
-        var token = crypto.randomBytes(256).toString("hex");
-        access_tokens[token] = ARR_AUTH_TOKENS[AUTH_TOKEN]
-        delete ARR_AUTH_TOKENS[AUTH_TOKEN];
-        res.json({ access_token: token, key: access_tokens[token].toCipher })//key è la stringa che il client usa per cifrare i dati dell'utente
-    } else res.sendStatus(401)
-    db.close()
 });
 
 app.post("/newQuestion", [check("domanda").escape()], loggedChecker, async (req, res) => {
