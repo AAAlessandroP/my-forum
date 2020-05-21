@@ -12,7 +12,7 @@ const nodemailer = require("nodemailer");
 const MongoClient = require("mongodb").MongoClient;
 const Telegraf = require('telegraf');
 const tsession = require('telegraf/session')
-const { Extra, Markup } = Telegraf;
+// const { Extra, Markup } = Telegraf;
 const sse = require('connect-sse')();
 require('dotenv').config()
 const bot = new Telegraf(process.env.TELEGRAM_TOKEN);
@@ -152,7 +152,8 @@ app.get("/fromGH", async (req, res) => {
                 var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
                 var lui = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(userOnGH.id.toString().padStart(24, "0")) });
                 if (!lui) { //se non c'era già
-                    req.session.token = data.access_token
+                    req.session.token = data.access_token //lo metto in sess
+                    // NECESSARIO 2 VOLTE??
                     let userOnGH = await infoSuDiMeGH(req.session.token);
                     var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
                     await db.db("forum").collection("utenti").insertOne(
@@ -173,6 +174,7 @@ app.get("/fromGH", async (req, res) => {
                         Utente: lui.Name,
                     }
                 }
+
                 res.redirect("/")
 
                 // ora l'user è su / con l'accesso
@@ -551,7 +553,31 @@ app.get("/getTempId4TG", sse, (req, res) => {
     res.send(shortId)
 })
 
+// vogliamo che postino col loro 
+// metterli required sia qui che nel fronteted
+app.post("/newIssue", loggedChecker, async (req, res) => {
+    console.log(`req.session.token`, req.session.token)
+    let url = `https://api.github.com/repos/AAAlessandroP/my-forum/issues`
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            "Authorization": `token ${req.session.token ? req.session.token : ""}`
+        },
+        body: JSON.stringify({
+            "title": req.body.title,
+            "body": req.body.body,
+            "labels": req.body["labels[]"]
+        })
+    });
+    let r = await response.json();
+    // console.log(`r`, r)
+    res.sendStatus(201)
+});
 
+
+
+// GESTION BOT
 bot.start((ctx) => ctx.replyWithHTML("<pre>Willcommen! type in \n /login \n to log-in in my-forum!</pre>"));
 bot.help((ctx) => ctx.replyWithHTML("<pre>Willcommen! type in \n /login \n to log-in in my-forum!</pre>"));
 bot.command('login', async (ctx) => {
@@ -843,6 +869,8 @@ function sendMail(mess, subject, to) {
 // notifica in alto
 
 //qualcuno è stato citato?
+
+
 
 // e con più @ ??
 // e con più @ ??

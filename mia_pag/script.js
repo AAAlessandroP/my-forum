@@ -88,6 +88,7 @@ $(async function () {
     $("#nuova_domanda").click(() => {
         $.post("/newQuestion", { domanda: $("#domanda").val() })
             .done(() => {
+                $("#domanda").val("")
                 ricaricaThreads()
             })
     });

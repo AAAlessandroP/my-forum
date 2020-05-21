@@ -9,12 +9,18 @@ function page(uid, hisData, hisPosts) {
         <title>Pagina di ${hisData.Name}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         <style>
+        span{
+            font-size:large;
+        }
         .nota {
             font-family: roboto condensed, serif;
         }
 
         div[contenteditable="true"] {
+            background-color: bisque;
             width: 55%;
             height: 120px;
             border: 3px solid #796969;
@@ -33,7 +39,8 @@ function page(uid, hisData, hisPosts) {
         `
 
     function printNota(nota, opts) {
-        return `<div>    
+        return `
+        <div>    
             <br><small>${new Date(nota.Date).toLocaleDateString()}</small>
             ${opts.showAuthor ? `<a href="/user/${nota.by.toString()}"> ${nota.ByName} </a>scrive:` : ""}
             <br><div contenteditable="true" id=${nota._id}>${nota.Text}</div> <div style="display:inline;"></div> 
@@ -58,16 +65,12 @@ function page(uid, hisData, hisPosts) {
 
 
     s += `
-            <button onclick="goBack()">Go Back</button>
-
+            <button type="button" class="btn btn-info" onclick="()=>window.history.back()">Go Back</button>
         </body>
     </html>
     <script>
     goto = chi=> window.location = \`/thread/\${chi}\`  
     
-    function goBack() {
-        window.history.back();
-      }
     </script>
     `;
     return s;

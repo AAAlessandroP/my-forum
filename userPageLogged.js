@@ -16,6 +16,8 @@ function page(id, hisData, hisPosts, con_masto) {
         <title>Pagina di ${hisData.Name}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         
         <style>
         span{
@@ -104,71 +106,105 @@ function page(id, hisData, hisPosts, con_masto) {
     else s += "<i>sembra che l'utente non abbia ancora scritto niente.</i>"
 
     s += `        
-                <center><button onclick="goBack()">Go Back</button></center>
+
+                <br><br><input type="button" value=showissueMaker id=showissueMaker><br>
+
+                <div id=issueMaker style="display:none">
+                    <br>
+                    <form id=newIssueForm action="newIssue" method=post>
+                        title:<input type="text" name=title><br>
+                        body:<input type="text" name=body><br>  
+                        this ticket is a:<br>                      
+                        bug:<input type="checkbox" name="labels[]" value="bug" ><br>
+                        duplicate:<input type="checkbox" name="labels[]" value="duplicate" ><br>
+                        question:<input type="checkbox" name="labels[]" value="question" ><br>
+                        enhancement:<input type="checkbox" name="labels[]" value="enhancement" ><br>
+                        help wanted:<input type="checkbox" name="labels[]" value="help wanted" ><br>
+                        <input type="submit" value="carica">
+                    </form>                
+                </div>
+
+
+                <center><button type="button" class="btn btn-info" onclick="goBack()">Go Back</button></center>
             </body>
     
             <script>
 
-            $("#nuova_domanda").click(() => {
-                $.post("/newQuestion", { domanda: $("#domanda").val() })
-                    .done(() => {
-                        location.reload();                        
-                    })
-            });
-            
-            $("#logout").click(() => {
-                $.post("/logout");
-                $("#logout").next().html("OK!").css("background-color", "green");
-                setTimeout(() => {
-                    location.reload();
-                }, 1000)
-            });
-
             function goBack() {
                 window.history.back();
-              }
-
+            }
+            
             $(() => {
 
-                $("#modificaPic").submit(()=>alert("ricarica la pagina per vedere la nuova pic"))
 
-
-// todo picUrl non da richiedere ma prevedibile /user/123/picc con 302 magari
-                $("#pic").click(() => {
-                    $("span:eq(0)").html(\`Pagina di 
-                    <input type="text" id=nome placeholder=${hisData.Name}>
-                    <input type="button" id="nuovoNome" value="vai">
-                    \`);
-                    $("#nuovoNome").click(() => {
-                        $.post("/nuovoNome", { nome: $("#nome").text() }).then(() => {
-                            $("span:eq(0)").html(\`<span>Pagina di \${$("#nome").text()}</span>\`);
-                        })
-                    })            
-                });        
+                $("#showissueMaker").click(()=>$("#issueMaker").toggle(100))
+                $("#newIssueForm").submit(function(e){
+                    e.preventDefault();
+                    $.ajax({
+                        type : 'POST',
+                        url:"/newIssue",
+                        data: $("#newIssueForm").serialize()
+                    });
                     
-                $("#delIco").click(async ()=>{
-                    let ok = confirm("sicuro?")
-                    if(ok) {
-                        await $.post("/delProfile")
-                        await $.post("/logout")
-                        alert("ok fatto")
-                        setTimeout(()=>{window.location="/"},1000)
-                    }
                 });
 
-                ${con_masto ? `
-                $('.masto_share_button').click(function (e) {
-                    console.log(e.target)
-                    $.post("/tootIt", { testo: $("#" + e.target.getAttribute("data-cosa")).val() }).then(() => {
-                        $(e.target).next().html("OK!").css("background-color", "green");
-                        setTimeout(() => {
-                            $(e.target).next().html("")
-                        }, 1000)
-                    })
+                $("#nuova_domanda").click(() => {
+                    $.post("/newQuestion", { domanda: $("#domanda").val() })
+                        .done(() => {
+                            location.reload();                        
+                        })
                 });
-                `: ""}
-            
-            });
+                
+                $("#logout").click(() => {
+                    $.post("/logout");
+                    $("#logout").next().html("OK!").css("background-color", "green");
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000)
+                });
+
+               
+
+
+                    $("#modificaPic").submit(()=>alert("ricarica la pagina per vedere la nuova pic"))
+
+
+    // todo picUrl non da richiedere ma prevedibile /user/123/picc con 302 magari
+                    $("#pic").click(() => {
+                        $("span:eq(0)").html(\`Pagina di 
+                        <input type="text" id=nome placeholder=${hisData.Name}>
+                        <input type="button" id="nuovoNome" value="vai">
+                        \`);
+                        $("#nuovoNome").click(() => {
+                            $.post("/nuovoNome", { nome: $("#nome").text() }).then(() => {
+                                $("span:eq(0)").html(\`<span>Pagina di \${$("#nome").text()}</span>\`);
+                            })
+                        })            
+                    });        
+                        
+                    $("#delIco").click(async ()=>{
+                        let ok = confirm("sicuro?")
+                        if(ok) {
+                            await $.post("/delProfile")
+                            await $.post("/logout")
+                            alert("ok fatto")
+                            setTimeout(()=>{window.location="/"},1000)
+                        }
+                    });
+
+                    ${con_masto ? `
+                    $('.masto_share_button').click(function (e) {
+                        console.log(e.target)
+                        $.post("/tootIt", { testo: $("#" + e.target.getAttribute("data-cosa")).val() }).then(() => {
+                            $(e.target).next().html("OK!").css("background-color", "green");
+                            setTimeout(() => {
+                                $(e.target).next().html("")
+                            }, 1000)
+                        })
+                    });
+                    `: ""}
+                
+                });
 
             function modificaNota(chi) {
                 console.log($("#" + chi).text())
@@ -194,7 +230,7 @@ function page(id, hisData, hisPosts, con_masto) {
             function goto(chi) {
                 console.log(\`chi\`, chi);
                 window.location = "/thread/"+chi
-            }
+                }
             </script>
         </html>
         `;
