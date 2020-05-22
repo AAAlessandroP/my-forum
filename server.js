@@ -557,21 +557,22 @@ app.get("/getTempId4TG", sse, (req, res) => {
 // metterli required sia qui che nel fronteted
 app.post("/newIssue", loggedChecker, async (req, res) => {
     console.log(`req.session.token`, req.session.token)
+    console.log(`req.body["labels[]"]`, req.body["labels[]"]);
     let url = `https://api.github.com/repos/AAAlessandroP/my-forum/issues`
     const response = await fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            "Authorization": `token ${req.session.token ? req.session.token : ""}`
+            "Authorization": `token ${req.session.token ? req.session.token : process.env.GH_TOKEN_AAALE}`
         },
         body: JSON.stringify({
             "title": req.body.title,
             "body": req.body.body,
-            "labels": req.body["labels[]"]
+            "labels": [req.body["labels[]"]]//lo forzo ad array
         })
     });
     let r = await response.json();
-    // console.log(`r`, r)
+    console.log(`r`, r)
     res.sendStatus(201)
 });
 
