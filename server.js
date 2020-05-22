@@ -33,7 +33,7 @@ app.use(cors())
 "use strict";
 let port = process.env.PORT;
 if (port == null || port == "") {
-    port = 8000;
+    port = 3000;
 }
 app.listen(port);
 console.log(`port`, port);
@@ -709,8 +709,8 @@ bot.on('text', async (ctx) => {
     } else
         ctx.replyWithHTML("<pre>Willcommen! type in the id given by the my-forum's login page.</pre>")
 })
-bot.launch()
-bot.startPolling();
+// bot.launch()
+// bot.startPolling();
 
 
 
