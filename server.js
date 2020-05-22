@@ -4,7 +4,6 @@ const { check, validationResult } = require('express-validator');
 const fileUpload = require('express-fileupload');
 var bodyParser = require("body-parser");
 const crypto = require("crypto");
-
 const Mastodon = require('mastodon-api');
 const fetch = require('node-fetch');
 const cors = require("cors");
