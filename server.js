@@ -31,7 +31,12 @@ app.use(express.static("mia_pag"));
 app.use(express.static("public")); //il suo file a.b è raggiungibile con /a.b
 app.use(cors())
 "use strict";
-app.listen(port = 3000);
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 8000;
+}
+app.listen(port);
+
 const client = new Redis({})
 const store = new RedisStore({ client })
 const cookie_name = "sid"
