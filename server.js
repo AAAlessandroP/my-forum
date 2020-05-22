@@ -583,132 +583,132 @@ app.post("/newIssue", loggedChecker, async (req, res) => {
 
 
 
-// GESTION BOT
-bot.start((ctx) => ctx.replyWithHTML("<pre>Willcommen! type in \n /login \n to log-in in my-forum!</pre>"));
-bot.help((ctx) => ctx.replyWithHTML("<pre>Willcommen! type in \n /login \n to log-in in my-forum!</pre>"));
-bot.command('login', async (ctx) => {
-    ctx.replyWithHTML("manda l'id (quello dato sul sito) in formato: id 123ad2")
-});
+// GESTIONE BOT
+// bot.start((ctx) => ctx.replyWithHTML("<pre>Willcommen! type in \n /login \n to log-in in my-forum!</pre>"));
+// bot.help((ctx) => ctx.replyWithHTML("<pre>Willcommen! type in \n /login \n to log-in in my-forum!</pre>"));
+// bot.command('login', async (ctx) => {
+//     ctx.replyWithHTML("manda l'id (quello dato sul sito) in formato: id 123ad2")
+// });
 
-var arrRisolutore = {}
-function risolutore(sid, callbRisolvi, exec) {
-    if (callbRisolvi)
-        arrRisolutore[sid] = callbRisolvi
-    if (exec) {
-        arrRisolutore[sid]()
-        delete arrRisolutore[sid];
-    }
-}
+// var arrRisolutore = {}
+// function risolutore(sid, callbRisolvi, exec) {
+//     if (callbRisolvi)
+//         arrRisolutore[sid] = callbRisolvi
+//     if (exec) {
+//         arrRisolutore[sid]()
+//         delete arrRisolutore[sid];
+//     }
+// }
 
-app.get('/events', sse, function (req, res, next) {
-    new Promise((resolve, reject) => {
-        risolutore(req.sessionID, () => resolve("ok ok")) // la chiamata fa risolvere la promise e far ritornare /events
-    }).then(() => next())
-}, (req, res) => {
-    store.get(req.sessionID, (error, s) => {
-        res.json(s.lui.IDUtente)
-    });
-});
+// app.get('/events', sse, function (req, res, next) {
+//     new Promise((resolve, reject) => {
+//         risolutore(req.sessionID, () => resolve("ok ok")) // la chiamata fa risolvere la promise e far ritornare /events
+//     }).then(() => next())
+// }, (req, res) => {
+//     store.get(req.sessionID, (error, s) => {
+//         res.json(s.lui.IDUtente)
+//     });
+// });
 
-// quando l'user fa login qui mette lo shortId che corrisponde al sessionID della sua sess sul sito, sess che segno autenticata
-// todo: rettifica mail magari?
-bot.on('text', async (ctx) => {
-
-
-    if (ctx.message.text.match(/.+@.+\..+/)) {//ci ha mandato una mail
-
-        let userOnTelegram = {
-            username: ctx.from.username.toString().replace(" ", "_"),
-            id: ctx.from.id
-        }
-
-        try {
-            var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-            var lui = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(userOnTelegram.id.toString().padStart(24, "0")) })
-            // console.log(`lui`, lui);
-            if (!lui) { //è nuovo utente 
-
-                // gli prendo la propic e la salvo e metto come sua pic nel sito
-                let pics = await bot.telegram.getUserProfilePhotos(ctx.update.message.chat.id)
-                let link = await bot.telegram.getFileLink(pics.photos[0][0].file_id)// è il link (valido per 1 ora) alla sua pima pic di profilo
-                const img = await fetch(link);
-                let imgageBlob = await img.arrayBuffer()
-                fs.writeFile("./public/" + userOnTelegram.username, Buffer.from(imgageBlob), function (err) {
-                    if (err) throw Error(err)
-                });
-
-                var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-                await db.db("forum").collection("utenti").insertOne(
-                    {
-                        _id: ObjectId(userOnTelegram.id.toString().padStart(24, "0")),
-                        Name: userOnTelegram.username,
-                        Email: ctx.message.text,
-                        chatId: ctx.chat.id,
-                        picUrl: home_sito + "/" + userOnTelegram.username,
-                        confirmed: false
-                    });
-
-                // gli metto la sess autorizzata 
-                client.get(ctx.session.id, (err, sessidSulSito) => {
-                    store.get(sessidSulSito, (error, precSess) => {
-                        precSess.lui = {
-                            IDUtente: ObjectId(userOnTelegram.id.toString().padStart(24, "0")),
-                            Utente: lui.Name,
-                            confirmed: false
-                        }
-                        store.set(sessidSulSito, precSess,
-                            () => risolutore(sessidSulSito, null, 1));
-                        ctx.reply(`fatto ${ctx.from.username}!`)
-                    });
-                })
-
-                toConfirm(ctx.message.text, ObjectId(userOnTelegram.id.toString().padStart(24, "0")))
-                ctx.reply(`fatto ${ctx.from.username}! now check your inbox to confirm your email address.`)
-            }
-        } catch (error) {
-            console.log(`error`, error);
-            return;
-        }
-    } if (ctx.message.text.match(/^id .{6}$/)) {//è l'id 
-
-        try {
-            let userOnTelegram = {
-                username: ctx.from.username.toString().replace(" ", "_"),
-                id: ctx.from.id
-            }
-            var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-            var lui = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(userOnTelegram.id.toString().padStart(24, "0")) })
-
-            if (lui) { //se c'era già
-
-                // gli metto la sess autorizzata
-                client.get(ctx.message.text.substring(3), (err, sessidSulSito) => {
-
-                    store.get(sessidSulSito, (error, precSess) => {
-                        precSess.lui = {
-                            IDUtente: ObjectId(userOnTelegram.id.toString().padStart(24, "0")),
-                            Utente: lui.Name,
-                        }
-                        store.set(sessidSulSito, precSess,
-                            () => risolutore(sessidSulSito, null, 1));
-
-                        ctx.reply(`fatto ${ctx.from.username}!`)
-                    });
-                })
+// // quando l'user fa login qui mette lo shortId che corrisponde al sessionID della sua sess sul sito, sess che segno autenticata
+// // todo: rettifica mail magari?
+// bot.on('text', async (ctx) => {
 
 
-            } else {
-                ctx.session.id = ctx.message.text.substring(3)//così quando arriva la mail posso salvare anche l'id
-                ctx.replyWithHTML(`ok dato che vuoi registrarti manda l'inidirizzo di posta a cui vuoi essere contattato se qualcuno ti menziona sul forum.`);
-            }
-        } catch (error) {
-            console.log(`error`, error)
-            ctx.reply("ops, errore")
-        }
+//     if (ctx.message.text.match(/.+@.+\..+/)) {//ci ha mandato una mail
 
-    } else
-        ctx.replyWithHTML("<pre>Willcommen! type in the id given by the my-forum's login page.</pre>")
-})
+//         let userOnTelegram = {
+//             username: ctx.from.username.toString().replace(" ", "_"),
+//             id: ctx.from.id
+//         }
+
+//         try {
+//             var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+//             var lui = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(userOnTelegram.id.toString().padStart(24, "0")) })
+//             // console.log(`lui`, lui);
+//             if (!lui) { //è nuovo utente 
+
+//                 // gli prendo la propic e la salvo e metto come sua pic nel sito
+//                 let pics = await bot.telegram.getUserProfilePhotos(ctx.update.message.chat.id)
+//                 let link = await bot.telegram.getFileLink(pics.photos[0][0].file_id)// è il link (valido per 1 ora) alla sua pima pic di profilo
+//                 const img = await fetch(link);
+//                 let imgageBlob = await img.arrayBuffer()
+//                 fs.writeFile("./public/" + userOnTelegram.username, Buffer.from(imgageBlob), function (err) {
+//                     if (err) throw Error(err)
+//                 });
+
+//                 var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+//                 await db.db("forum").collection("utenti").insertOne(
+//                     {
+//                         _id: ObjectId(userOnTelegram.id.toString().padStart(24, "0")),
+//                         Name: userOnTelegram.username,
+//                         Email: ctx.message.text,
+//                         chatId: ctx.chat.id,
+//                         picUrl: home_sito + "/" + userOnTelegram.username,
+//                         confirmed: false
+//                     });
+
+//                 // gli metto la sess autorizzata 
+//                 client.get(ctx.session.id, (err, sessidSulSito) => {
+//                     store.get(sessidSulSito, (error, precSess) => {
+//                         precSess.lui = {
+//                             IDUtente: ObjectId(userOnTelegram.id.toString().padStart(24, "0")),
+//                             Utente: lui.Name,
+//                             confirmed: false
+//                         }
+//                         store.set(sessidSulSito, precSess,
+//                             () => risolutore(sessidSulSito, null, 1));
+//                         ctx.reply(`fatto ${ctx.from.username}!`)
+//                     });
+//                 })
+
+//                 toConfirm(ctx.message.text, ObjectId(userOnTelegram.id.toString().padStart(24, "0")))
+//                 ctx.reply(`fatto ${ctx.from.username}! now check your inbox to confirm your email address.`)
+//             }
+//         } catch (error) {
+//             console.log(`error`, error);
+//             return;
+//         }
+//     } if (ctx.message.text.match(/^id .{6}$/)) {//è l'id 
+
+//         try {
+//             let userOnTelegram = {
+//                 username: ctx.from.username.toString().replace(" ", "_"),
+//                 id: ctx.from.id
+//             }
+//             var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+//             var lui = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(userOnTelegram.id.toString().padStart(24, "0")) })
+
+//             if (lui) { //se c'era già
+
+//                 // gli metto la sess autorizzata
+//                 client.get(ctx.message.text.substring(3), (err, sessidSulSito) => {
+
+//                     store.get(sessidSulSito, (error, precSess) => {
+//                         precSess.lui = {
+//                             IDUtente: ObjectId(userOnTelegram.id.toString().padStart(24, "0")),
+//                             Utente: lui.Name,
+//                         }
+//                         store.set(sessidSulSito, precSess,
+//                             () => risolutore(sessidSulSito, null, 1));
+
+//                         ctx.reply(`fatto ${ctx.from.username}!`)
+//                     });
+//                 })
+
+
+//             } else {
+//                 ctx.session.id = ctx.message.text.substring(3)//così quando arriva la mail posso salvare anche l'id
+//                 ctx.replyWithHTML(`ok dato che vuoi registrarti manda l'inidirizzo di posta a cui vuoi essere contattato se qualcuno ti menziona sul forum.`);
+//             }
+//         } catch (error) {
+//             console.log(`error`, error)
+//             ctx.reply("ops, errore")
+//         }
+
+//     } else
+//         ctx.replyWithHTML("<pre>Willcommen! type in the id given by the my-forum's login page.</pre>")
+// })
 // bot.launch()
 // bot.startPolling();
 
