@@ -33,10 +33,10 @@ app.use(cors())
 "use strict";
 let port = process.env.PORT;
 if (port == null || port == "") {
-  port = 8000;
+    port = 8000;
 }
 app.listen(port);
-
+console.log(`port`, port);
 const client = new Redis({})
 const store = new RedisStore({ client })
 const cookie_name = "sid"
