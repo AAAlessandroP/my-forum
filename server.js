@@ -15,6 +15,8 @@ const tsession = require('telegraf/session')
 // const { Extra, Markup } = Telegraf;
 const sse = require('connect-sse')();
 require('dotenv').config()
+assert.notEqual(process.env.TELEGRAM_TOKEN, null)
+
 const bot = new Telegraf(process.env.TELEGRAM_TOKEN);
 bot.use(tsession())
 var app = express();
