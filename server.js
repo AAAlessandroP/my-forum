@@ -882,7 +882,6 @@ function sendMail(mess, subject, to) {
 
 // e con più @ ??
 // e con più @ ??
-// e con più @ ??
 async function verificaCitati(testo, nomeUtenteCheScrive, replyTo) {
     console.log(`testo`, testo)
     testo = testo.replace(/\n/, "")
