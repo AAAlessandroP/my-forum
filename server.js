@@ -60,7 +60,7 @@ app.use(
 )
 // posso manipolare le sessioni a mano con STORE.get() e STORE.set(), lui le salva lì
 if (process.env.NODE_ENV == 'production')
-    home_sito = "https://my-forum.glitch.me"
+    home_sito = "https://my-forum101.herokuapp.com"
 else
     home_sito = "http://localhost:" + port
 
