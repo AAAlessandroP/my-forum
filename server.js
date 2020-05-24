@@ -38,7 +38,6 @@ if (port == null || port == "") {
     port = 3000;
 }
 app.listen(port);
-// console.log(`port`, port);
 const client = new Redis(14133, process.env.REDIS_ENDP, { db: 0, password: process.env.REDIS_PASSW })
 const store = new RedisStore({ client })
 const cookie_name = "sid"
