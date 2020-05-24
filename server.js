@@ -1097,7 +1097,7 @@ app.get("/thread/:id", async (req, res) => {
 
 app.use(bodyParser.text({ type: 'text' }))
 
-app.post("/modificaNota",/* [check("text").escape()]*/, loggedChecker, async (req, res) => {
+app.post("/modificaNota",/* [check("text").escape()],*/ loggedChecker, async (req, res) => {
     let newText = req.body.text //html sanitized
     try {
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
