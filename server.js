@@ -854,7 +854,7 @@ function sendMail(mess, subject, to) {
         }
     });
     var mailOptions = {
-        from: process.env.MAIL,
+        from: process.env.MAIL_ADDR,
         to,
         subject,
         text: mess
