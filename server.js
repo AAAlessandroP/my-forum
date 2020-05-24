@@ -748,6 +748,7 @@ app.post("/addUser",/* [check('utente').escape()],*/ async (req, res) => {
         var giaPresente = await db.db("forum").collection("utenti").findOne({ Name: name });
         if (!giaPresente) {
             //lui non c'era
+            console.log(`arrAssocIdCategoria[photoId]`, arrAssocIdCategoria[photoId]);
             if (arrAssocIdCategoria[photoId] != guess) {
                 res.status(412).send("ma ci vedi?");
                 db.close();
