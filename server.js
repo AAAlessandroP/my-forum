@@ -641,7 +641,7 @@ bot.on('text', async (ctx) => {
                         Name: userOnTelegram.username,
                         Email: ctx.message.text,
                         chatId: ctx.chat.id,
-                        picUrl: home_sito + "/" + userOnTelegram.username,
+                        picUrl: "/" + userOnTelegram.id.toString(),
                         confirmed: false
                     });
 
@@ -1012,7 +1012,7 @@ app.post("/modificaPic", loggedChecker, async (req, res) => {
         if (req.files) {
             picc = req.files.newPicc
             picc.mv("./public/" + picc.name)
-            let done = await db.db("forum").collection("utenti").findOneAndUpdate({ _id: ObjectId(req.session.lui.IDUtente) }, { $set: { picUrl: home_sito + "/" + picc.name } })
+            let done = await db.db("forum").collection("utenti").findOneAndUpdate({ _id: ObjectId(req.session.lui.IDUtente) }, { $set: { picUrl: "/" + picc.name } })
         } else {
             let done = await db.db("forum").collection("utenti").findOneAndUpdate({ _id: ObjectId(req.session.lui.IDUtente) }, { $set: { picUrl: req.body.newPicUrl } })
         }
