@@ -707,6 +707,7 @@ bot.on('text', async (ctx) => {
         ctx.replyWithHTML("<pre>Willcommen! type in the id given by the my-forum's login page.</pre>")
 })
 bot.launch()
+
 bot.startPolling();
 
 
