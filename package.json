@@ -25,7 +25,9 @@
     "nodemailer": "^6.4.6",
     "nodemon": "^2.0.4",
     "redis": "^3.0.2",
-    "telegraf": "^3.38.0"
+    "telegraf": "^3.38.0",
+    "grunt": "^1.1.0",
+    "grunt-text-replace": "^0.4.0"
   },
   "engines": {
     "node": "8.x"
@@ -36,11 +38,6 @@
   "license": "MIT",
   "keywords": [
     "node",
-    "glitch",
     "express"
-  ],
-  "devDependencies": {
-    "grunt": "^1.1.0",
-    "grunt-text-replace": "^0.4.0"
-  }
+  ]
 }
