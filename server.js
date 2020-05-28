@@ -926,6 +926,7 @@ app.post("/newReply"/*, [check("text").escape()]*/, loggedChecker, async (req, r
 });
 
 app.post("/allUsers", async (req, res) => {
+    console.log(`req.sessionID`, req.sessionID)
 
     try {
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
