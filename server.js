@@ -97,8 +97,8 @@ function h(s) {
 }
 
 function loggedChecker(req, res, next) {
-    // console.log("req.session.lui", req.session.lui)
-    // console.log(`req.sessionID`, req.sessionID)
+    console.log("req.session.lui", req.session.lui)
+    console.log(`req.sessionID`, req.sessionID)
 
     if (req.session.lui != undefined && (req.session.lui.confirmed === undefined || req.session.lui.confirmed !== false)) {
         next()
