@@ -53,8 +53,8 @@ app.use(
         secret: `quiet, pal! it's a secret!`,
         cookie: {
             maxAge: 1000 * 60 * 60 * 1, //If the session cookie has a expires date, connect-redis will use it as the TTL.
-            sameSite: true,
-            secure: process.env.NODE_ENV === 'production'
+            // sameSite: true,
+            secure: false
         }
     })
 )
@@ -872,10 +872,6 @@ function sendMail(mess, subject, to) {
 // notifica in alto (consigliati)
 // notifica in alto
 // notifica in alto
-
-//qualcuno è stato citato?
-
-
 
 // e con più @ ??
 // e con più @ ??
