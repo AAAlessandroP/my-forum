@@ -1,7 +1,7 @@
+
 var express = require("express");
 var assert = require("assert");
 // const { check, validationResult } = require('express-validator');
-const fileUpload = require('express-fileupload');
 var bodyParser = require("body-parser");
 const crypto = require("crypto");
 const Mastodon = require('mastodon-api');
@@ -25,7 +25,6 @@ app.use(bodyParser.json({
     limit: 50 * 1024
 }));
 
-app.use(fileUpload());
 const session = require('express-session')
 const RedisStore = require('connect-redis')(session)
 const Redis = require('ioredis')
@@ -58,6 +57,7 @@ app.use(
         }
     })
 )
+
 // posso manipolare le sessioni a mano con STORE.get() e STORE.set(), lui le salva lì
 if (process.env.NODE_ENV == 'production')
     home_sito = "https://my-forum101.herokuapp.com"
@@ -95,10 +95,9 @@ function h(s) {
     hash.update(s);
     return hash.digest("base64");
 }
-
 function loggedChecker(req, res, next) {
-    console.log("req.session.lui", req.session.lui)
-    console.log(`req.sessionID`, req.sessionID)
+    // console.log("req.session.lui", req.session.lui)
+    // console.log(`req.sessionID`, req.sessionID)
 
     if (req.session.lui != undefined && (req.session.lui.confirmed === undefined || req.session.lui.confirmed !== false)) {
         next()
@@ -260,11 +259,6 @@ app.get("/fromFB", async (req, res) => {
         })
     db.close()
 });
-// share with fb ache sulle altre pagine
-// share with fb ache sulle altre pagine
-// share with fb ache sulle altre pagine
-// share with fb ache sulle altre pagine
-
 
 async function toot(M_config, txt, base_url) {
     const num = Math.floor(Math.random() * 100);
@@ -280,7 +274,6 @@ async function toot(M_config, txt, base_url) {
         console.error(error);
     }
 }
-
 // endpoint del redirect da gh, che ci dà il code e ottenere il token , noi facciamo accedere l'user già registrato/lo registriamo
 app.get("/fromMasto", async (req, res) => {
     var client_id = process.env.MASTO_APP_ID
@@ -959,21 +952,20 @@ app.get("/user/:uid", async (req, res) => {
         return;
     }
     var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-    let hisData = await db.db("forum").collection("utenti").findOne({ _id: uid })
+    let him = await db.db("forum").collection("utenti").findOne({ _id: uid })
     let hisPosts = await db.db("forum").collection("messaggi").find({ by: uid }).toArray()
     db.close()
     hisPosts = hisPosts.reverse() //ord crono inverso
 
-    if (!hisData) {//user non c'è
+    if (!him) {//user non c'è
         res.send("pagina non disponibile. utente cancellato? <button onclick=\"goBack()\">Go Back</button><script>function goBack() {window.history.back();}</script> ")
         return;
     }
 
-    hisData.picUrl = hisData.picUrl || "https://raw.githubusercontent.com/Infernus101/ProfileUI/0690f5e61a9f7af02c30342d4d6414a630de47fc/icon.png"
     if (!req.session.lui || req.session.lui.IDUtente != uid)//o non loggato o non sua-> solo vedere
-        res.send(Page.page(uid, hisData, hisPosts))
+        res.send(Page.page(uid, him, hisPosts))
     else
-        res.send(LoggedPage.page(uid, hisData, hisPosts, req.session.lui ? req.session.lui.masto : null))
+        res.send(LoggedPage.page(uid, him, hisPosts, req.session.lui ? req.session.lui.masto : null))
 });
 
 app.post("/nuovoNome", loggedChecker, async (req, res) => {
@@ -1002,29 +994,91 @@ app.post("/delProfile", loggedChecker, async (req, res) => {
     db.close()
 });
 
-app.get("/user/:uid/pic", loggedChecker, async (req, res) => {
+var aws = require('aws-sdk');
+var multer = require('multer')
+var multerS3 = require('multer-s3')
+var config = new aws.Config({
+
+    accessKeyId: process.env.accessKeyId,
+    secretAccessKey: process.env.secretAccessKey,
+    region: 'eu-de',
+    endpoint: 's3.eu-de.cloud-object-storage.appdomain.cloud',
+    s3BucketEndpoint: false
+});
+var s3 = new aws.S3(config)
+
+
+async function getImage(Key) {
+    const data = s3.getObject(
+        {
+            Bucket: process.env.bucketName,
+            Key: Key.toString()
+        }
+    ).promise();
+    return data;//Buffer
+}
+
+
+app.get("/user/:uid/pic", async (req, res) => {
     var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-    let him = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(req.session.lui.IDUtente) })
-    res.redirect(him.picUrl || "https://raw.githubusercontent.com/Infernus101/ProfileUI/0690f5e61a9f7af02c30342d4d6414a630de47fc/icon.png")
+    let him = await db.db("forum").collection("utenti").findOne({ _id: ObjectId(req.params.uid.padStart(24, "0")) })
+    if (!him.picUrl) {
+        res.redirect("https://raw.githubusercontent.com/Infernus101/ProfileUI/0690f5e61a9f7af02c30342d4d6414a630de47fc/icon.png")
+    } else {
+        if (him.picOnCloud)
+            getImage(ObjectId(req.params.uid.padStart(24, "0")))
+                .then((img) => {
+                    res.setHeader('Content-Type', 'image/jpeg');
+                    res.send(img.Body)
+                });
+        else
+            res.redirect(him.picUrl);
+    }
 });
 
-app.post("/modificaPic", loggedChecker, async (req, res) => {
-    try {
-        var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-        if (req.files) {
-            picc = req.files.newPicc
-            picc.mv("./public/" + picc.name)
-            let done = await db.db("forum").collection("utenti").findOneAndUpdate({ _id: ObjectId(req.session.lui.IDUtente) }, { $set: { picUrl: "/" + picc.name } })
-        } else {
-            let done = await db.db("forum").collection("utenti").findOneAndUpdate({ _id: ObjectId(req.session.lui.IDUtente) }, { $set: { picUrl: req.body.newPicUrl } })
+var upload = multer({
+    storage: multerS3({
+        s3: s3,
+        bucket: process.env.bucketName,
+        metadata: function (req, file, cb) {
+            console.log(`file`, file);
+            cb(null, { fieldName: file.fieldname });
+        },
+        key: function (req, file, cb) {
+            cb(null, req.session.lui.IDUtente)//userid is its name
         }
-        res.sendStatus(200)
-    } catch (error) {
-        console.log(`error`, error);
-        res.sendStatus(500)
-    }
-    db.close()
-});
+    })
+})
+
+app.post('/modificaPic', loggedChecker,
+    upload.single('newPicc'), async function (req, res, next) {
+        // console.log(`req.body`, req.body);is the url (empty or not)
+        // console.log(`req.files`, req.files);populated by multer if we first upload.array
+        // console.log(`req.file`, req.file);populated by multer if we first call upload.single
+        try {
+            var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+            if (req.file) {
+
+                await db.db("forum").collection("utenti").findOneAndUpdate({ _id: ObjectId(req.session.lui.IDUtente) },
+                    { $set: { picUrl: req.session.lui.Utente, picOnCloud: true } })
+                res.sendStatus(200)
+
+            } else {//it's a url
+
+                await db.db("forum").collection("utenti").findOneAndUpdate({ _id: ObjectId(req.session.lui.IDUtente) },
+                    { $set: { picUrl: req.body.newPicUrl, picOnCloud: false } })
+
+                res.sendStatus(200)
+            }
+
+        } catch (error) {
+            console.log(`error`, error);
+            res.sendStatus(500)
+            db.close()
+        }
+        db.close()
+    });
+
 
 //gli appendo l'header: x-logged
 app.post("/allQuestions", isLogged, async (req, res) => {

@@ -10,6 +10,7 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "aws-sdk": "^2.686.0",
     "connect-redis": "^4.0.4",
     "connect-sse": "^1.2.0",
     "cors": "*",
@@ -18,16 +19,18 @@
     "express-fileupload": "^1.1.7-alpha.3",
     "express-session": "^1.17.1",
     "express-validator": "^6.5.0",
+    "grunt": "^1.1.0",
+    "grunt-text-replace": "^0.4.0",
     "ioredis": "^4.17.1",
     "mastodon-api": "^1.3.0",
     "mongodb": "^3.5.7",
+    "multer": "^1.4.2",
+    "multer-s3": "^2.9.0",
     "node-fetch": "^2.6.0",
     "nodemailer": "^6.4.6",
     "nodemon": "^2.0.4",
     "redis": "^3.0.2",
-    "telegraf": "^3.38.0",
-    "grunt": "^1.1.0",
-    "grunt-text-replace": "^0.4.0"
+    "telegraf": "^3.38.0"
   },
   "engines": {
     "node": "8.x"

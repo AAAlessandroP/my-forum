@@ -32,7 +32,7 @@ function page(uid, hisData, hisPosts) {
     <body style="background-color:grey">
 
         <h2>Pagina di ${hisData.Name}</h2>
-        <img src="${hisData.picUrl}" alt="profile pic" height="152" width="152">
+        <img src="/user/${uid}/pic" alt="profile pic" height="152" width="152">
         <br>
         <br>
         <h2> Posts scritti di recente:</h2>

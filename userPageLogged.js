@@ -67,7 +67,7 @@ function page(id, hisData, hisPosts, con_masto) {
         </div>
 
         <b><span>Pagina di ${hisData.Name}</span></b>${editIcon("pic")}<br><br>
-        <img src="${hisData.picUrl}" alt="profile pic" height="152" width="152">
+        <img src="/user/${id}/pic" alt="profile pic" height="152" width="152">
         <br>
         <iframe id="upload_target" name="upload_target" src="#" style="width:0;height:0;border:0px solid #fff;"></iframe>                 
         <form action="/modificaPic" target="upload_target" enctype="multipart/form-data" id=modificaPic method=post>
