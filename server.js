@@ -1,4 +1,4 @@
-
+const regression = require("regression")
 var express = require("express");
 var assert = require("assert");
 // const { check, validationResult } = require('express-validator');
@@ -81,6 +81,7 @@ const uri = `mongodb+srv://forum:${process.env.MONGO_PASS}@miocluster2-igwb8.mon
 // '5e726f0534058302ceb2ccc2' è il _id pescato da una query
 // ObjectId('5e726f0534058302ceb2ccc2') == '5e726f0534058302ceb2ccc2' sì
 // ObjectId('5e726f0534058302ceb2ccc2') == ObjectId(ObjectId('5e726f0534058302ceb2ccc2')) sì
+
 
 // passw lunga
 // passw lunga
@@ -956,6 +957,24 @@ app.get("/user/:uid", async (req, res) => {
     let hisPosts = await db.db("forum").collection("messaggi").find({ by: uid }).toArray()
     db.close()
     hisPosts = hisPosts.reverse() //ord crono inverso
+    var data = {};
+    hisPosts.forEach(element => {
+        let gg = Math.floor(element.Date / 8.64e7);//giorni dal 1970
+        if (data[gg] === undefined)
+            data[gg] = 1
+        else
+            data[gg]++
+    });
+    // console.log(`data`, data);// data { '18412': 1, '18413': 2 }
+    var dataArray = []
+    Object.keys(data).forEach(key => {
+        dataArray.push([Number(key) - Number(Object.keys(data)[0]), data[key]])
+    })
+    // console.log(`dataArray`, dataArray);//dataArray [ [ 0, 2 ], [ 5, 1 ] ] due post il giorno 0, 1 post il giorno 5 ecc...
+    if (dataArray.length > 2)
+        result = regression.polynomial(dataArray);//almeno 3 elem x la polinom
+    else
+        result = regression.linear(dataArray);
 
     if (!him) {//user non c'è
         res.send("pagina non disponibile. utente cancellato? <button onclick=\"goBack()\">Go Back</button><script>function goBack() {window.history.back();}</script> ")
@@ -965,7 +984,7 @@ app.get("/user/:uid", async (req, res) => {
     if (!req.session.lui || req.session.lui.IDUtente != uid)//o non loggato o non sua-> solo vedere
         res.send(Page.page(uid, him, hisPosts))
     else
-        res.send(LoggedPage.page(uid, him, hisPosts, req.session.lui ? req.session.lui.masto : null))
+        res.send(LoggedPage.page(uid, him, hisPosts, req.session.lui ? req.session.lui.masto : null, result.string))
 });
 
 app.post("/nuovoNome", loggedChecker, async (req, res) => {
@@ -1026,11 +1045,12 @@ app.get("/user/:uid/pic", async (req, res) => {
         res.redirect("https://raw.githubusercontent.com/Infernus101/ProfileUI/0690f5e61a9f7af02c30342d4d6414a630de47fc/icon.png")
     } else {
         if (him.picOnCloud)
-            getImage(ObjectId(req.params.uid.padStart(24, "0")))
-                .then((img) => {
-                    res.setHeader('Content-Type', 'image/jpeg');
-                    res.send(img.Body)
-                });
+            // getImage(ObjectId(req.params.uid.padStart(24, "0")))
+            //     .then((img) => {
+            //         res.setHeader('Content-Type', 'image/jpeg');
+            //         res.send(img.Body)
+            //     });
+            res.redirect("https://s3.eu-de.cloud-object-storage.appdomain.cloud/forum/" + req.params.uid.padStart(24, "0"));
         else
             res.redirect(him.picUrl);
     }

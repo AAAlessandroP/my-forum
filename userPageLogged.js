@@ -7,7 +7,7 @@ function delIcon(id) {
     return `<img id="${id}" src="/delete_icon.svg" alt=" edit" height="20" width="20">`
 }
 
-function page(id, hisData, hisPosts, con_masto) {
+function page(id, hisData, hisPosts, con_masto, formula_post) {
     let s = `<!DOCTYPE html>
     <html>
     <head>
@@ -17,8 +17,8 @@ function page(id, hisData, hisPosts, con_masto) {
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-        
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">        
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
         <style>
         span{
             font-size:large;
@@ -81,7 +81,20 @@ function page(id, hisData, hisPosts, con_masto) {
         <br>
         <h2> Posts scritti di recente:</h2>
         `
-    // console.log(`hisPosts`, hisPosts);
+    var data = {};
+    hisPosts.forEach(element => {
+        let gg = Math.floor(element.Date / 8.64e7);//giorni dal 1970
+        if (data[gg] === undefined)
+            data[gg] = 1
+        else
+            data[gg]++
+    });
+    // console.log(`data`, data);// data { '202064': 1, '2020530': 2 }
+    var dataArray = []
+    Object.keys(data).forEach(key => {
+        dataArray.push([new Date(Number(key) * 24 * 60 * 60 * 1000).toLocaleDateString(), data[key]])// [ [ieri,2], [oggi, 3], ...]
+    })
+    // console.log(`dataArray`, dataArray);
 
     function printNota(nota, opts) {
         return `<div>    
@@ -105,9 +118,13 @@ function page(id, hisData, hisPosts, con_masto) {
         });
     else s += "<i>sembra che l'utente non abbia ancora scritto niente.</i>"
 
-    s += `        
+    s += `<div>`;
+    if (hisPosts.length)
+        s += `<canvas style="width:50%;" id="grafico"></canvas>
+                </div>
+                <h5>Formula approssimata: ${formula_post}</h5>`;
 
-                <br><br><input type="button" value=showissueMaker id=showissueMaker><br>
+    s += `   <br><br><input type="button" value=showissueMaker id=showissueMaker><br>
 
                 <div id=issueMaker style="display:none">
                     <br>
@@ -231,6 +248,59 @@ function page(id, hisData, hisPosts, con_masto) {
                 console.log(\`chi\`, chi);
                 window.location = "/thread/"+chi
                 }
+
+
+                window.chartColors = {
+                    red: "rgb(255, 99, 132)",
+                    orange: "rgb(255, 159, 64)",
+                    yellow: "rgb(255, 205, 86)",
+                    green: "rgb(75, 192, 192)",
+                    blue: "rgb(54, 162, 235)",
+                    purple: "rgb(153, 102, 255)",
+                    grey: "rgb(201, 203, 207)"
+                  };
+                
+                  var config = {
+                    type: "line",
+                    data: {
+                      labels: ${JSON.stringify(dataArray.map(ele => ele[0]))}
+                      ,
+                      datasets: [
+                        {
+                          label: "numero post al giorno",
+                          backgroundColor: window.chartColors.red,
+                          borderColor: window.chartColors.red,
+                          fill: false,
+                          data: ${JSON.stringify(dataArray.map(ele => ele[1]))}
+                        }
+                      ]
+                    },
+                    options: {
+                      responsive: true,
+                      title: {
+                        display: true,
+                        text: "MyForum Usage History"
+                      },
+                      scales: {
+                        xAxes: [
+                          {
+                            display: true
+                          }
+                        ],
+                        yAxes: [
+                          {
+                            display: true
+                            // type: 'logarithmic',
+                          }
+                        ]
+                      }
+                    }
+                  };
+                
+                  if(document.getElementById("grafico")){//se 0 post non c'è
+                  var ctx = document.getElementById("grafico").getContext("2d");
+                  window.myLine = new Chart(ctx, config);     
+                  }
             </script>
         </html>
         `;
