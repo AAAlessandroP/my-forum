@@ -189,9 +189,6 @@ app.get("/fromGH", async (req, res) => {
             db.close()
         });
 });
-// estraggo pic da gh
-// estraggo pic da gh
-// estraggo pic da gh
 
 app.get("/fromFB", async (req, res) => {
     // endpoint del redirect da fb, che ci dà il code e ottenere il token , noi facciamo accedere l'user già registrato/lo registriamo
@@ -240,7 +237,7 @@ app.get("/fromFB", async (req, res) => {
                             expires_in: data.expires_in + Math.trunc(new Date().getTime() / 1000), //secondi rimanenti+ora attuale
                             _id: ObjectId(userOnFB.id.toString().padStart(24, "0")),
                             Name: userOnFB.name.toString().replace(" ", "_"),
-                            Email: userOnFB.email,
+                            mail: userOnFB.email,
                         });
 
                     req.session.lui = {
@@ -363,6 +360,11 @@ app.get("/rechaptaPhotos", async (req, res) => {
 // TODO AUTH 3e PARTI mie
 // TODO AUTH 3e PARTI mie
 // TODO AUTH 3e PARTI mie
+// TODO AUTH 3e PARTI mie
+// TODO AUTH 3e PARTI mie
+// TODO AUTH 3e PARTI mie
+// TODO AUTH 3e PARTI mies
+// TODO AUTH 3e PARTI mie
 
 var ARR_AUTH_TOKENS = {};
 var access_tokens = {};
@@ -429,20 +431,15 @@ app.post("/getToken", async (req, res) => {
 });
 
 
-// TODO pagina : dev > registra app oauth con rechapta
-// TODO pagina : dev > registra app oauth con rechapta
-// TODO pagina : dev > registra app oauth con rechapta
-app.post("/registraApi", async (req, res) => {
+app.post("/registraApi", loggedChecker, async (req, res) => {
     var client_secret = req.body.client_secret;
     var name = req.body.name;
     let shortId = crypto.randomBytes(126).toString("hex")
-    client.set(shortId, JSON.stringify({ client_secret, name }))
+    client.set(shortId, JSON.stringify({ client_secret, name, Utente: req.session.lui.IDUtente }))
     sendMail(`vuoi accettare: ${name} ?
-    se sì: ${home_sito}/registraApiOk/${shortId}`, "new oauth app", process.env.MIA_MAIL)
+    se sì: ${home_sito}/registraApiOk/${shortId}`, "new oauth app", process.env.MIA_MAIL)//mi invio una mail per approvare nuove app
     res.sendStatus(200)
 });
-
-// store.clear(() => { })
 
 app.get("/registraApiOk/:id", (req, res, next) => {
     console.log(req.sessionID);
@@ -453,18 +450,76 @@ app.get("/registraApiOk/:id", (req, res, next) => {
         res.sendStatus(401)
 }, async (req, res) => {
     var id = req.params.id;
-    let m_client = await client.get(id)
+    let m_client = await client.get(id)//dati serializzati da /registraApi
     await client.del(id)
-    res.sendStatus(201)
+    m_client = JSON.parse(m_client)
+    var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    var done = await db.db("forum").collection("apps").insertOne(
+        {
+            byUser: ObjectId(m_client.IDUtente),
+            client_secret: h(m_client.client_secret),
+            name: m_client.name
+        });
+    db.close()
+    res.status(201).json({ client_id: done.insertedId })
 });
 
+app.get("/api/login", async (req, res, next) => {
+    var client_id = req.body.client_id;
+    var client_secret = req.body.client_secret;
+    var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    var client = await db.db("forum").collection("apps").findOne({ _id: ObjectId(client_id), client_secret: h(client_secret.toString()) });
+    db.close()
+
+    if (client) {
+        var token = crypto.randomBytes(256).toString("hex");
+        access_tokens[token] = JSON.stringify({ client_id, expire_at: new Date() + 1000 * 60 * 60 * 60 * 24 * 31 })
+        setTimeout(() => {
+            delete access_tokens[token];
+        }, 1000 * 60 * 60 * 60 * 24 * 31);
+        res.send(token)
+    }
+    else
+        res.sendStatus(401)
+});
+
+// TODO loggedCHECK API MIA
+// TODO loggedCHECK API MIA
+// TODO loggedCHECK API MIA
+// TODO loggedCHECK API MIA
+// TODO loggedCHECK API MIA
+// TODO loggedCHECK API MIA
+
+// rilascio token
+// rilascio token
+// rilascio token
+// rilascio token
+// rilascio token
+// rilascio token
+// rilascio token
+// rilascio token
+// rilascio token
+// rilascio token
+// rilascio token
+// rilascio token
+// rilascio token
+// rilascio token
+// rilascio token
+// rilascio token
+// rilascio token
+// rilascio token
+// rilascio token
+// rilascio token
+// rilascio token
+
 function loggedApi(req, res, next) {
-    if (true)
+    if (access_tokens[req.query.access_token])
         next()
     else
         res.sendStatus(401)
 }
 
+//tutti i mess
 app.get("/api/all", loggedApi, async (req, res) => {
 
     try {
@@ -549,7 +604,6 @@ app.get("/getTempId4TG", sse, (req, res) => {
     res.send(shortId)
 })
 
-// vogliamo che postino col loro 
 // metterli required sia qui che nel fronteted
 app.post("/newIssue", loggedChecker, async (req, res) => {
     // console.log(`req.session.token`, req.session.token)
@@ -573,8 +627,6 @@ app.post("/newIssue", loggedChecker, async (req, res) => {
 });
 
 
-
-// GESTIONE BOT
 bot.start((ctx) => ctx.replyWithHTML("<pre>Willcommen! type in \n /login \n to log-in in my-forum!</pre>"));
 bot.help((ctx) => ctx.replyWithHTML("<pre>Willcommen! type in \n /login \n to log-in in my-forum!</pre>"));
 bot.command('login', async (ctx) => {
@@ -633,7 +685,7 @@ bot.on('text', async (ctx) => {
                     {
                         _id: ObjectId(userOnTelegram.id.toString().padStart(24, "0")),
                         Name: userOnTelegram.username,
-                        Email: ctx.message.text,
+                        mail: ctx.message.text,
                         chatId: ctx.chat.id,
                         picUrl: "/" + userOnTelegram.id.toString(),
                         confirmed: false
@@ -710,7 +762,7 @@ bot.startPolling();
 // faccio scegliere per cosa osserva
 // tipo un nuovo post o un post di uno o @uno
 
-
+// TODO EMAIL ANCHE ALLA RISPOSTA SUL MIO THREAD
 
 //se è loggato gli metto l'header che lo specifica
 // funz usata per appendere l'header a /allQuestions, così lo script dalla req capisce se è loggato
@@ -884,8 +936,8 @@ async function verificaCitati(testo, nomeUtenteCheScrive, replyTo) {
         let chi = /(\w*)( .+|$)/.exec(testo.substring(pos + 1))[1]
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
         var lui = await db.db("forum").collection("utenti").findOne({ Name: chi });
-        if (lui.Email) {
-            sendMail(`sei stato citato da ${nomeUtenteCheScrive}.\n${nomeUtenteCheScrive} scrive: "${testo}" \nvedi il messaggio: ${home_sito}/thread/${ObjectId(replyTo)}`, "ti hanno citato", lui.Email)
+        if (lui.mail) {
+            sendMail(`sei stato citato da ${nomeUtenteCheScrive}.\n${nomeUtenteCheScrive} scrive: "${testo}" \nvedi il messaggio: ${home_sito}/thread/${ObjectId(replyTo)}`, "ti hanno citato", lui.mail)
         }
         if (lui.chatId)
             await bot.telegram.sendMessage(lui.chatId, `sei stato citato da ${nomeUtenteCheScrive}.\n${nomeUtenteCheScrive} scrive: "${testo}" \nvedi il messaggio: ${home_sito}/thread/${ObjectId(replyTo)}`)
@@ -898,7 +950,6 @@ async function verificaCitati(testo, nomeUtenteCheScrive, replyTo) {
 }
 
 app.post("/newReply"/*, [check("text").escape()]*/, loggedChecker, async (req, res) => {
-
     try {
         var testo = req.body.text;
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });

@@ -55,7 +55,7 @@ function page(op_id, posts, IDUtente, con_masto) {
     s += `    
 
         <br><br>reply with: <textarea id=reply></textarea> <input type=button id=Pubblica value=Pubblica!>
-    
+    <br><br><br>
         <button type="button" class="btn btn-info" onclick="goBack()">Go Back</button>
     </body>
 </html>
@@ -108,7 +108,7 @@ function page(op_id, posts, IDUtente, con_masto) {
         `: ""}
 
         $("#Pubblica").click(async()=>{
-            await $.post("/newReply",{replyTo:"${op_id}" , text:$("#reply").text()})
+            await $.post("/newReply",{replyTo:"${op_id}" , text:$("#reply").val()})
             window.location.reload()
         });
 
