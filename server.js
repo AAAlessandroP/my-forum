@@ -423,6 +423,7 @@ app.post("/getToken", async (req, res) => {
             delete access_tokens[token];
         }, 1000 * 60 * 60 * 24);//dopo 1gg scade il token
         delete ARR_AUTH_TOKENS[AUTH_TOKEN];
+        console.log(`{ access_token: token }`, { access_token: token });
         res.json({ access_token: token })
     } else res.sendStatus(401)
     db.close()
