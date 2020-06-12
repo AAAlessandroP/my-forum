@@ -1,80 +1,43 @@
 <!DOCTYPE html>
 
 <html>
+
 <head>
-  <title>server.js</title>
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
-  <link rel="stylesheet" media="all" href="docco.css" />
+    <title>server.js</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+    <link rel="stylesheet" media="all" href="docco.css" />
 </head>
+
 <body>
-  <div class="container">
-    <div class="page">
+    <div class="container">
+        <div class="page">
 
-      <div class="header">
-        
-          <h1>server.js</h1>
-        
+            <div class="header">
 
-        
-          <div class="toc">
-            <h3>Table of Contents</h3>
-            <ol>
-              
-                
-                <li>
-                  <a class="source" href="Gruntfile.html">
-                    Gruntfile.js
-                  </a>
-                </li>
-              
-                
-                <li>
-                  <a class="source" href="server.html">
-                    server.js
-                  </a>
-                </li>
-              
-                
-                <li>
-                  <a class="source" href="threadPage.html">
-                    threadPage.js
-                  </a>
-                </li>
-              
-                
-                <li>
-                  <a class="source" href="userPage.html">
-                    userPage.js
-                  </a>
-                </li>
-              
-                
-                <li>
-                  <a class="source" href="userPageLogged.html">
-                    userPageLogged.js
-                  </a>
-                </li>
-              
-            </ol>
-          </div>
-        
-      </div>
+                <h1>server.js</h1>
 
-      
-        
-        
-        
-          <div class='highlight'><pre><span class="hljs-keyword">const</span> regression = <span class="hljs-built_in">require</span>(<span class="hljs-string">&quot;regression&quot;</span>)
+
+
+            </div>
+
+
+
+
+
+            <div class='highlight'>
+                <pre><span class="hljs-keyword">const</span> regression = <span class="hljs-built_in">require</span>(<span class="hljs-string">&quot;regression&quot;</span>)
 <span class="hljs-keyword">var</span> express = <span class="hljs-built_in">require</span>(<span class="hljs-string">&quot;express&quot;</span>);
-<span class="hljs-keyword">var</span> assert = <span class="hljs-built_in">require</span>(<span class="hljs-string">&quot;assert&quot;</span>);</pre></div>
-        
-      
-        
-        <p>const { check, validationResult } = require(‘express-validator’);</p>
+<span class="hljs-keyword">var</span> assert = <span class="hljs-built_in">require</span>(<span class="hljs-string">&quot;assert&quot;</span>);</pre>
+            </div>
 
-        
-          <div class='highlight'><pre><span class="hljs-keyword">var</span> bodyParser = <span class="hljs-built_in">require</span>(<span class="hljs-string">&quot;body-parser&quot;</span>);
+
+
+            <p>const { check, validationResult } = require(‘express-validator’);</p>
+
+
+            <div class='highlight'>
+                <pre><span class="hljs-keyword">var</span> bodyParser = <span class="hljs-built_in">require</span>(<span class="hljs-string">&quot;body-parser&quot;</span>);
 <span class="hljs-keyword">const</span> crypto = <span class="hljs-built_in">require</span>(<span class="hljs-string">&quot;crypto&quot;</span>);
 <span class="hljs-keyword">const</span> Mastodon = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;mastodon-api&#x27;</span>);
 <span class="hljs-keyword">const</span> fetch = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;node-fetch&#x27;</span>);
@@ -83,14 +46,16 @@
 <span class="hljs-keyword">const</span> nodemailer = <span class="hljs-built_in">require</span>(<span class="hljs-string">&quot;nodemailer&quot;</span>);
 <span class="hljs-keyword">const</span> MongoClient = <span class="hljs-built_in">require</span>(<span class="hljs-string">&quot;mongodb&quot;</span>).MongoClient;
 <span class="hljs-keyword">const</span> Telegraf = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;telegraf&#x27;</span>);
-<span class="hljs-keyword">const</span> tsession = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;telegraf/session&#x27;</span>)</pre></div>
-        
-      
-        
-        <p>const { Extra, Markup } = Telegraf;</p>
+<span class="hljs-keyword">const</span> tsession = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;telegraf/session&#x27;</span>)</pre>
+            </div>
 
-        
-          <div class='highlight'><pre><span class="hljs-keyword">const</span> sse = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;connect-sse&#x27;</span>)();
+
+
+            <p>const { Extra, Markup } = Telegraf;</p>
+
+
+            <div class='highlight'>
+                <pre><span class="hljs-keyword">const</span> sse = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;connect-sse&#x27;</span>)();
 <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;dotenv&#x27;</span>).config()
 assert.notEqual(process.env.TELEGRAM_TOKEN, <span class="hljs-literal">null</span>)
 
@@ -123,14 +88,16 @@ app.use(
         store,
         <span class="hljs-attr">unset</span>: <span class="hljs-string">&quot;destroy&quot;</span>,
         <span class="hljs-attr">name</span>: cookie_name,
-        <span class="hljs-attr">saveUninitialized</span>: <span class="hljs-literal">true</span>,<span class="hljs-comment">//a true permette di mantenere la sessione anche se req.session non viene toccato, altrimenti tutte le richieste che non modificano req.session sarebbero indistinguibili (salvo una precedente req che lo facesse)</span></pre></div>
-        
-      
-        
-        <p>con saveUninitialized: true la sessione permane anche tra + req che non toccano req.session</p>
+        <span class="hljs-attr">saveUninitialized</span>: <span class="hljs-literal">true</span>,<span class="hljs-comment">//a true permette di mantenere la sessione anche se req.session non viene toccato, altrimenti tutte le richieste che non modificano req.session sarebbero indistinguibili (salvo una precedente req che lo facesse)</span></pre>
+            </div>
 
-        
-          <div class='highlight'><pre>        resave: <span class="hljs-literal">false</span>,
+
+
+            <p>con saveUninitialized: true la sessione permane anche tra + req che non toccano req.session</p>
+
+
+            <div class='highlight'>
+                <pre>        resave: <span class="hljs-literal">false</span>,
         <span class="hljs-attr">secret</span>: <span class="hljs-string">`quiet, pal! it&#x27;s a secret!`</span>,
         <span class="hljs-attr">cookie</span>: {
             <span class="hljs-attr">maxAge</span>: <span class="hljs-number">1000</span> * <span class="hljs-number">60</span> * <span class="hljs-number">60</span> * <span class="hljs-number">1</span>, <span class="hljs-comment">//If the session cookie has a expires date, connect-redis will use it as the TTL.</span>
@@ -138,14 +105,16 @@ app.use(
             <span class="hljs-attr">secure</span>: <span class="hljs-literal">false</span>
         }
     })
-)</pre></div>
-        
-      
-        
-        <p>posso manipolare le sessioni a mano con STORE.get() e STORE.set(), lui le salva lì</p>
+)</pre>
+            </div>
 
-        
-          <div class='highlight'><pre><span class="hljs-keyword">if</span> (process.env.NODE_ENV == <span class="hljs-string">&#x27;production&#x27;</span>)
+
+
+            <p>posso manipolare le sessioni a mano con STORE.get() e STORE.set(), lui le salva lì</p>
+
+
+            <div class='highlight'>
+                <pre><span class="hljs-keyword">if</span> (process.env.NODE_ENV == <span class="hljs-string">&#x27;production&#x27;</span>)
     home_sito = <span class="hljs-string">&quot;https://my-forum101.herokuapp.com&quot;</span>
 <span class="hljs-keyword">else</span>
     home_sito = <span class="hljs-string">&quot;http://localhost:&quot;</span> + port
@@ -154,71 +123,79 @@ app.use(
 (<span class="hljs-keyword">async</span> () =&gt; {
     <span class="hljs-keyword">try</span> {
         <span class="hljs-keyword">var</span> db = <span class="hljs-keyword">await</span> MongoClient.connect(uri, { <span class="hljs-attr">useNewUrlParser</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">useUnifiedTopology</span>: <span class="hljs-literal">true</span> });
-        <span class="hljs-keyword">var</span> tutti = <span class="hljs-keyword">await</span> db.db(<span class="hljs-string">&quot;forum&quot;</span>).collection(<span class="hljs-string">&quot;utenti&quot;</span>).find({}).toArray()</pre></div>
-        
-      
-        
-        <p>console.log(<code>tutti</code>, tutti)</p>
+        <span class="hljs-keyword">var</span> tutti = <span class="hljs-keyword">await</span> db.db(<span class="hljs-string">&quot;forum&quot;</span>).collection(<span class="hljs-string">&quot;utenti&quot;</span>).find({}).toArray()</pre>
+            </div>
 
-        
-          <div class='highlight'><pre>    } <span class="hljs-keyword">catch</span> (error) {
+
+
+            <p>console.log(<code>tutti</code>, tutti)</p>
+
+
+            <div class='highlight'>
+                <pre>    } <span class="hljs-keyword">catch</span> (error) {
         <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`error`</span>, error)
     }
-})<span class="hljs-comment">//()</span></pre></div>
-        
-      
-        
-        <p> todo gli STATE del redirect validi in funzione del tempo(cambiano con, non lo stesso sempre)
- todo gli STATE del redirect validi in funzione del tempo(cambiano con, non lo stesso sempre)
- todo gli STATE del redirect validi in funzione del tempo(cambiano con, non lo stesso sempre)
-‘5e726f0534058302ceb2ccc2’ è il _id pescato da una query
-ObjectId(‘5e726f0534058302ceb2ccc2’) == ‘5e726f0534058302ceb2ccc2’ sì
-ObjectId(‘5e726f0534058302ceb2ccc2’) == ObjectId(ObjectId(‘5e726f0534058302ceb2ccc2’)) sì</p>
+})<span class="hljs-comment">//()</span></pre>
+            </div>
 
-        
-      
-        
-        <p>passw lunga
-passw lunga
-email unica
-email unica</p>
 
-        
-      
-        
-        <p>i temp token che arrivano all’endoint nostro sono usabili una sola volta
-i temp token che arrivano all’endoint nostro sono usabili una sola volta
-i temp token che arrivano all’endoint nostro sono usabili una sola volta</p>
 
-        
-          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">h</span>(<span class="hljs-params">s</span>) </span>{
+            <p> todo gli STATE del redirect validi in funzione del tempo(cambiano con, non lo stesso sempre)
+                todo gli STATE del redirect validi in funzione del tempo(cambiano con, non lo stesso sempre)
+                todo gli STATE del redirect validi in funzione del tempo(cambiano con, non lo stesso sempre)
+                ‘5e726f0534058302ceb2ccc2’ è il _id pescato da una query
+                ObjectId(‘5e726f0534058302ceb2ccc2’) == ‘5e726f0534058302ceb2ccc2’ sì
+                ObjectId(‘5e726f0534058302ceb2ccc2’) == ObjectId(ObjectId(‘5e726f0534058302ceb2ccc2’)) sì</p>
+
+
+
+
+            <p>passw lunga
+                passw lunga
+                email unica
+                email unica</p>
+
+
+
+
+            <p>i temp token che arrivano all’endoint nostro sono usabili una sola volta
+                i temp token che arrivano all’endoint nostro sono usabili una sola volta
+                i temp token che arrivano all’endoint nostro sono usabili una sola volta</p>
+
+
+            <div class='highlight'>
+                <pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">h</span>(<span class="hljs-params">s</span>) </span>{
     <span class="hljs-keyword">var</span> hash = crypto.createHash(<span class="hljs-string">&quot;sha256&quot;</span>);
     hash.update(s);
     <span class="hljs-keyword">return</span> hash.digest(<span class="hljs-string">&quot;base64&quot;</span>);
 }
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">loggedChecker</span>(<span class="hljs-params">req, res, next</span>) </span>{</pre></div>
-        
-      
-        
-        <p>console.log(“req.session.lui”, req.session.lui)
-console.log(<code>req.sessionID</code>, req.sessionID)</p>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">loggedChecker</span>(<span class="hljs-params">req, res, next</span>) </span>{</pre>
+            </div>
 
-        
-          <div class='highlight'><pre>
+
+
+            <p>console.log(“req.session.lui”, req.session.lui)
+                console.log(<code>req.sessionID</code>, req.sessionID)</p>
+
+
+            <div class='highlight'>
+                <pre>
     <span class="hljs-keyword">if</span> (req.session.lui != <span class="hljs-literal">undefined</span> &amp;&amp; (req.session.lui.confirmed === <span class="hljs-literal">undefined</span> || req.session.lui.confirmed !== <span class="hljs-literal">false</span>)) {
         next()
     } <span class="hljs-keyword">else</span>
         res.sendStatus(<span class="hljs-number">401</span>)
-}</pre></div>
-        
-      
-        
-        <p>anteprima icona utente
-anteprima icona utente
-anteprima icona utente</p>
+}</pre>
+            </div>
 
-        
-          <div class='highlight'><pre>
+
+
+            <p>anteprima icona utente
+                anteprima icona utente
+                anteprima icona utente</p>
+
+
+            <div class='highlight'>
+                <pre>
 
 <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">meOnGH</span>(<span class="hljs-params">token</span>) </span>{
     <span class="hljs-keyword">let</span> url = <span class="hljs-string">`https://api.github.com/user`</span>
@@ -230,15 +207,17 @@ anteprima icona utente</p>
         }
     });
     <span class="hljs-keyword">return</span> response.json();
-}</pre></div>
-        
-      
-        
-        <p>TODO quando faccio l’@ medo la lista di possibili target
-TODO quando faccio l’@ medo la lista di possibili target</p>
+}</pre>
+            </div>
 
-        
-          <div class='highlight'><pre><span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">infoSuDiMeFB</span>(<span class="hljs-params">token</span>) </span>{
+
+
+            <p>TODO quando faccio l’@ medo la lista di possibili target
+                TODO quando faccio l’@ medo la lista di possibili target</p>
+
+
+            <div class='highlight'>
+                <pre><span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">infoSuDiMeFB</span>(<span class="hljs-params">token</span>) </span>{
     <span class="hljs-keyword">let</span> url = <span class="hljs-string">`https://graph.facebook.com/v6.0/me?fields=id%2Cemail%2Cname&amp;access_token=`</span> + token
     <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> fetch(url, {
         <span class="hljs-attr">method</span>: <span class="hljs-string">&#x27;GET&#x27;</span>,
@@ -249,14 +228,17 @@ TODO quando faccio l’@ medo la lista di possibili target</p>
     <span class="hljs-keyword">return</span> response.json();
 }
 
-app.get(<span class="hljs-string">&quot;/fromGH&quot;</span>, <span class="hljs-keyword">async</span> (req, res) =&gt; {</pre></div>
-        
-      
-        
-        <p>endpoint del redirect da gh, che ci dà il code e ottenere il token , noi facciamo accedere l’user già registrato/lo registriamo</p>
+app.get(<span class="hljs-string">&quot;/fromGH&quot;</span>, <span class="hljs-keyword">async</span> (req, res) =&gt; {</pre>
+            </div>
 
-        
-          <div class='highlight'><pre>    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;req.query&quot;</span>, req.query)
+
+
+            <p>endpoint del redirect da gh, che ci dà il code e ottenere il token , noi facciamo accedere l’user già
+                registrato/lo registriamo</p>
+
+
+            <div class='highlight'>
+                <pre>    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;req.query&quot;</span>, req.query)
     <span class="hljs-keyword">var</span> client_id = process.env.NODE_ENV == <span class="hljs-string">&#x27;production&#x27;</span> ? process.env.GH_PROD_ID : process.env.GH_DEV_ID
     <span class="hljs-keyword">var</span> client_secret = process.env.NODE_ENV == <span class="hljs-string">&#x27;production&#x27;</span> ? process.env.GH_PROD_PASS : process.env.GH_DEV_PASS
     <span class="hljs-keyword">var</span> code = req.query.code
@@ -296,14 +278,16 @@ app.get(<span class="hljs-string">&quot;/fromGH&quot;</span>, <span class="hljs-
                     }
                 }
 
-                res.redirect(<span class="hljs-string">&quot;/&quot;</span>)</pre></div>
-        
-      
-        
-        <p>ora l’user è su / con l’accesso</p>
+                res.redirect(<span class="hljs-string">&quot;/&quot;</span>)</pre>
+            </div>
 
-        
-          <div class='highlight'><pre>            } <span class="hljs-keyword">catch</span> (error) {
+
+
+            <p>ora l’user è su / con l’accesso</p>
+
+
+            <div class='highlight'>
+                <pre>            } <span class="hljs-keyword">catch</span> (error) {
                 <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`error`</span>, error);
                 res.sendStatus(<span class="hljs-number">500</span>);
                 <span class="hljs-keyword">return</span>;
@@ -312,24 +296,29 @@ app.get(<span class="hljs-string">&quot;/fromGH&quot;</span>, <span class="hljs-
         });
 });
 
-app.get(<span class="hljs-string">&quot;/fromFB&quot;</span>, <span class="hljs-keyword">async</span> (req, res) =&gt; {</pre></div>
-        
-      
-        
-        <p>endpoint del redirect da fb, che ci dà il code e ottenere il token , noi facciamo accedere l’user già registrato/lo registriamo</p>
+app.get(<span class="hljs-string">&quot;/fromFB&quot;</span>, <span class="hljs-keyword">async</span> (req, res) =&gt; {</pre>
+            </div>
 
-        
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> client_id = process.env.FB_ID
+
+
+            <p>endpoint del redirect da fb, che ci dà il code e ottenere il token , noi facciamo accedere l’user già
+                registrato/lo registriamo</p>
+
+
+            <div class='highlight'>
+                <pre>    <span class="hljs-keyword">var</span> client_id = process.env.FB_ID
     <span class="hljs-keyword">var</span> client_secret = process.env.FB_PASS
-    <span class="hljs-keyword">var</span> code = req.query.code<span class="hljs-comment">//il token temporaneo da scambiare</span></pre></div>
-        
-      
-        
-        <p>console.log(<code>client_id</code>, client_id);
-console.log(<code>client_secret</code>, client_secret);</p>
+    <span class="hljs-keyword">var</span> code = req.query.code<span class="hljs-comment">//il token temporaneo da scambiare</span></pre>
+            </div>
 
-        
-          <div class='highlight'><pre>
+
+
+            <p>console.log(<code>client_id</code>, client_id);
+                console.log(<code>client_secret</code>, client_secret);</p>
+
+
+            <div class='highlight'>
+                <pre>
     endpoint = <span class="hljs-string">`https://graph.facebook.com/v6.0/oauth/access_token?client_id=<span class="hljs-subst">${client_id}</span>&amp;redirect_uri=<span class="hljs-subst">${home_sito}</span>/fromFB&amp;client_secret=<span class="hljs-subst">${client_secret}</span>&amp;code=<span class="hljs-subst">${code}</span>`</span>
 
     fetch(endpoint, {
@@ -338,29 +327,35 @@ console.log(<code>client_secret</code>, client_secret);</p>
     })
         .then(<span class="hljs-function"><span class="hljs-params">res</span> =&gt;</span> res.json())
         .then(<span class="hljs-keyword">async</span> data =&gt; {
-            <span class="hljs-keyword">try</span> {</pre></div>
-        
-      
-        
-        <p>console.log(<code>data</code>, data);</p>
+            <span class="hljs-keyword">try</span> {</pre>
+            </div>
 
-        
-          <div class='highlight'><pre>                <span class="hljs-keyword">let</span> userOnFB = <span class="hljs-keyword">await</span> infoSuDiMeFB(data.access_token);</pre></div>
-        
-      
-        
-        <p>console.log(<code>userOnFB</code>, userOnFB);</p>
 
-        
-          <div class='highlight'><pre>                <span class="hljs-keyword">var</span> db = <span class="hljs-keyword">await</span> MongoClient.connect(uri, { <span class="hljs-attr">useNewUrlParser</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">useUnifiedTopology</span>: <span class="hljs-literal">true</span> });
-                <span class="hljs-keyword">var</span> lui = <span class="hljs-keyword">await</span> db.db(<span class="hljs-string">&quot;forum&quot;</span>).collection(<span class="hljs-string">&quot;utenti&quot;</span>).findOne({ <span class="hljs-attr">_id</span>: ObjectId(userOnFB.id.toString().padStart(<span class="hljs-number">24</span>, <span class="hljs-string">&quot;0&quot;</span>)) })</pre></div>
-        
-      
-        
-        <p>console.log(<code>lui</code>, lui);</p>
 
-        
-          <div class='highlight'><pre>                <span class="hljs-keyword">if</span> (lui) { <span class="hljs-comment">//se c&#x27;era già</span>
+            <p>console.log(<code>data</code>, data);</p>
+
+
+            <div class='highlight'>
+                <pre>                <span class="hljs-keyword">let</span> userOnFB = <span class="hljs-keyword">await</span> infoSuDiMeFB(data.access_token);</pre>
+            </div>
+
+
+
+            <p>console.log(<code>userOnFB</code>, userOnFB);</p>
+
+
+            <div class='highlight'>
+                <pre>                <span class="hljs-keyword">var</span> db = <span class="hljs-keyword">await</span> MongoClient.connect(uri, { <span class="hljs-attr">useNewUrlParser</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">useUnifiedTopology</span>: <span class="hljs-literal">true</span> });
+                <span class="hljs-keyword">var</span> lui = <span class="hljs-keyword">await</span> db.db(<span class="hljs-string">&quot;forum&quot;</span>).collection(<span class="hljs-string">&quot;utenti&quot;</span>).findOne({ <span class="hljs-attr">_id</span>: ObjectId(userOnFB.id.toString().padStart(<span class="hljs-number">24</span>, <span class="hljs-string">&quot;0&quot;</span>)) })</pre>
+            </div>
+
+
+
+            <p>console.log(<code>lui</code>, lui);</p>
+
+
+            <div class='highlight'>
+                <pre>                <span class="hljs-keyword">if</span> (lui) { <span class="hljs-comment">//se c&#x27;era già</span>
                     req.session.token = data.access_token
                     <span class="hljs-keyword">var</span> db = <span class="hljs-keyword">await</span> MongoClient.connect(uri, { <span class="hljs-attr">useNewUrlParser</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">useUnifiedTopology</span>: <span class="hljs-literal">true</span> });
                     <span class="hljs-keyword">await</span> db.db(<span class="hljs-string">&quot;forum&quot;</span>).collection(<span class="hljs-string">&quot;utenti&quot;</span>).findOneAndUpdate({ <span class="hljs-attr">_id</span>: ObjectId(userOnFB.id.toString().padStart(<span class="hljs-number">24</span>, <span class="hljs-string">&quot;0&quot;</span>)) },
@@ -417,25 +412,32 @@ console.log(<code>client_secret</code>, client_secret);</p>
     } <span class="hljs-keyword">catch</span> (error) {
         <span class="hljs-built_in">console</span>.error(error);
     }
-}</pre></div>
-        
-      
-        
-        <p>endpoint del redirect da gh, che ci dà il code e ottenere il token , noi facciamo accedere l’user già registrato/lo registriamo</p>
+}</pre>
+            </div>
 
-        
-          <div class='highlight'><pre>app.get(<span class="hljs-string">&quot;/fromMasto&quot;</span>, <span class="hljs-keyword">async</span> (req, res) =&gt; {
+
+
+            <p>endpoint del redirect da gh, che ci dà il code e ottenere il token , noi facciamo accedere l’user già
+                registrato/lo registriamo</p>
+
+
+            <div class='highlight'>
+                <pre>app.get(<span class="hljs-string">&quot;/fromMasto&quot;</span>, <span class="hljs-keyword">async</span> (req, res) =&gt; {
     <span class="hljs-keyword">var</span> client_id = process.env.MASTO_APP_ID
     <span class="hljs-keyword">var</span> client_secret = process.env.MASTO_APP_SECR
-    <span class="hljs-keyword">var</span> code = req.query.code</pre></div>
-        
-      
-        
-        <p>let url = Mastodon.getAuthorizationUrl(client_id, client_secret, “<a href="https://botsin.space&quot;">https://botsin.space&quot;</a>, “write”, “<a href="http://localhost:3000/fromMasto&quot;">http://localhost:3000/fromMasto&quot;</a>)
-console.log(<code>url</code>, url); basta una volta e metti l’url nell’href</p>
+    <span class="hljs-keyword">var</span> code = req.query.code</pre>
+            </div>
 
-        
-          <div class='highlight'><pre>    <span class="hljs-keyword">let</span> p = Mastodon.getAccessToken(client_id, client_secret, code, <span class="hljs-string">&quot;https://botsin.space&quot;</span>, home_sito + <span class="hljs-string">&quot;/fromMasto&quot;</span>)
+
+
+            <p>let url = Mastodon.getAuthorizationUrl(client_id, client_secret, “<a
+                    href="https://botsin.space&quot;">https://botsin.space&quot;</a>, “write”, “<a
+                    href="http://localhost:3000/fromMasto&quot;">http://localhost:3000/fromMasto&quot;</a>)
+                console.log(<code>url</code>, url); basta una volta e metti l’url nell’href</p>
+
+
+            <div class='highlight'>
+                <pre>    <span class="hljs-keyword">let</span> p = Mastodon.getAccessToken(client_id, client_secret, code, <span class="hljs-string">&quot;https://botsin.space&quot;</span>, home_sito + <span class="hljs-string">&quot;/fromMasto&quot;</span>)
     p.then(<span class="hljs-function"><span class="hljs-params">access_token</span> =&gt;</span> {
 
         <span class="hljs-keyword">const</span> M = <span class="hljs-keyword">new</span> Mastodon({
@@ -444,23 +446,27 @@ console.log(<code>url</code>, url); basta una volta e metti l’url nell’href<
             access_token,
             <span class="hljs-attr">timeout_ms</span>: <span class="hljs-number">60</span> * <span class="hljs-number">1000</span>, <span class="hljs-comment">// optional HTTP request timeout to apply to all requests.</span>
             <span class="hljs-attr">api_url</span>: <span class="hljs-string">&#x27;https://botsin.space/api/v1/&#x27;</span>, <span class="hljs-comment">// optional, defaults to https://mastodon.social/api/v1/</span>
-        });</pre></div>
-        
-      
-        
-        <p>serve lo scope:read per leggere qualunque cosa!</p>
+        });</pre>
+            </div>
 
-        
-          <div class='highlight'><pre>        M.get(<span class="hljs-string">&#x27;accounts/verify_credentials&#x27;</span>).then(<span class="hljs-keyword">async</span> resp =&gt; {
 
-            <span class="hljs-keyword">const</span> userOnMasto = resp.data;</pre></div>
-        
-      
-        
-        <p>console.log(<code>userOnMasto</code>, userOnMasto);</p>
 
-        
-          <div class='highlight'><pre>            <span class="hljs-keyword">var</span> db = <span class="hljs-keyword">await</span> MongoClient.connect(uri, { <span class="hljs-attr">useNewUrlParser</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">useUnifiedTopology</span>: <span class="hljs-literal">true</span> });
+            <p>serve lo scope:read per leggere qualunque cosa!</p>
+
+
+            <div class='highlight'>
+                <pre>        M.get(<span class="hljs-string">&#x27;accounts/verify_credentials&#x27;</span>).then(<span class="hljs-keyword">async</span> resp =&gt; {
+
+            <span class="hljs-keyword">const</span> userOnMasto = resp.data;</pre>
+            </div>
+
+
+
+            <p>console.log(<code>userOnMasto</code>, userOnMasto);</p>
+
+
+            <div class='highlight'>
+                <pre>            <span class="hljs-keyword">var</span> db = <span class="hljs-keyword">await</span> MongoClient.connect(uri, { <span class="hljs-attr">useNewUrlParser</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">useUnifiedTopology</span>: <span class="hljs-literal">true</span> });
             <span class="hljs-keyword">var</span> lui = <span class="hljs-keyword">await</span> db.db(<span class="hljs-string">&quot;forum&quot;</span>).collection(<span class="hljs-string">&quot;utenti&quot;</span>).findOne({ <span class="hljs-attr">_id</span>: ObjectId(userOnMasto.id.toString().padStart(<span class="hljs-number">24</span>, <span class="hljs-string">&quot;0&quot;</span>)) });
             <span class="hljs-keyword">if</span> (!lui) { <span class="hljs-comment">//se non c&#x27;era già</span>
                 req.session.token = access_token
@@ -501,14 +507,16 @@ fs.readdirSync(<span class="hljs-string">&quot;./files4rechapta/tortoises&quot;<
 fs.readdirSync(<span class="hljs-string">&quot;./files4rechapta/seagulls&quot;</span>).forEach(<span class="hljs-function"><span class="hljs-params">file</span> =&gt;</span> {
     <span class="hljs-keyword">if</span> (file.endsWith(<span class="hljs-string">&quot;.jpg&quot;</span>))
         picNamesSeagulls.push(<span class="hljs-string">&quot;seagulls/&quot;</span> + file)
-})</pre></div>
-        
-      
-        
-        <p>mando indietro la pic nel body e l’id di questa nell’header</p>
+})</pre>
+            </div>
 
-        
-          <div class='highlight'><pre><span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>;
+
+
+            <p>mando indietro la pic nel body e l’id di questa nell’header</p>
+
+
+            <div class='highlight'>
+                <pre><span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>;
 <span class="hljs-keyword">var</span> arrAssocIdCategoria = {}
 app.get(<span class="hljs-string">&quot;/rechaptaPhotos&quot;</span>, <span class="hljs-keyword">async</span> (req, res) =&gt; {
     <span class="hljs-keyword">let</span> randPicName;
@@ -522,23 +530,25 @@ app.get(<span class="hljs-string">&quot;/rechaptaPhotos&quot;</span>, <span clas
     res.setHeader(<span class="hljs-string">&quot;X-photo-id&quot;</span>, i)
     i++;
     res.sendFile(<span class="hljs-string">`./files4rechapta/<span class="hljs-subst">${randPicName}</span>`</span>, { <span class="hljs-attr">root</span>: __dirname })
-})</pre></div>
-        
-      
-        
-        <p>TODO AUTH 3e PARTI mie
-TODO AUTH 3e PARTI mie
-TODO AUTH 3e PARTI mie
-TODO AUTH 3e PARTI mie
-TODO AUTH 3e PARTI mie
-TODO AUTH 3e PARTI mie
-TODO AUTH 3e PARTI mie
-TODO AUTH 3e PARTI mie
-TODO AUTH 3e PARTI mies
-TODO AUTH 3e PARTI mie</p>
+})</pre>
+            </div>
 
-        
-          <div class='highlight'><pre>
+
+
+            <p>TODO AUTH 3e PARTI mie
+                TODO AUTH 3e PARTI mie
+                TODO AUTH 3e PARTI mie
+                TODO AUTH 3e PARTI mie
+                TODO AUTH 3e PARTI mie
+                TODO AUTH 3e PARTI mie
+                TODO AUTH 3e PARTI mie
+                TODO AUTH 3e PARTI mie
+                TODO AUTH 3e PARTI mies
+                TODO AUTH 3e PARTI mie</p>
+
+
+            <div class='highlight'>
+                <pre>
 <span class="hljs-keyword">var</span> ARR_AUTH_TOKENS = {};
 <span class="hljs-keyword">var</span> access_tokens = {};
 app.get(<span class="hljs-string">&quot;/login&quot;</span>, <span class="hljs-keyword">async</span> (req, res) =&gt; {
@@ -577,17 +587,19 @@ app.get(<span class="hljs-string">&quot;/login&quot;</span>, <span class="hljs-k
 app.post(<span class="hljs-string">&quot;/getToken&quot;</span>, <span class="hljs-keyword">async</span> (req, res) =&gt; {
     <span class="hljs-keyword">var</span> AUTH_TOKEN = req.body.AUTH_TOKEN;
     <span class="hljs-keyword">var</span> client_id = req.body.client_id;
-    <span class="hljs-keyword">var</span> client_secret = req.body.client_secret;</pre></div>
-        
-      
-        
-        <p>TODO gestione scope
-TODO gestione scope
-TODO gestione scope
-TODO gestione scope</p>
+    <span class="hljs-keyword">var</span> client_secret = req.body.client_secret;</pre>
+            </div>
 
-        
-          <div class='highlight'><pre>
+
+
+            <p>TODO gestione scope
+                TODO gestione scope
+                TODO gestione scope
+                TODO gestione scope</p>
+
+
+            <div class='highlight'>
+                <pre>
     <span class="hljs-keyword">var</span> db = <span class="hljs-keyword">await</span> MongoClient.connect(uri, { <span class="hljs-attr">useNewUrlParser</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">useUnifiedTopology</span>: <span class="hljs-literal">true</span> });
     <span class="hljs-keyword">var</span> client = <span class="hljs-keyword">await</span> db.db(<span class="hljs-string">&quot;forum&quot;</span>).collection(<span class="hljs-string">&quot;apps&quot;</span>).findOne({ <span class="hljs-attr">_id</span>: ObjectId(client_id), <span class="hljs-attr">client_secret</span>: h(client_secret.toString()) });
 
@@ -659,57 +671,61 @@ app.get(<span class="hljs-string">&quot;/api/get_token&quot;</span>, <span class
     }
     <span class="hljs-keyword">else</span>
         res.sendStatus(<span class="hljs-number">401</span>)
-});</pre></div>
-        
-      
-        
-        <p>TODO loggedCHECK API MIA
-TODO loggedCHECK API MIA
-TODO loggedCHECK API MIA
-TODO loggedCHECK API MIA
-TODO loggedCHECK API MIA
-TODO loggedCHECK API MIA</p>
+});</pre>
+            </div>
 
-        
-      
-        
-        <p>rilascio token
-rilascio token
-rilascio token
-rilascio token
-rilascio token
-rilascio token
-rilascio token
-rilascio token
-rilascio token
-rilascio token
-rilascio token
-rilascio token
-rilascio token
-rilascio token
-rilascio token
-rilascio token
-rilascio token
-rilascio token
-rilascio token
-rilascio token
-rilascio token</p>
 
-        
-          <div class='highlight'><pre>
+
+            <p>TODO loggedCHECK API MIA
+                TODO loggedCHECK API MIA
+                TODO loggedCHECK API MIA
+                TODO loggedCHECK API MIA
+                TODO loggedCHECK API MIA
+                TODO loggedCHECK API MIA</p>
+
+
+
+
+            <p>rilascio token
+                rilascio token
+                rilascio token
+                rilascio token
+                rilascio token
+                rilascio token
+                rilascio token
+                rilascio token
+                rilascio token
+                rilascio token
+                rilascio token
+                rilascio token
+                rilascio token
+                rilascio token
+                rilascio token
+                rilascio token
+                rilascio token
+                rilascio token
+                rilascio token
+                rilascio token
+                rilascio token</p>
+
+
+            <div class='highlight'>
+                <pre>
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">loggedApi</span>(<span class="hljs-params">req, res, next</span>) </span>{
     <span class="hljs-keyword">if</span> (access_tokens[req.query.access_token])
         next()
     <span class="hljs-keyword">else</span>
         res.sendStatus(<span class="hljs-number">401</span>)
-}</pre></div>
-        
-      
-        
-        <p>tutti i mess</p>
+}</pre>
+            </div>
 
-        
-          <div class='highlight'><pre>app.get(<span class="hljs-string">&quot;/api/all&quot;</span>, loggedApi, <span class="hljs-keyword">async</span> (req, res) =&gt; {
+
+
+            <p>tutti i mess</p>
+
+
+            <div class='highlight'>
+                <pre>app.get(<span class="hljs-string">&quot;/api/all&quot;</span>, loggedApi, <span class="hljs-keyword">async</span> (req, res) =&gt; {
 
     <span class="hljs-keyword">try</span> {
         <span class="hljs-keyword">var</span> db = <span class="hljs-keyword">await</span> MongoClient.connect(uri, { <span class="hljs-attr">useNewUrlParser</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">useUnifiedTopology</span>: <span class="hljs-literal">true</span> });
@@ -784,25 +800,29 @@ app.post(<span class="hljs-string">&quot;/api&quot;</span>, loggedApi, <span cla
         <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`error`</span>, error);
         res.sendStatus(<span class="hljs-number">500</span>);
     }
-});</pre></div>
-        
-      
-        
-        <p>chiamato dalla pag</p>
+});</pre>
+            </div>
 
-        
-          <div class='highlight'><pre>app.get(<span class="hljs-string">&quot;/getTempId4TG&quot;</span>, sse, <span class="hljs-function">(<span class="hljs-params">req, res</span>) =&gt;</span> {
+
+
+            <p>chiamato dalla pag</p>
+
+
+            <div class='highlight'>
+                <pre>app.get(<span class="hljs-string">&quot;/getTempId4TG&quot;</span>, sse, <span class="hljs-function">(<span class="hljs-params">req, res</span>) =&gt;</span> {
     <span class="hljs-keyword">let</span> shortId = crypto.randomBytes(<span class="hljs-number">16</span>).toString(<span class="hljs-string">&quot;hex&quot;</span>).substr(<span class="hljs-number">0</span>, <span class="hljs-number">6</span>)
     client.set(shortId, req.sessionID)
     res.send(shortId)
-})</pre></div>
-        
-      
-        
-        <p>metterli required sia qui che nel fronteted</p>
+})</pre>
+            </div>
 
-        
-          <div class='highlight'><pre>app.post(<span class="hljs-string">&quot;/newIssue&quot;</span>, loggedChecker, <span class="hljs-keyword">async</span> (req, res) =&gt; {
+
+
+            <p>metterli required sia qui che nel fronteted</p>
+
+
+            <div class='highlight'>
+                <pre>app.post(<span class="hljs-string">&quot;/newIssue&quot;</span>, loggedChecker, <span class="hljs-keyword">async</span> (req, res) =&gt; {
     <span class="hljs-keyword">let</span> url = <span class="hljs-string">`https://api.github.com/repos/AAAlessandroP/my-forum/issues`</span>
     <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> fetch(url, {
         <span class="hljs-attr">method</span>: <span class="hljs-string">&#x27;POST&#x27;</span>,
@@ -845,15 +865,18 @@ app.get(<span class="hljs-string">&#x27;/events&#x27;</span>, sse, <span class="
     store.get(req.sessionID, <span class="hljs-function">(<span class="hljs-params">error, s</span>) =&gt;</span> {
         res.json(s.lui.IDUtente)
     });
-});</pre></div>
-        
-      
-        
-        <p>quando l’user fa login qui mette lo shortId che corrisponde al sessionID della sua sess sul sito, sess che segno autenticata
-todo: rettifica mail magari?</p>
+});</pre>
+            </div>
 
-        
-          <div class='highlight'><pre>bot.on(<span class="hljs-string">&#x27;text&#x27;</span>, <span class="hljs-keyword">async</span> (ctx) =&gt; {
+
+
+            <p>quando l’user fa login qui mette lo shortId che corrisponde al sessionID della sua sess sul sito, sess
+                che segno autenticata
+                todo: rettifica mail magari?</p>
+
+
+            <div class='highlight'>
+                <pre>bot.on(<span class="hljs-string">&#x27;text&#x27;</span>, <span class="hljs-keyword">async</span> (ctx) =&gt; {
 
 
     <span class="hljs-keyword">if</span> (ctx.message.text.match(<span class="hljs-regexp">/.+@.+\..+/</span>)) {<span class="hljs-comment">//ci ha mandato una mail</span>
@@ -865,38 +888,44 @@ todo: rettifica mail magari?</p>
 
         <span class="hljs-keyword">try</span> {
             <span class="hljs-keyword">var</span> db = <span class="hljs-keyword">await</span> MongoClient.connect(uri, { <span class="hljs-attr">useNewUrlParser</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">useUnifiedTopology</span>: <span class="hljs-literal">true</span> });
-            <span class="hljs-keyword">var</span> lui = <span class="hljs-keyword">await</span> db.db(<span class="hljs-string">&quot;forum&quot;</span>).collection(<span class="hljs-string">&quot;utenti&quot;</span>).findOne({ <span class="hljs-attr">_id</span>: ObjectId(userOnTelegram.id.toString().padStart(<span class="hljs-number">24</span>, <span class="hljs-string">&quot;0&quot;</span>)) })</pre></div>
-        
-      
-        
-        <p>console.log(<code>lui</code>, lui);</p>
+            <span class="hljs-keyword">var</span> lui = <span class="hljs-keyword">await</span> db.db(<span class="hljs-string">&quot;forum&quot;</span>).collection(<span class="hljs-string">&quot;utenti&quot;</span>).findOne({ <span class="hljs-attr">_id</span>: ObjectId(userOnTelegram.id.toString().padStart(<span class="hljs-number">24</span>, <span class="hljs-string">&quot;0&quot;</span>)) })</pre>
+            </div>
 
-        
-          <div class='highlight'><pre>            <span class="hljs-keyword">if</span> (!lui) { <span class="hljs-comment">//è nuovo utente </span></pre></div>
-        
-      
-        
-        <p>gli prendo la propic e la salvo e metto come sua pic nel sito</p>
 
-        
-          <div class='highlight'><pre>                <span class="hljs-keyword">let</span> pics = <span class="hljs-keyword">await</span> bot.telegram.getUserProfilePhotos(ctx.update.message.chat.id)
+
+            <p>console.log(<code>lui</code>, lui);</p>
+
+
+            <div class='highlight'>
+                <pre>            <span class="hljs-keyword">if</span> (!lui) { <span class="hljs-comment">//è nuovo utente </span></pre>
+            </div>
+
+
+
+            <p>gli prendo la propic e la salvo e metto come sua pic nel sito</p>
+
+
+            <div class='highlight'>
+                <pre>                <span class="hljs-keyword">let</span> pics = <span class="hljs-keyword">await</span> bot.telegram.getUserProfilePhotos(ctx.update.message.chat.id)
                 <span class="hljs-keyword">let</span> link = <span class="hljs-keyword">await</span> bot.telegram.getFileLink(pics.photos[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>].file_id)<span class="hljs-comment">// è il link (valido per 1 ora) alla sua pima pic di profilo</span>
                 <span class="hljs-keyword">const</span> img = <span class="hljs-keyword">await</span> fetch(link);
                 <span class="hljs-keyword">let</span> imgageBlob = <span class="hljs-keyword">await</span> img.arrayBuffer()
                 fs.writeFile(<span class="hljs-string">&quot;./public/&quot;</span> + userOnTelegram.username, Buffer.from(imgageBlob), <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">err</span>) </span>{
                     <span class="hljs-keyword">if</span> (err) <span class="hljs-keyword">throw</span> <span class="hljs-built_in">Error</span>(err)
-                });</pre></div>
-        
-      
-        
-        <p>UPLOAD TO S3
-UPLOAD TO S3
-UPLOAD TO S3
-UPLOAD TO S3
-UPLOAD TO S3</p>
+                });</pre>
+            </div>
 
-        
-          <div class='highlight'><pre>
+
+
+            <p>UPLOAD TO S3
+                UPLOAD TO S3
+                UPLOAD TO S3
+                UPLOAD TO S3
+                UPLOAD TO S3</p>
+
+
+            <div class='highlight'>
+                <pre>
                 <span class="hljs-keyword">var</span> db = <span class="hljs-keyword">await</span> MongoClient.connect(uri, { <span class="hljs-attr">useNewUrlParser</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">useUnifiedTopology</span>: <span class="hljs-literal">true</span> });
                 <span class="hljs-keyword">await</span> db.db(<span class="hljs-string">&quot;forum&quot;</span>).collection(<span class="hljs-string">&quot;utenti&quot;</span>).insertOne(
                     {
@@ -906,14 +935,16 @@ UPLOAD TO S3</p>
                         <span class="hljs-attr">chatId</span>: ctx.chat.id,
                         <span class="hljs-attr">picUrl</span>: <span class="hljs-string">&quot;/&quot;</span> + userOnTelegram.id.toString(),
                         <span class="hljs-attr">confirmed</span>: <span class="hljs-literal">false</span>
-                    });</pre></div>
-        
-      
-        
-        <p>gli metto la sess autorizzata </p>
+                    });</pre>
+            </div>
 
-        
-          <div class='highlight'><pre>                client.get(ctx.session.id, <span class="hljs-function">(<span class="hljs-params">err, sessidSulSito</span>) =&gt;</span> {
+
+
+            <p>gli metto la sess autorizzata </p>
+
+
+            <div class='highlight'>
+                <pre>                client.get(ctx.session.id, <span class="hljs-function">(<span class="hljs-params">err, sessidSulSito</span>) =&gt;</span> {
                     store.get(sessidSulSito, <span class="hljs-function">(<span class="hljs-params">error, precSess</span>) =&gt;</span> {
                         precSess.lui = {
                             <span class="hljs-attr">IDUtente</span>: ObjectId(userOnTelegram.id.toString().padStart(<span class="hljs-number">24</span>, <span class="hljs-string">&quot;0&quot;</span>)),
@@ -943,14 +974,16 @@ UPLOAD TO S3</p>
             <span class="hljs-keyword">var</span> db = <span class="hljs-keyword">await</span> MongoClient.connect(uri, { <span class="hljs-attr">useNewUrlParser</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">useUnifiedTopology</span>: <span class="hljs-literal">true</span> });
             <span class="hljs-keyword">var</span> lui = <span class="hljs-keyword">await</span> db.db(<span class="hljs-string">&quot;forum&quot;</span>).collection(<span class="hljs-string">&quot;utenti&quot;</span>).findOne({ <span class="hljs-attr">_id</span>: ObjectId(userOnTelegram.id.toString().padStart(<span class="hljs-number">24</span>, <span class="hljs-string">&quot;0&quot;</span>)) })
 
-            <span class="hljs-keyword">if</span> (lui) { <span class="hljs-comment">//se c&#x27;era già</span></pre></div>
-        
-      
-        
-        <p>gli metto la sess autorizzata</p>
+            <span class="hljs-keyword">if</span> (lui) { <span class="hljs-comment">//se c&#x27;era già</span></pre>
+            </div>
 
-        
-          <div class='highlight'><pre>                client.get(ctx.message.text.substring(<span class="hljs-number">3</span>), <span class="hljs-function">(<span class="hljs-params">err, sessidSulSito</span>) =&gt;</span> {
+
+
+            <p>gli metto la sess autorizzata</p>
+
+
+            <div class='highlight'>
+                <pre>                client.get(ctx.message.text.substring(<span class="hljs-number">3</span>), <span class="hljs-function">(<span class="hljs-params">err, sessidSulSito</span>) =&gt;</span> {
 
                     store.get(sessidSulSito, <span class="hljs-function">(<span class="hljs-params">error, precSess</span>) =&gt;</span> {
                         precSess.lui = {
@@ -979,27 +1012,29 @@ UPLOAD TO S3</p>
 })
 bot.launch()
 
-bot.startPolling();</pre></div>
-        
-      
-        
-        <p>crea webhook con token
-faccio scegliere per cosa osserva
-tipo un nuovo post o un post di uno o @uno</p>
+bot.startPolling();</pre>
+            </div>
 
-        
-      
-        
-        <p>TODO EMAIL ANCHE ALLA RISPOSTA SUL MIO THREAD</p>
 
-        
-      
-        
-        <p>se è loggato gli metto l’header che lo specifica
-funz usata per appendere l’header a /allQuestions, così lo script dalla req capisce se è loggato</p>
 
-        
-          <div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isLogged</span>(<span class="hljs-params">req, res, next</span>) </span>{
+            <p>crea webhook con token
+                faccio scegliere per cosa osserva
+                tipo un nuovo post o un post di uno o @uno</p>
+
+
+
+
+            <p>TODO EMAIL ANCHE ALLA RISPOSTA SUL MIO THREAD</p>
+
+
+
+
+            <p>se è loggato gli metto l’header che lo specifica
+                funz usata per appendere l’header a /allQuestions, così lo script dalla req capisce se è loggato</p>
+
+
+            <div class='highlight'>
+                <pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isLogged</span>(<span class="hljs-params">req, res, next</span>) </span>{
     store.get(req.sessionID, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">err, result</span>) </span>{
         <span class="hljs-built_in">console</span>.log(result);
     });
@@ -1026,14 +1061,16 @@ app.post(<span class="hljs-string">&quot;/addUser&quot;</span>,<span class="hljs
     <span class="hljs-keyword">try</span> {
         <span class="hljs-keyword">var</span> db = <span class="hljs-keyword">await</span> MongoClient.connect(uri, { <span class="hljs-attr">useNewUrlParser</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">useUnifiedTopology</span>: <span class="hljs-literal">true</span> });
         <span class="hljs-keyword">var</span> giaPresente = <span class="hljs-keyword">await</span> db.db(<span class="hljs-string">&quot;forum&quot;</span>).collection(<span class="hljs-string">&quot;utenti&quot;</span>).findOne({ <span class="hljs-attr">Name</span>: name });
-        <span class="hljs-keyword">if</span> (!giaPresente) {</pre></div>
-        
-      
-        
-        <p>lui non c’era</p>
+        <span class="hljs-keyword">if</span> (!giaPresente) {</pre>
+            </div>
 
-        
-          <div class='highlight'><pre>            <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`arrAssocIdCategoria[photoId]`</span>, arrAssocIdCategoria[photoId]);
+
+
+            <p>lui non c’era</p>
+
+
+            <div class='highlight'>
+                <pre>            <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`arrAssocIdCategoria[photoId]`</span>, arrAssocIdCategoria[photoId]);
             <span class="hljs-keyword">if</span> (arrAssocIdCategoria[photoId] != guess) {
                 res.status(<span class="hljs-number">412</span>).send(<span class="hljs-string">&quot;ma ci vedi?&quot;</span>);
                 db.close();
@@ -1049,14 +1086,16 @@ app.post(<span class="hljs-string">&quot;/addUser&quot;</span>,<span class="hljs
             <span class="hljs-keyword">try</span> {
                 <span class="hljs-keyword">var</span> user = <span class="hljs-keyword">await</span> db.db(<span class="hljs-string">&quot;forum&quot;</span>).collection(<span class="hljs-string">&quot;utenti&quot;</span>).insertOne(nuovo_utente, { <span class="hljs-attr">safe</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">upsert</span>: <span class="hljs-literal">true</span> });
                 user = user.ops[<span class="hljs-number">0</span>]
-                assert.notEqual(user, <span class="hljs-literal">null</span>)</pre></div>
-        
-      
-        
-        <p>console.log(<code>req.sessionID che vuole iscriv</code>, req.sessionID)</p>
+                assert.notEqual(user, <span class="hljs-literal">null</span>)</pre>
+            </div>
 
-        
-          <div class='highlight'><pre>                req.session.lui = {
+
+
+            <p>console.log(<code>req.sessionID che vuole iscriv</code>, req.sessionID)</p>
+
+
+            <div class='highlight'>
+                <pre>                req.session.lui = {
                     <span class="hljs-attr">IDUtente</span>: user._id,
                     <span class="hljs-attr">Utente</span>: user.Name,
                     mail,
@@ -1087,14 +1126,16 @@ app.post(<span class="hljs-string">&quot;/addUser&quot;</span>,<span class="hljs
 app.get(<span class="hljs-string">&quot;/confermaMail&quot;</span>, <span class="hljs-keyword">async</span> (req, res) =&gt; {
     <span class="hljs-keyword">let</span> code = req.query.code
     <span class="hljs-keyword">let</span> who = <span class="hljs-keyword">await</span> client.get(code) <span class="hljs-comment">// CODE =&gt; IDUtente da segnare ok</span>
-    <span class="hljs-keyword">try</span> {</pre></div>
-        
-      
-        
-        <p>è una sess diversa da quella del registra</p>
+    <span class="hljs-keyword">try</span> {</pre>
+            </div>
 
-        
-          <div class='highlight'><pre>        <span class="hljs-keyword">var</span> db = <span class="hljs-keyword">await</span> MongoClient.connect(uri, { <span class="hljs-attr">useNewUrlParser</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">useUnifiedTopology</span>: <span class="hljs-literal">true</span> });
+
+
+            <p>è una sess diversa da quella del registra</p>
+
+
+            <div class='highlight'>
+                <pre>        <span class="hljs-keyword">var</span> db = <span class="hljs-keyword">await</span> MongoClient.connect(uri, { <span class="hljs-attr">useNewUrlParser</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">useUnifiedTopology</span>: <span class="hljs-literal">true</span> });
         <span class="hljs-keyword">var</span> done = <span class="hljs-keyword">await</span> db.db(<span class="hljs-string">&quot;forum&quot;</span>).collection(<span class="hljs-string">&quot;utenti&quot;</span>).updateOne({ <span class="hljs-attr">_id</span>: ObjectId(who) }, { <span class="hljs-attr">$set</span>: { <span class="hljs-attr">confirmed</span>: <span class="hljs-literal">true</span> } }, { <span class="hljs-attr">safe</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">upsert</span>: <span class="hljs-literal">true</span> });
         <span class="hljs-keyword">var</span> lui = <span class="hljs-keyword">await</span> db.db(<span class="hljs-string">&quot;forum&quot;</span>).collection(<span class="hljs-string">&quot;utenti&quot;</span>).findOne({ <span class="hljs-attr">_id</span>: ObjectId(who) })
 
@@ -1161,28 +1202,30 @@ app.post(<span class="hljs-string">&quot;/newQuestion&quot;</span><span class="h
             <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;Email sent: &#x27;</span> + info.response);
         }
     });
-}</pre></div>
-        
-      
-        
-        <p>notifica in alto (menzioni)
-notifica in alto (consigliati)
-notifica in alto
-notifica in alto</p>
+}</pre>
+            </div>
 
-        
-      
-        
-        <p>qualcuno è stato citato?</p>
 
-        
-      
-        
-        <p>e con più @ ??
-e con più @ ??</p>
 
-        
-          <div class='highlight'><pre><span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">verificaCitati</span>(<span class="hljs-params">testo, nomeUtenteCheScrive, replyTo</span>) </span>{
+            <p>notifica in alto (menzioni)
+                notifica in alto (consigliati)
+                notifica in alto
+                notifica in alto</p>
+
+
+
+
+            <p>qualcuno è stato citato?</p>
+
+
+
+
+            <p>e con più @ ??
+                e con più @ ??</p>
+
+
+            <div class='highlight'>
+                <pre><span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">verificaCitati</span>(<span class="hljs-params">testo, nomeUtenteCheScrive, replyTo</span>) </span>{
     <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`testo`</span>, testo)
     testo = testo.replace(<span class="hljs-regexp">/\n/</span>, <span class="hljs-string">&quot;&quot;</span>)
     <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`testo`</span>, testo)
@@ -1197,16 +1240,18 @@ e con più @ ??</p>
             sendMail(<span class="hljs-string">`sei stato citato da <span class="hljs-subst">${nomeUtenteCheScrive}</span>.\n<span class="hljs-subst">${nomeUtenteCheScrive}</span> scrive: &quot;<span class="hljs-subst">${testo}</span>&quot; \nvedi il messaggio: <span class="hljs-subst">${home_sito}</span>/thread/<span class="hljs-subst">${ObjectId(replyTo)}</span>`</span>, <span class="hljs-string">&quot;ti hanno citato&quot;</span>, lui.mail)
         }
         <span class="hljs-keyword">if</span> (lui.chatId)
-            <span class="hljs-keyword">await</span> bot.telegram.sendMessage(lui.chatId, <span class="hljs-string">`sei stato citato da <span class="hljs-subst">${nomeUtenteCheScrive}</span>.\n<span class="hljs-subst">${nomeUtenteCheScrive}</span> scrive: &quot;<span class="hljs-subst">${testo}</span>&quot; \nvedi il messaggio: <span class="hljs-subst">${home_sito}</span>/thread/<span class="hljs-subst">${ObjectId(replyTo)}</span>`</span>)</pre></div>
-        
-      
-        
-        <p>notifica in alto
-notifica in alto
-notifica in alto</p>
+            <span class="hljs-keyword">await</span> bot.telegram.sendMessage(lui.chatId, <span class="hljs-string">`sei stato citato da <span class="hljs-subst">${nomeUtenteCheScrive}</span>.\n<span class="hljs-subst">${nomeUtenteCheScrive}</span> scrive: &quot;<span class="hljs-subst">${testo}</span>&quot; \nvedi il messaggio: <span class="hljs-subst">${home_sito}</span>/thread/<span class="hljs-subst">${ObjectId(replyTo)}</span>`</span>)</pre>
+            </div>
 
-        
-          <div class='highlight'><pre>        <span class="hljs-keyword">return</span> testo.replace(<span class="hljs-string">&quot;@&quot;</span> + chi, <span class="hljs-string">`&lt;a href=&quot;/user/<span class="hljs-subst">${lui._id}</span>&quot;&gt;<span class="hljs-subst">${chi}</span>&lt;/a&gt;`</span>)
+
+
+            <p>notifica in alto
+                notifica in alto
+                notifica in alto</p>
+
+
+            <div class='highlight'>
+                <pre>        <span class="hljs-keyword">return</span> testo.replace(<span class="hljs-string">&quot;@&quot;</span> + chi, <span class="hljs-string">`&lt;a href=&quot;/user/<span class="hljs-subst">${lui._id}</span>&quot;&gt;<span class="hljs-subst">${chi}</span>&lt;/a&gt;`</span>)
     } <span class="hljs-keyword">else</span>
         <span class="hljs-keyword">return</span> testo;
 }
@@ -1257,14 +1302,16 @@ app.get(<span class="hljs-string">&quot;/user/:uid&quot;</span>, <span class="hl
     <span class="hljs-keyword">if</span> (uid &amp;&amp; uid != <span class="hljs-string">&quot;undefined&quot;</span>) {
         <span class="hljs-keyword">try</span> {
             uid = ObjectId(uid)
-        } <span class="hljs-keyword">catch</span> (error) {</pre></div>
-        
-      
-        
-        <p>l’id è quello corto di gh/fb allra</p>
+        } <span class="hljs-keyword">catch</span> (error) {</pre>
+            </div>
 
-        
-          <div class='highlight'><pre>            uid = ObjectId(uid.toString().padStart(<span class="hljs-number">24</span>, <span class="hljs-string">&quot;0&quot;</span>))
+
+
+            <p>l’id è quello corto di gh/fb allra</p>
+
+
+            <div class='highlight'>
+                <pre>            uid = ObjectId(uid.toString().padStart(<span class="hljs-number">24</span>, <span class="hljs-string">&quot;0&quot;</span>))
         }
     } <span class="hljs-keyword">else</span> {
         res.sendStatus(<span class="hljs-number">400</span>)
@@ -1282,24 +1329,29 @@ app.get(<span class="hljs-string">&quot;/user/:uid&quot;</span>, <span class="hl
             data[gg] = <span class="hljs-number">1</span>
         <span class="hljs-keyword">else</span>
             data[gg]++
-    });</pre></div>
-        
-      
-        
-        <p>console.log(<code>data</code>, data);// data { ‘18412’: 1, ‘18413’: 2 }</p>
+    });</pre>
+            </div>
 
-        
-          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> dataArray = []
+
+
+            <p>console.log(<code>data</code>, data);// data { ‘18412’: 1, ‘18413’: 2 }</p>
+
+
+            <div class='highlight'>
+                <pre>    <span class="hljs-keyword">var</span> dataArray = []
     <span class="hljs-built_in">Object</span>.keys(data).forEach(<span class="hljs-function"><span class="hljs-params">key</span> =&gt;</span> {
         dataArray.push([<span class="hljs-built_in">Number</span>(key) - <span class="hljs-built_in">Number</span>(<span class="hljs-built_in">Object</span>.keys(data)[<span class="hljs-number">0</span>]), data[key]])
-    })</pre></div>
-        
-      
-        
-        <p>console.log(<code>dataArray</code>, dataArray);//dataArray [ [ 0, 2 ], [ 5, 1 ] ] due post il giorno 0, 1 post il giorno 5 ecc…</p>
+    })</pre>
+            </div>
 
-        
-          <div class='highlight'><pre>    <span class="hljs-keyword">if</span> (dataArray.length &gt; <span class="hljs-number">2</span>)
+
+
+            <p>console.log(<code>dataArray</code>, dataArray);//dataArray [ [ 0, 2 ], [ 5, 1 ] ] due post il giorno 0, 1
+                post il giorno 5 ecc…</p>
+
+
+            <div class='highlight'>
+                <pre>    <span class="hljs-keyword">if</span> (dataArray.length &gt; <span class="hljs-number">2</span>)
         result = regression.polynomial(dataArray);<span class="hljs-comment">//almeno 3 elem x la polinom</span>
     <span class="hljs-keyword">else</span>
         result = regression.linear(dataArray);
@@ -1352,14 +1404,16 @@ app.post(<span class="hljs-string">&quot;/delProfile&quot;</span>, loggedChecker
     <span class="hljs-attr">endpoint</span>: <span class="hljs-string">&#x27;s3.eu-de.cloud-object-storage.appdomain.cloud&#x27;</span>,
     <span class="hljs-attr">s3BucketEndpoint</span>: <span class="hljs-literal">false</span>
 });
-<span class="hljs-keyword">var</span> s3 = <span class="hljs-keyword">new</span> aws.S3(config)</pre></div>
-        
-      
-        
-        <p>scarica e ritorna un img dal bucket</p>
+<span class="hljs-keyword">var</span> s3 = <span class="hljs-keyword">new</span> aws.S3(config)</pre>
+            </div>
 
-        
-          <div class='highlight'><pre><span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getImage</span>(<span class="hljs-params">Key</span>) </span>{
+
+
+            <p>scarica e ritorna un img dal bucket</p>
+
+
+            <div class='highlight'>
+                <pre><span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getImage</span>(<span class="hljs-params">Key</span>) </span>{
     <span class="hljs-keyword">const</span> data = s3.getObject(
         {
             <span class="hljs-attr">Bucket</span>: process.env.bucketName,
@@ -1375,21 +1429,25 @@ app.get(<span class="hljs-string">&quot;/user/:uid/pic&quot;</span>, <span class
     <span class="hljs-keyword">let</span> him = <span class="hljs-keyword">await</span> db.db(<span class="hljs-string">&quot;forum&quot;</span>).collection(<span class="hljs-string">&quot;utenti&quot;</span>).findOne({ <span class="hljs-attr">_id</span>: ObjectId(req.params.uid.padStart(<span class="hljs-number">24</span>, <span class="hljs-string">&quot;0&quot;</span>)) })
     <span class="hljs-keyword">if</span> (!him.picUrl) {
         res.redirect(<span class="hljs-string">&quot;https://raw.githubusercontent.com/Infernus101/ProfileUI/0690f5e61a9f7af02c30342d4d6414a630de47fc/icon.png&quot;</span>)
-    } <span class="hljs-keyword">else</span> {</pre></div>
-        
-      
-        
-        <p>if (him.picOnCloud)
-getImage(ObjectId(req.params.uid.padStart(24, “0”)))
-    .then((img) =&gt; {
-        res.setHeader(‘Content-Type’, ‘image/jpeg’);
-        res.send(img.Body)
-    });
-res.redirect(“<a href="https://s3.eu-de.cloud-object-storage.appdomain.cloud/forum/&quot;">https://s3.eu-de.cloud-object-storage.appdomain.cloud/forum/&quot;</a> + req.params.uid.padStart(24, “0”));
-else</p>
+    } <span class="hljs-keyword">else</span> {</pre>
+            </div>
 
-        
-          <div class='highlight'><pre>        res.redirect(him.picUrl);
+
+
+            <p>if (him.picOnCloud)
+                getImage(ObjectId(req.params.uid.padStart(24, “0”)))
+                .then((img) =&gt; {
+                res.setHeader(‘Content-Type’, ‘image/jpeg’);
+                res.send(img.Body)
+                });
+                res.redirect(“<a
+                    href="https://s3.eu-de.cloud-object-storage.appdomain.cloud/forum/&quot;">https://s3.eu-de.cloud-object-storage.appdomain.cloud/forum/&quot;</a>
+                + req.params.uid.padStart(24, “0”));
+                else</p>
+
+
+            <div class='highlight'>
+                <pre>        res.redirect(him.picUrl);
     }
 });
 
@@ -1408,16 +1466,18 @@ else</p>
 })
 
 app.post(<span class="hljs-string">&#x27;/modificaPic&#x27;</span>, loggedChecker,
-    upload.single(<span class="hljs-string">&#x27;newPicc&#x27;</span>), <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">req, res, next</span>) </span>{</pre></div>
-        
-      
-        
-        <p>console.log(<code>req.body</code>, req.body);is the url (empty or not)
-console.log(<code>req.files</code>, req.files);populated by multer if we first upload.array
-console.log(<code>req.file</code>, req.file);populated by multer if we first call upload.single</p>
+    upload.single(<span class="hljs-string">&#x27;newPicc&#x27;</span>), <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">req, res, next</span>) </span>{</pre>
+            </div>
 
-        
-          <div class='highlight'><pre>        <span class="hljs-keyword">try</span> {
+
+
+            <p>console.log(<code>req.body</code>, req.body);is the url (empty or not)
+                console.log(<code>req.files</code>, req.files);populated by multer if we first upload.array
+                console.log(<code>req.file</code>, req.file);populated by multer if we first call upload.single</p>
+
+
+            <div class='highlight'>
+                <pre>        <span class="hljs-keyword">try</span> {
             <span class="hljs-keyword">var</span> db = <span class="hljs-keyword">await</span> MongoClient.connect(uri, { <span class="hljs-attr">useNewUrlParser</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">useUnifiedTopology</span>: <span class="hljs-literal">true</span> });
             <span class="hljs-keyword">if</span> (req.file) {
 
@@ -1439,14 +1499,16 @@ console.log(<code>req.file</code>, req.file);populated by multer if we first cal
             db.close()
         }
         db.close()
-    });</pre></div>
-        
-      
-        
-        <p>gli appendo l’header: x-logged</p>
+    });</pre>
+            </div>
 
-        
-          <div class='highlight'><pre>app.post(<span class="hljs-string">&quot;/allQuestions&quot;</span>, isLogged, <span class="hljs-keyword">async</span> (req, res) =&gt; {
+
+
+            <p>gli appendo l’header: x-logged</p>
+
+
+            <div class='highlight'>
+                <pre>app.post(<span class="hljs-string">&quot;/allQuestions&quot;</span>, isLogged, <span class="hljs-keyword">async</span> (req, res) =&gt; {
 
     <span class="hljs-keyword">try</span> {
         <span class="hljs-keyword">var</span> db = <span class="hljs-keyword">await</span> MongoClient.connect(uri, { <span class="hljs-attr">useNewUrlParser</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">useUnifiedTopology</span>: <span class="hljs-literal">true</span> });
@@ -1465,14 +1527,16 @@ console.log(<code>req.file</code>, req.file);populated by multer if we first cal
             }
             <span class="hljs-keyword">return</span> post
         }));
-        db.close()</pre></div>
-        
-      
-        
-        <p>console.log(“dati”,dati)</p>
+        db.close()</pre>
+            </div>
 
-        
-          <div class='highlight'><pre>        res.json(dati.reverse());<span class="hljs-comment">//dal + nuovo</span>
+
+
+            <p>console.log(“dati”,dati)</p>
+
+
+            <div class='highlight'>
+                <pre>        res.json(dati.reverse());<span class="hljs-comment">//dal + nuovo</span>
     } <span class="hljs-keyword">catch</span> (error) {
         <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`error`</span>, error);
         res.sendStatus(<span class="hljs-number">500</span>);
@@ -1552,23 +1616,42 @@ app.post(<span class="hljs-string">&quot;/delNota&quot;</span>, loggedChecker, <
     }
 });
 
-app.post(<span class="hljs-string">&quot;/tootIt&quot;</span>, loggedChecker, <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">req, res</span>) </span>{</pre></div>
-        
-      
-        
-        <p>console.log(<code>req.headers.referer</code>, req.headers.referer); request’s origin</p>
+app.post(<span class="hljs-string">&quot;/tootIt&quot;</span>, loggedChecker, <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">req, res</span>) </span>{</pre>
+            </div>
 
-        
-          <div class='highlight'><pre>    <span class="hljs-keyword">if</span> (req.session.lui.masto) {
+
+
+            <p>console.log(<code>req.headers.referer</code>, req.headers.referer); request’s origin</p>
+
+
+            <div class='highlight'>
+                <pre>    <span class="hljs-keyword">if</span> (req.session.lui.masto) {
         <span class="hljs-keyword">await</span> toot(req.session.lui.masto.config, req.body.testo, req.headers.referer)
         res.sendStatus(<span class="hljs-number">201</span>)
     } <span class="hljs-keyword">else</span>
         res.sendStatus(<span class="hljs-number">428</span>)
-});</pre></div>
-        
-      
-      <div class="fleur">h</div>
+});</pre>
+            </div>
+
+
+            <div class="fleur">h</div>
+        </div>
     </div>
-  </div>
 </body>
+
 </html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+    $(() => {
+        $(".header").append("<h3>Clicca sulle funzionalità per espandere il codice</h3>")
+        $("div.highlight:eq(0)").hide()
+        let arr = $("body .page p").next()
+        $("body .page p").click(e => {
+            $(e.target).next().toggle(500)
+        });
+        for (let i = 0; i < arr.length; i++) {
+            const element = arr[i];
+            $(element).hide()
+        }
+    })
+</script>

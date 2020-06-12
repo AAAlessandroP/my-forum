@@ -88,23 +88,26 @@
                     }
                 }]
             }
-        }
-    });
-    grunt.registerTask(<span class="hljs-string">&quot;default&quot;</span>, [<span class="hljs-string">&quot;replace&quot;</span>])
-
-    <span class="hljs-keyword">var</span> execSync = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;child_process&#x27;</span>).execSync;
-    grunt.initConfig({
+        },
         <span class="hljs-attr">concat</span>: {
             <span class="hljs-attr">dist</span>: {
-                <span class="hljs-attr">src</span>: [<span class="hljs-string">&quot;docs/app.html&quot;</span>, <span class="hljs-string">&quot;docs/script.html&quot;</span>],
+                <span class="hljs-attr">src</span>: [<span class="hljs-string">&quot;docs/app.html&quot;</span>, <span class="hljs-string">&quot;docs/myscript.html&quot;</span>],
                 <span class="hljs-attr">dest</span>: <span class="hljs-string">&#x27;docs/app.html&#x27;</span>,
             },
         },
     });
+    grunt.registerTask(<span class="hljs-string">&quot;default&quot;</span>, [<span class="hljs-string">&quot;replace&quot;</span>])
+
+    <span class="hljs-keyword">var</span> execSync = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;child_process&#x27;</span>).execSync;
+
     grunt.loadNpmTasks(<span class="hljs-string">&quot;grunt-contrib-concat&quot;</span>)
     grunt.registerTask(<span class="hljs-string">&quot;execDocco&quot;</span>, <span class="hljs-function">() =&gt;</span> {
-        execSync(<span class="hljs-string">&quot;docco -l \&quot;linear\&quot; *.js&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">err, stdout, stderr</span>) </span>{
+        <span class="hljs-built_in">console</span>.log(<span class="hljs-number">123</span>);
 
+        execSync(<span class="hljs-string">&quot;docco -l \&quot;linear\&quot; *.js&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">err, stdout, stderr</span>) </span>{
+            <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`err`</span>, err);
+            <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`stdout`</span>, stdout);
+            <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`stderr`</span>, stderr);
         });
     })
 

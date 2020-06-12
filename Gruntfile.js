@@ -21,23 +21,26 @@ module.exports = function (grunt) {
                     }
                 }]
             }
-        }
-    });
-    grunt.registerTask("default", ["replace"])
-
-    var execSync = require('child_process').execSync;
-    grunt.initConfig({
+        },
         concat: {
             dist: {
-                src: ["docs/app.html", "docs/script.html"],
+                src: ["docs/app.html", "docs/myscript.html"],
                 dest: 'docs/app.html',
             },
         },
     });
+    grunt.registerTask("default", ["replace"])
+
+    var execSync = require('child_process').execSync;
+
     grunt.loadNpmTasks("grunt-contrib-concat")
     grunt.registerTask("execDocco", () => {
-        execSync("docco -l \"linear\" *.js", function (err, stdout, stderr) {
+        console.log(123);
 
+        execSync("docco -l \"linear\" *.js", function (err, stdout, stderr) {
+            console.log(`err`, err);
+            console.log(`stdout`, stdout);
+            console.log(`stderr`, stderr);
         });
     })
 

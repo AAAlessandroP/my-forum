@@ -1,7 +1,7 @@
 const regression = require("regression")
 var express = require("express");
 var assert = require("assert");
-// const { check, validationResult } = require('express-validator');
+const { check, validationResult } = require('express-validator');
 var bodyParser = require("body-parser");
 const crypto = require("crypto");
 const Mastodon = require('mastodon-api');
@@ -12,7 +12,6 @@ const nodemailer = require("nodemailer");
 const MongoClient = require("mongodb").MongoClient;
 const Telegraf = require('telegraf');
 const tsession = require('telegraf/session')
-// const { Extra, Markup } = Telegraf;
 const sse = require('connect-sse')();
 require('dotenv').config()
 assert.notEqual(process.env.TELEGRAM_TOKEN, null)
@@ -783,7 +782,7 @@ function isLogged(req, res, next) {
     next()
 }
 
-app.post("/addUser",/* [check('utente').escape()],*/ async (req, res) => {
+app.post("/addUser", [check('utente').escape()], async (req, res) => {
     var name = req.body.utente;
     var pass = req.body.passw;
     let photoId = req.body.photoId
@@ -875,7 +874,7 @@ app.post("/logout", loggedChecker, async (req, res) => {
     res.sendStatus(200)
 });
 
-app.post("/newQuestion"/*, [check("domanda").escape()]*/, loggedChecker, async (req, res) => {
+app.post("/newQuestion", [check("domanda").escape()], loggedChecker, async (req, res) => {
 
     try {
         var testo = req.body.domanda;
@@ -951,7 +950,7 @@ async function verificaCitati(testo, nomeUtenteCheScrive, replyTo) {
         return testo;
 }
 
-app.post("/newReply"/*, [check("text").escape()]*/, loggedChecker, async (req, res) => {
+app.post("/newReply", [check("text").escape()], loggedChecker, async (req, res) => {
     try {
         var testo = req.body.text;
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -1226,7 +1225,7 @@ app.get("/thread/:id", async (req, res) => {
 
 app.use(bodyParser.text({ type: 'text' }))
 
-app.post("/modificaNota",/* [check("text").escape()],*/ loggedChecker, async (req, res) => {
+app.post("/modificaNota", [check("text").escape()], loggedChecker, async (req, res) => {
     let newText = req.body.text //html sanitized
     try {
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
