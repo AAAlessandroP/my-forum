@@ -28,6 +28,7 @@ const RedisStore = require('connect-redis')(session)
 const Redis = require('ioredis')
 const { ObjectId } = require("mongodb");
 app.use(express.static("mia_pag"));
+app.use(express.static("docs"));
 app.use(express.static("public")); //il suo file a.b è raggiungibile con /a.b
 app.use(cors())
 "use strict";
@@ -1095,15 +1096,15 @@ app.get("/user/:uid/pic", async (req, res) => {
     if (!him.picUrl) {
         res.redirect("https://raw.githubusercontent.com/Infernus101/ProfileUI/0690f5e61a9f7af02c30342d4d6414a630de47fc/icon.png")
     } else {
-        // if (him.picOnCloud)
-        // getImage(ObjectId(req.params.uid.padStart(24, "0")))
-        //     .then((img) => {
-        //         res.setHeader('Content-Type', 'image/jpeg');
-        //         res.send(img.Body)
-        //     });
-        // res.redirect("https://s3.eu-de.cloud-object-storage.appdomain.cloud/forum/" + req.params.uid.padStart(24, "0"));
-        // else
-        res.redirect(him.picUrl);
+        if (him.picOnCloud) {
+            // getImage(ObjectId(req.params.uid.padStart(24, "0")))
+            //     .then((img) => {
+            //         res.setHeader('Content-Type', 'image/jpeg');
+            //         res.send(img.Body)
+            //     });
+            res.redirect("https://s3.eu-de.cloud-object-storage.appdomain.cloud/forum/" + req.params.uid.padStart(24, "0"));
+        } else
+            res.redirect(him.picUrl);
     }
 });
 

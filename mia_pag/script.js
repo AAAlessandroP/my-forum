@@ -118,6 +118,7 @@ $(async function () {
                             <img src="/user/${id}/pic" id=picture style="border-radius: 50%;width:64px;height:64px">
                             <div id=divProfilo style="display:none;background-color:white;border-radius: 5%"> 
                                 <a href="/user/${id}"> vedi il profilo</a><br>
+                                <a href="/server.html"> vedi la documentazione</a><br>
                                 <span id=logout>logout</span><div></div>
                             </div>
                         </div>
