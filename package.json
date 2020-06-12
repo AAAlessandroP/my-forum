@@ -30,7 +30,9 @@
     "nodemon": "^2.0.4",
     "redis": "^3.0.2",
     "regression": "^2.0.1",
-    "telegraf": "^3.38.0"
+    "telegraf": "^3.38.0",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-text-replace": "^0.4.0"
   },
   "engines": {
     "node": "8.x"
@@ -44,8 +46,6 @@
     "express"
   ],
   "devDependencies": {
-    "docco": "^0.8.0",
-    "grunt-contrib-concat": "^1.0.1",
-    "grunt-text-replace": "^0.4.0"
+    "docco": "^0.8.0"
   }
 }
