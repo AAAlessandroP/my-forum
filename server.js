@@ -259,7 +259,6 @@ app.get("/fromFB", async (req, res) => {
 });
 
 async function toot(M_config, txt, base_url) {
-    const num = Math.floor(Math.random() * 100);
     const params = {
         spoiler_text: `Check Out What I said on my-forum: ${base_url}`,
         status: txt
@@ -412,7 +411,6 @@ app.post("/getToken", async (req, res) => {
 
     var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
     var client = await db.db("forum").collection("apps").findOne({ _id: ObjectId(client_id), client_secret: h(client_secret.toString()) });
-    // la metto hasciata la passw
 
     console.log(client)
     console.log(ARR_AUTH_TOKENS[AUTH_TOKEN])
@@ -425,7 +423,7 @@ app.post("/getToken", async (req, res) => {
             delete access_tokens[token];
         }, 1000 * 60 * 60 * 24);//dopo 1gg scade il token
         delete ARR_AUTH_TOKENS[AUTH_TOKEN];
-        res.json({ access_token: token, key: access_tokens[token].toCipher })//key è la stringa che il client usa per cifrare i dati dell'utente
+        res.json({ access_token: token })
     } else res.sendStatus(401)
     db.close()
 });
@@ -464,7 +462,7 @@ app.get("/registraApiOk/:id", (req, res, next) => {
     res.status(201).json({ client_id: done.insertedId })
 });
 
-app.get("/api/login", async (req, res, next) => {
+app.get("/api/get_token", async (req, res, next) => {
     var client_id = req.body.client_id;
     var client_secret = req.body.client_secret;
     var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -606,8 +604,6 @@ app.get("/getTempId4TG", sse, (req, res) => {
 
 // metterli required sia qui che nel fronteted
 app.post("/newIssue", loggedChecker, async (req, res) => {
-    // console.log(`req.session.token`, req.session.token)
-    // console.log(`req.body["labels[]"]`, req.body["labels[]"]);
     let url = `https://api.github.com/repos/AAAlessandroP/my-forum/issues`
     const response = await fetch(url, {
         method: 'POST',
@@ -622,13 +618,12 @@ app.post("/newIssue", loggedChecker, async (req, res) => {
         })
     });
     let r = await response.json();
-    // console.log(`r`, r)
     res.sendStatus(201)
 });
 
 
-bot.start((ctx) => ctx.replyWithHTML("<pre>Willcommen! type in \n /login \n to log-in in my-forum!</pre>"));
-bot.help((ctx) => ctx.replyWithHTML("<pre>Willcommen! type in \n /login \n to log-in in my-forum!</pre>"));
+bot.start((ctx) => ctx.replyWithHTML("<pre>Benvenuto! type in \n /login \n to log-in in my-forum!</pre>"));
+bot.help((ctx) => ctx.replyWithHTML("<pre>Benvenuto! type in \n /login \n to log-in in my-forum!</pre>"));
 bot.command('login', async (ctx) => {
     ctx.replyWithHTML("manda l'id (quello dato sul sito) in formato: id 123ad2")
 });
@@ -679,6 +674,12 @@ bot.on('text', async (ctx) => {
                 fs.writeFile("./public/" + userOnTelegram.username, Buffer.from(imgageBlob), function (err) {
                     if (err) throw Error(err)
                 });
+
+                // UPLOAD TO S3
+                // UPLOAD TO S3
+                // UPLOAD TO S3
+                // UPLOAD TO S3
+                // UPLOAD TO S3
 
                 var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
                 await db.db("forum").collection("utenti").insertOne(
@@ -750,7 +751,7 @@ bot.on('text', async (ctx) => {
         }
 
     } else
-        ctx.replyWithHTML("<pre>Willcommen! type in the id given by the my-forum's login page.</pre>")
+        ctx.replyWithHTML("<pre>Benvenuto! type in the id given by the my-forum's login page.</pre>")
 })
 bot.launch()
 
@@ -1077,7 +1078,7 @@ var config = new aws.Config({
 });
 var s3 = new aws.S3(config)
 
-
+//scarica e ritorna un img dal bucket
 async function getImage(Key) {
     const data = s3.getObject(
         {
@@ -1095,15 +1096,15 @@ app.get("/user/:uid/pic", async (req, res) => {
     if (!him.picUrl) {
         res.redirect("https://raw.githubusercontent.com/Infernus101/ProfileUI/0690f5e61a9f7af02c30342d4d6414a630de47fc/icon.png")
     } else {
-        if (him.picOnCloud)
-            // getImage(ObjectId(req.params.uid.padStart(24, "0")))
-            //     .then((img) => {
-            //         res.setHeader('Content-Type', 'image/jpeg');
-            //         res.send(img.Body)
-            //     });
-            res.redirect("https://s3.eu-de.cloud-object-storage.appdomain.cloud/forum/" + req.params.uid.padStart(24, "0"));
-        else
-            res.redirect(him.picUrl);
+        // if (him.picOnCloud)
+        // getImage(ObjectId(req.params.uid.padStart(24, "0")))
+        //     .then((img) => {
+        //         res.setHeader('Content-Type', 'image/jpeg');
+        //         res.send(img.Body)
+        //     });
+        // res.redirect("https://s3.eu-de.cloud-object-storage.appdomain.cloud/forum/" + req.params.uid.padStart(24, "0"));
+        // else
+        res.redirect(him.picUrl);
     }
 });
 
@@ -1131,13 +1132,13 @@ app.post('/modificaPic', loggedChecker,
             if (req.file) {
 
                 await db.db("forum").collection("utenti").findOneAndUpdate({ _id: ObjectId(req.session.lui.IDUtente) },
-                    { $set: { picUrl: req.session.lui.Utente, picOnCloud: true } })
+                    { $set: { picUrl: "https://s3.eu-de.cloud-object-storage.appdomain.cloud/forum/" + req.session.lui.Utente.padStart(24, "0") } })
                 res.sendStatus(200)
 
             } else {//it's a url
 
                 await db.db("forum").collection("utenti").findOneAndUpdate({ _id: ObjectId(req.session.lui.IDUtente) },
-                    { $set: { picUrl: req.body.newPicUrl, picOnCloud: false } })
+                    { $set: { picUrl: req.body.newPicUrl } })
 
                 res.sendStatus(200)
             }
