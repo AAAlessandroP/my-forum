@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>threadPage.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>threadPage.js</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="Gruntfile.html">
+                    Gruntfile.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="server.html">
+                    server.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="threadPage.html">
+                    threadPage.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="userPage.html">
+                    userPage.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="userPageLogged.html">
+                    userPageLogged.js
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        
+        
+          <div class='highlight'><pre><span class="hljs-built_in">module</span>.exports = { <span class="hljs-attr">page</span>: page };
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">page</span>(<span class="hljs-params">op_id, posts, IDUtente, con_masto</span>) </span>{</pre></div>
+        
+      
+        
+        <p>IDUtente c’è se user è loggato</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-keyword">let</span> s = <span class="hljs-string">`
+    &lt;!DOCTYPE html&gt;
+    &lt;html&gt;
+    &lt;head&gt;
+        &lt;meta charset=&quot;utf-8&quot; /&gt;
+        &lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=edge&quot;&gt;
+        &lt;title&gt;<span class="hljs-subst">${posts[<span class="hljs-number">0</span>].Text}</span>&lt;/title&gt;
+        &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+        &lt;link rel=&quot;stylesheet&quot; href=&quot;https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css&quot;
+        integrity=&quot;sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T&quot; crossorigin=&quot;anonymous&quot;&gt;
+        &lt;script src=&quot;https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js&quot;&gt;&lt;/script&gt;
+        &lt;style&gt;
+        .nota {
+            font-family: roboto condensed, serif;
+        }
+
+        div[contenteditable=&quot;true&quot;] {
+            background-color: bisque;
+            width: 55%;
+            height: 120px;
+            border: 3px solid #796969;
+            padding: 5px;
+            font-family: Tahoma, sans-serif;
+        }
+    &lt;/style&gt;
+    &lt;/head&gt;
+    &lt;body style=&quot;background-color:grey&quot;&gt;
+    &lt;div id=&quot;fb-root&quot;&gt;&lt;/div&gt;
+    `</span>;
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">printNota</span>(<span class="hljs-params">nota, opts</span>) </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-string">`&lt;div&gt;    
+            &lt;br&gt;&lt;small&gt;<span class="hljs-subst">${<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(nota.<span class="hljs-built_in">Date</span>).toLocaleDateString()}</span>&lt;/small&gt;
+            <span class="hljs-subst">${opts.showAuthor ? <span class="hljs-string">`&lt;a href=&quot;/user/<span class="hljs-subst">${nota.by.toString()}</span>&quot;&gt; <span class="hljs-subst">${nota.ByName}</span> &lt;/a&gt;scrive:`</span> : <span class="hljs-string">&quot;&quot;</span>}</span>
+            &lt;br&gt;&lt;div contenteditable=&quot;true&quot; id=<span class="hljs-subst">${nota._id}</span>&gt;<span class="hljs-subst">${nota.Text}</span>&lt;/div&gt; &lt;div style=&quot;display:inline;&quot;&gt;&lt;/div&gt; 
+            <span class="hljs-subst">${opts.fb ? <span class="hljs-string">`&lt;img src=&quot;/share_icon.svg&quot; class =&quot;my_share_button&quot; alt=&quot;share with facebook&quot; height=&quot;20&quot; width=&quot;20&quot;&gt;`</span> : <span class="hljs-string">&quot;&quot;</span>}</span>
+            <span class="hljs-subst">${opts.goto ? <span class="hljs-string">`&lt;img onclick=&quot;goto(&#x27;<span class="hljs-subst">${nota._id}</span>&#x27;)&quot; src=&quot;/goto_icon.svg&quot; alt=&quot;see it&quot; height=&quot;20&quot; width=&quot;20&quot;&gt;`</span> : <span class="hljs-string">&quot;&quot;</span>}</span>
+            <span class="hljs-subst">${opts.modificabile ? <span class="hljs-string">`&lt;img class=&quot;perModificare&quot; onclick=&quot;modificaNota(&#x27;<span class="hljs-subst">${nota._id}</span>&#x27;)&quot; src=&quot;/edit_icon.svg&quot; alt=&quot;edit&quot; height=&quot;20&quot; width=&quot;20&quot;&gt;`</span> : <span class="hljs-string">&quot;&quot;</span>}</span>
+            <span class="hljs-subst">${opts.con_masto ? <span class="hljs-string">`&lt;img src=&quot;/toot_icon.svg&quot; data-cosa=&quot;<span class="hljs-subst">${nota._id}</span>&quot; class=&quot;masto_share_button&quot; alt=&quot;repost on mastodont&quot; height=&quot;20&quot; width=&quot;20&quot;&gt;`</span> : <span class="hljs-string">&quot;&quot;</span>}</span>
+            &lt;div style=&quot;display:inline&quot;&gt;&lt;/div&gt;
+            <span class="hljs-subst">${opts.modificabile ? <span class="hljs-string">`&lt;img data-post-by=&quot;<span class="hljs-subst">${nota.by}</span>&quot; class=&quot;perModificare&quot; onclick=&quot;delNota(&#x27;<span class="hljs-subst">${nota._id}</span>&#x27;)&quot; src=&quot;/delete_icon.svg&quot; alt=&quot;edit&quot; height=&quot;20&quot; width=&quot;20&quot;&gt;`</span> : <span class="hljs-string">&quot;&quot;</span>}</span>
+            &lt;br&gt;
+        &lt;/div&gt;`</span>
+    }
+
+
+    posts.forEach(<span class="hljs-function"><span class="hljs-params">nota</span> =&gt;</span> {</pre></div>
+        
+      
+        
+        <p>IDUtente c’è se user è loggato</p>
+
+        
+          <div class='highlight'><pre>        s += printNota(nota, { <span class="hljs-attr">goto</span>: <span class="hljs-literal">false</span>, <span class="hljs-attr">fb</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">showAuthor</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">masto</span>: con_masto, <span class="hljs-attr">modificabile</span>: IDUtente == nota.by })
+    })
+
+    s += <span class="hljs-string">`    
+
+        &lt;br&gt;&lt;br&gt;reply with: &lt;textarea id=reply&gt;&lt;/textarea&gt; &lt;input type=button id=Pubblica value=Pubblica!&gt;
+    &lt;br&gt;&lt;br&gt;&lt;br&gt;
+        &lt;button type=&quot;button&quot; class=&quot;btn btn-info&quot; onclick=&quot;goBack()&quot;&gt;Go Back&lt;/button&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+
+    &lt;script&gt;
+        window.fbAsyncInit = function() {
+        FB.init({appId: &#x27;2546945782289657&#x27;, status: true, cookie: true,
+        xfbml: true});
+        };
+        (function() {
+        var e = document.createElement(&#x27;script&#x27;); e.async = true;
+        e.src = document.location.protocol +
+        &#x27;//connect.facebook.net/en_US/all.js&#x27;;
+        document.getElementById(&#x27;fb-root&#x27;).appendChild(e);
+        }());
+        
+    &lt;/script&gt;
+
+    &lt;script&gt;
+    $(function () {
+
+        $(&#x27;.my_share_button&#x27;).click(function(e){
+            try{
+                e.preventDefault();
+                FB.ui(
+                {
+                method: &#x27;feed&#x27;,
+                name: &#x27;This is the content of the &quot;name&quot; field.&#x27;,
+                link: &#x27;https://my-forum.glitch.me/thread/<span class="hljs-subst">${op_id}</span>&#x27;,
+                picture: &#x27;https://cdn.glitch.com/8f696785-3177-4609-b393-3252e90ccbf5%2Fshare_icon.svg?v=1586891390886&#x27;,
+                caption: &#x27;caption&#x27;,
+                description: &quot;descr&quot;,
+                message: &quot;message&quot;
+                });
+            }catch(error){
+                alert(&quot;probabilmente hai estensioni/impostazioni che bloccano il popup di facebook&quot;)
+            }
+        });
+
+        <span class="hljs-subst">${con_masto ? <span class="hljs-string">`
+        $(&#x27;.masto_share_button&#x27;).click(function (e) {
+            console.log(e.target)
+            $.post(&quot;/tootIt&quot;, { testo: $(&quot;#&quot; + e.target.getAttribute(&quot;data-cosa&quot;)).val() }).then(() =&gt; {
+                $(e.target).next().html(&quot;OK!&quot;).css(&quot;background-color&quot;, &quot;green&quot;);
+                setTimeout(() =&gt; {
+                    $(e.target).next().html(&quot;&quot;)
+                }, 1000)
+            })
+        });
+        `</span>: <span class="hljs-string">&quot;&quot;</span>}</span>
+
+        $(&quot;#Pubblica&quot;).click(async()=&gt;{
+            await $.post(&quot;/newReply&quot;,{replyTo:&quot;<span class="hljs-subst">${op_id}</span>&quot; , text:$(&quot;#reply&quot;).val()})
+            window.location.reload()
+        });
+
+       
+        
+    });
+
+
+    function goBack() {
+        window.history.back();
+    }
+
+    function modificaNota(chi) {
+        console.log($(&quot;#&quot; + chi).text())
+        $.post(&quot;/modificaNota&quot;, { id: &quot;&quot; + chi, text: $(&quot;#&quot; + chi).text() }).then(() =&gt; {
+            $(&quot;#&quot; + chi).next().html(&quot;OK!&quot;).css(&quot;background-color&quot;, &quot;green&quot;);
+            setTimeout(() =&gt; {
+                $(&quot;#&quot; + chi).next().html(&quot;&quot;);
+            }, 1000)
+        });
+    
+    }
+
+    function delNota(chi) {
+        console.log($(&quot;#&quot; + chi).text())
+        $.post(&quot;/delNota&quot;, { id: &quot;&quot; + chi }).then(() =&gt; {
+            $(&quot;#&quot; + chi).next().html(&quot;OK!&quot;).css(&quot;background-color&quot;, &quot;green&quot;);
+            setTimeout(() =&gt; {
+                $(&quot;#&quot; + chi).parent().remove()
+            }, 500)
+        });
+    }
+
+    &lt;/script&gt;`</span>;
+    <span class="hljs-keyword">return</span> s;
+};</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

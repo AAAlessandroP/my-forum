@@ -12,10 +12,10 @@ module.exports = function (grunt) {
                         console.log(`process.env.NODE_ENV`, process.env.NODE_ENV);
                         console.log(matchedWord)
                         if (process.env.NODE_ENV == "development") {
-                          console.log(1)
+                            console.log(1)
                             return "http://localhost:3000"
                         } else {
-                          console.log(11)
+                            console.log(11)
                             return "https://my-forum.glitch.me"
                         }
                     }
@@ -25,4 +25,21 @@ module.exports = function (grunt) {
     });
     grunt.registerTask("default", ["replace"])
 
+    var execSync = require('child_process').execSync;
+    grunt.initConfig({
+        concat: {
+            dist: {
+                src: ["docs/app.html", "docs/script.html"],
+                dest: 'docs/app.html',
+            },
+        },
+    });
+    grunt.loadNpmTasks("grunt-contrib-concat")
+    grunt.registerTask("execDocco", () => {
+        execSync("docco -l \"linear\" *.js", function (err, stdout, stderr) {
+
+        });
+    })
+
+    grunt.registerTask("docs", ["execDocco", "concat"])
 }

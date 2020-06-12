@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>userPage.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>userPage.js</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="Gruntfile.html">
+                    Gruntfile.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="server.html">
+                    server.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="threadPage.html">
+                    threadPage.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="userPage.html">
+                    userPage.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="userPageLogged.html">
+                    userPageLogged.js
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        
+        
+          <div class='highlight'><pre><span class="hljs-built_in">module</span>.exports = { <span class="hljs-attr">page</span>: page };
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">page</span>(<span class="hljs-params">uid, hisData, hisPosts</span>) </span>{
+    <span class="hljs-keyword">let</span> s = <span class="hljs-string">`
+    &lt;!DOCTYPE html&gt;
+    &lt;html&gt;
+    &lt;head&gt;
+        &lt;meta charset=&quot;utf-8&quot; /&gt;
+        &lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=edge&quot;&gt;
+        &lt;title&gt;Pagina di <span class="hljs-subst">${hisData.Name}</span>&lt;/title&gt;
+        &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+        &lt;script src=&quot;https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js&quot;&gt;&lt;/script&gt;
+        &lt;link rel=&quot;stylesheet&quot; href=&quot;https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css&quot;
+        integrity=&quot;sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T&quot; crossorigin=&quot;anonymous&quot;&gt;
+        &lt;style&gt;
+        span{
+            font-size:large;
+        }
+        .nota {
+            font-family: roboto condensed, serif;
+        }
+
+        div[contenteditable=&quot;true&quot;] {
+            background-color: bisque;
+            width: 55%;
+            height: 120px;
+            border: 3px solid #796969;
+            padding: 5px;
+            font-family: Tahoma, sans-serif;
+        }
+    &lt;/style&gt;
+    &lt;/head&gt;
+    &lt;body style=&quot;background-color:grey&quot;&gt;
+
+        &lt;h2&gt;Pagina di <span class="hljs-subst">${hisData.Name}</span>&lt;/h2&gt;
+        &lt;img src=&quot;/user/<span class="hljs-subst">${uid}</span>/pic&quot; alt=&quot;profile pic&quot; height=&quot;152&quot; width=&quot;152&quot;&gt;
+        &lt;br&gt;
+        &lt;br&gt;
+        &lt;h2&gt; Posts scritti di recente:&lt;/h2&gt;
+        `</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">printNota</span>(<span class="hljs-params">nota, opts</span>) </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-string">`
+        &lt;div&gt;    
+            &lt;br&gt;&lt;small&gt;<span class="hljs-subst">${<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(nota.<span class="hljs-built_in">Date</span>).toLocaleDateString()}</span>&lt;/small&gt;
+            <span class="hljs-subst">${opts.showAuthor ? <span class="hljs-string">`&lt;a href=&quot;/user/<span class="hljs-subst">${nota.by.toString()}</span>&quot;&gt; <span class="hljs-subst">${nota.ByName}</span> &lt;/a&gt;scrive:`</span> : <span class="hljs-string">&quot;&quot;</span>}</span>
+            &lt;br&gt;&lt;div contenteditable=&quot;true&quot; id=<span class="hljs-subst">${nota._id}</span>&gt;<span class="hljs-subst">${nota.Text}</span>&lt;/div&gt; &lt;div style=&quot;display:inline;&quot;&gt;&lt;/div&gt; 
+            <span class="hljs-subst">${opts.fb ? <span class="hljs-string">`&lt;img src=&quot;/share_icon.svg&quot; class =&quot;my_share_button&quot; alt=&quot;share with facebook&quot; height=&quot;20&quot; width=&quot;20&quot;&gt;`</span> : <span class="hljs-string">&quot;&quot;</span>}</span>
+            <span class="hljs-subst">${opts.goto ? <span class="hljs-string">`&lt;img onclick=&quot;goto(&#x27;<span class="hljs-subst">${nota._id}</span>&#x27;)&quot; src=&quot;/goto_icon.svg&quot; alt=&quot;see it&quot; height=&quot;20&quot; width=&quot;20&quot;&gt;`</span> : <span class="hljs-string">&quot;&quot;</span>}</span>
+            <span class="hljs-subst">${opts.modificabile ? <span class="hljs-string">`&lt;img class=&quot;perModificare&quot; onclick=&quot;modificaNota(&#x27;<span class="hljs-subst">${nota._id}</span>&#x27;)&quot; src=&quot;/edit_icon.svg&quot; alt=&quot;edit&quot; height=&quot;20&quot; width=&quot;20&quot;&gt;`</span> : <span class="hljs-string">&quot;&quot;</span>}</span>
+            <span class="hljs-subst">${opts.con_masto ? <span class="hljs-string">`&lt;img src=&quot;/toot_icon.svg&quot; data-cosa=&quot;<span class="hljs-subst">${nota._id}</span>&quot; class=&quot;masto_share_button&quot; alt=&quot;repost on mastodont&quot; height=&quot;20&quot; width=&quot;20&quot;&gt;`</span> : <span class="hljs-string">&quot;&quot;</span>}</span>
+            &lt;div style=&quot;display:inline&quot;&gt;&lt;/div&gt;
+            <span class="hljs-subst">${opts.modificabile ? <span class="hljs-string">`&lt;img data-post-by=&quot;<span class="hljs-subst">${nota.by}</span>&quot; class=&quot;perModificare&quot; onclick=&quot;delNota(&#x27;<span class="hljs-subst">${nota._id}</span>&#x27;)&quot; src=&quot;/delete_icon.svg&quot; alt=&quot;edit&quot; height=&quot;20&quot; width=&quot;20&quot;&gt;`</span> : <span class="hljs-string">&quot;&quot;</span>}</span>
+            &lt;br&gt;
+        &lt;/div&gt;`</span>
+    }
+
+    <span class="hljs-keyword">if</span> (hisPosts.length)
+        hisPosts.forEach(<span class="hljs-function"><span class="hljs-params">post</span> =&gt;</span> {</pre></div>
+        
+      
+        
+        <p>s += `<textarea readonly id=${post._id}> ${post.Text} </textarea> </p>
+<div style="display:inline;"</div> <img onclick=goto('${post._id}') src="/goto_icon.svg" alt="see it" height="20" width="20">
+<br><br>`
+
+        
+          <div class='highlight'><pre>            s += printNota(post, { <span class="hljs-attr">modificabile</span>: <span class="hljs-literal">false</span>, <span class="hljs-attr">goto</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">masto</span>: <span class="hljs-literal">false</span>, <span class="hljs-attr">fb</span>: <span class="hljs-literal">false</span> })
+        });
+    <span class="hljs-keyword">else</span> s += <span class="hljs-string">&quot;&lt;i&gt;sembra che l&#x27;utente non abbia ancora scritto niente.&lt;/i&gt;&quot;</span>
+
+
+    s += <span class="hljs-string">`
+            &lt;button type=&quot;button&quot; class=&quot;btn btn-info&quot; onclick=&quot;()=&gt;window.history.back()&quot;&gt;Go Back&lt;/button&gt;
+        &lt;/body&gt;
+    &lt;/html&gt;
+    &lt;script&gt;
+    goto = chi=&gt; window.location = \`/thread/\${chi}\`  
+    
+    &lt;/script&gt;
+    `</span>;
+    <span class="hljs-keyword">return</span> s;</pre></div>
+        
+      
+        
+        <p>link 2 these posts
+link 2 these posts</p>
+
+        
+          <div class='highlight'><pre>};</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

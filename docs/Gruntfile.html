@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Gruntfile.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>Gruntfile.js</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="Gruntfile.html">
+                    Gruntfile.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="server.html">
+                    server.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="threadPage.html">
+                    threadPage.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="userPage.html">
+                    userPage.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="userPageLogged.html">
+                    userPageLogged.js
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        
+        
+          <div class='highlight'><pre><span class="hljs-built_in">module</span>.exports = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">grunt</span>) </span>{
+    <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;dotenv&#x27;</span>).config()
+    grunt.loadNpmTasks(<span class="hljs-string">&#x27;grunt-text-replace&#x27;</span>);
+    grunt.initConfig({
+        <span class="hljs-attr">replace</span>: {
+            <span class="hljs-attr">example</span>: {
+                <span class="hljs-attr">src</span>: [<span class="hljs-string">&#x27;mia_pag/index.html&#x27;</span>],             <span class="hljs-comment">// source files array (supports minimatch)</span>
+                <span class="hljs-attr">dest</span>: <span class="hljs-string">&#x27;mia_pag/index.html&#x27;</span>,             <span class="hljs-comment">// destination directory or file</span>
+                <span class="hljs-attr">replacements</span>: [{
+                    <span class="hljs-attr">from</span>: <span class="hljs-regexp">/(URL|http:\/\/localhost:3000|https:\/\/my-forum\.glitch\.me)/gm</span>,                   <span class="hljs-comment">// string replacement</span>
+                    to: <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">matchedWord</span>) </span>{
+                        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`process.env.NODE_ENV`</span>, process.env.NODE_ENV);
+                        <span class="hljs-built_in">console</span>.log(matchedWord)
+                        <span class="hljs-keyword">if</span> (process.env.NODE_ENV == <span class="hljs-string">&quot;development&quot;</span>) {
+                            <span class="hljs-built_in">console</span>.log(<span class="hljs-number">1</span>)
+                            <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;http://localhost:3000&quot;</span>
+                        } <span class="hljs-keyword">else</span> {
+                            <span class="hljs-built_in">console</span>.log(<span class="hljs-number">11</span>)
+                            <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;https://my-forum.glitch.me&quot;</span>
+                        }
+                    }
+                }]
+            }
+        }
+    });
+    grunt.registerTask(<span class="hljs-string">&quot;default&quot;</span>, [<span class="hljs-string">&quot;replace&quot;</span>])
+
+    <span class="hljs-keyword">var</span> execSync = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;child_process&#x27;</span>).execSync;
+    grunt.initConfig({
+        <span class="hljs-attr">concat</span>: {
+            <span class="hljs-attr">dist</span>: {
+                <span class="hljs-attr">src</span>: [<span class="hljs-string">&quot;docs/app.html&quot;</span>, <span class="hljs-string">&quot;docs/script.html&quot;</span>],
+                <span class="hljs-attr">dest</span>: <span class="hljs-string">&#x27;docs/app.html&#x27;</span>,
+            },
+        },
+    });
+    grunt.loadNpmTasks(<span class="hljs-string">&quot;grunt-contrib-concat&quot;</span>)
+    grunt.registerTask(<span class="hljs-string">&quot;execDocco&quot;</span>, <span class="hljs-function">() =&gt;</span> {
+        execSync(<span class="hljs-string">&quot;docco -l \&quot;linear\&quot; *.js&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">err, stdout, stderr</span>) </span>{
+
+        });
+    })
+
+    grunt.registerTask(<span class="hljs-string">&quot;docs&quot;</span>, [<span class="hljs-string">&quot;execDocco&quot;</span>, <span class="hljs-string">&quot;concat&quot;</span>])
+}</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>

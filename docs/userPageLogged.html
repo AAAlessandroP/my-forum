@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>userPageLogged.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>userPageLogged.js</h1>
+        
+
+        
+          <div class="toc">
+            <h3>Table of Contents</h3>
+            <ol>
+              
+                
+                <li>
+                  <a class="source" href="Gruntfile.html">
+                    Gruntfile.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="server.html">
+                    server.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="threadPage.html">
+                    threadPage.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="userPage.html">
+                    userPage.js
+                  </a>
+                </li>
+              
+                
+                <li>
+                  <a class="source" href="userPageLogged.html">
+                    userPageLogged.js
+                  </a>
+                </li>
+              
+            </ol>
+          </div>
+        
+      </div>
+
+      
+        
+        
+        
+          <div class='highlight'><pre><span class="hljs-built_in">module</span>.exports = { <span class="hljs-attr">page</span>: page };<span class="hljs-comment">//pagina dell&#x27;utente vista da lui (loggato)</span>
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">editIcon</span>(<span class="hljs-params">id</span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-string">`&lt;img id=&quot;<span class="hljs-subst">${id}</span>&quot; src=&quot;/edit_icon.svg&quot; alt=&quot; edit&quot; height=&quot;20&quot; width=&quot;20&quot;&gt;`</span>
+}
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">delIcon</span>(<span class="hljs-params">id</span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-string">`&lt;img id=&quot;<span class="hljs-subst">${id}</span>&quot; src=&quot;/delete_icon.svg&quot; alt=&quot; edit&quot; height=&quot;20&quot; width=&quot;20&quot;&gt;`</span>
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">page</span>(<span class="hljs-params">id, hisData, hisPosts, con_masto, formula_post</span>) </span>{
+    <span class="hljs-keyword">let</span> s = <span class="hljs-string">`&lt;!DOCTYPE html&gt;
+    &lt;html&gt;
+    &lt;head&gt;
+        &lt;meta charset=&quot;utf-8&quot; /&gt;
+        &lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=edge&quot;&gt;
+        &lt;title&gt;Pagina di <span class="hljs-subst">${hisData.Name}</span>&lt;/title&gt;
+        &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+        &lt;script src=&quot;https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js&quot;&gt;&lt;/script&gt;
+        &lt;link rel=&quot;stylesheet&quot; href=&quot;https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css&quot;
+        integrity=&quot;sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T&quot; crossorigin=&quot;anonymous&quot;&gt;        
+        &lt;script src=&quot;https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js&quot;&gt;&lt;/script&gt;
+        &lt;style&gt;
+        span{
+            font-size:large;
+        }
+        .nota {
+            font-family: roboto condensed, serif;
+        }
+
+        div[contenteditable=&quot;true&quot;] {
+            background-color: bisque;
+            width: 55%;
+            height: 120px;
+            border: 3px solid #796969;
+            padding: 5px;
+            font-family: Tahoma, sans-serif;
+        }
+        &lt;/style&gt;
+    &lt;/head&gt;
+
+    &lt;body style=&quot;background-color:grey&quot;&gt;
+
+        &lt;div class=&quot;row&quot;&gt;
+            &lt;div class=&quot;col-10&quot;&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;col-2&quot;&gt;
+                &lt;div id=divProfilo style=&quot;display:none;background-color:white;border-radius: 5%&quot;&gt; 
+                    &lt;a href=&quot;/user/<span class="hljs-subst">${id}</span>&quot;&gt; vedi il profilo&lt;/a&gt;&lt;br&gt;
+                    &lt;span id=logout&gt;logout&lt;/span&gt;&lt;div&gt;&lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;br&gt;
+        &lt;div class=&quot;row&quot;&gt;
+            &lt;div class=&quot;col-lg&quot; style=&quot;background-color:rgb(11, 145, 11)&quot;&gt;
+                &lt;div id=&quot;AddMessage&quot;&gt;
+                    &lt;div&gt;
+                        &lt;br&gt;
+                        fai una nuova domanda:
+                        &lt;input type=&quot;text&quot; placeholder=&quot;fai una nuova domanda&quot; id=&quot;domanda&quot;&gt;
+                        &lt;input type=&quot;button&quot; id=&quot;nuova_domanda&quot; value=&quot;vai&quot;&gt;
+                        &lt;br&gt;
+                        &lt;br&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;b&gt;&lt;span&gt;Pagina di <span class="hljs-subst">${hisData.Name}</span>&lt;/span&gt;&lt;/b&gt;<span class="hljs-subst">${editIcon(<span class="hljs-string">&quot;pic&quot;</span>)}</span>&lt;br&gt;&lt;br&gt;
+        &lt;img src=&quot;/user/<span class="hljs-subst">${id}</span>/pic&quot; alt=&quot;profile pic&quot; height=&quot;152&quot; width=&quot;152&quot;&gt;
+        &lt;br&gt;
+        &lt;iframe id=&quot;upload_target&quot; name=&quot;upload_target&quot; src=&quot;#&quot; style=&quot;width:0;height:0;border:0px solid #fff;&quot;&gt;&lt;/iframe&gt;                 
+        &lt;form action=&quot;/modificaPic&quot; target=&quot;upload_target&quot; enctype=&quot;multipart/form-data&quot; id=modificaPic method=post&gt;
+            Carica nuova immagine:
+            &lt;input type=&quot;file&quot; name=&quot;newPicc&quot; id=&quot;fileToUpload&quot;&gt;&lt;br&gt; o il link a questa:
+            &lt;input type=&quot;text&quot; name=newPicUrl&gt;&lt;br&gt;
+            &lt;input type=&quot;submit&quot; value=&quot;carica&quot;&gt;
+        &lt;/form&gt;
+        &lt;br&gt;
+        Elimina profilo: <span class="hljs-subst">${delIcon(<span class="hljs-string">&quot;delIco&quot;</span>)}</span>
+        &lt;br&gt;
+        &lt;h2&gt; Posts scritti di recente:&lt;/h2&gt;
+        `</span>
+    <span class="hljs-keyword">var</span> data = {};
+    hisPosts.forEach(<span class="hljs-function"><span class="hljs-params">element</span> =&gt;</span> {
+        <span class="hljs-keyword">let</span> gg = <span class="hljs-built_in">Math</span>.floor(element.Date / <span class="hljs-number">8.64e7</span>);<span class="hljs-comment">//giorni dal 1970</span>
+        <span class="hljs-keyword">if</span> (data[gg] === <span class="hljs-literal">undefined</span>)
+            data[gg] = <span class="hljs-number">1</span>
+        <span class="hljs-keyword">else</span>
+            data[gg]++
+    });</pre></div>
+        
+      
+        
+        <p>console.log(<code>data</code>, data);// data { ‘202064’: 1, ‘2020530’: 2 }</p>
+
+        
+          <div class='highlight'><pre>    <span class="hljs-keyword">var</span> dataArray = []
+    <span class="hljs-built_in">Object</span>.keys(data).forEach(<span class="hljs-function"><span class="hljs-params">key</span> =&gt;</span> {
+        dataArray.push([<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(<span class="hljs-built_in">Number</span>(key) * <span class="hljs-number">24</span> * <span class="hljs-number">60</span> * <span class="hljs-number">60</span> * <span class="hljs-number">1000</span>).toLocaleDateString(), data[key]])<span class="hljs-comment">// [ [ieri,2], [oggi, 3], ...]</span>
+    })</pre></div>
+        
+      
+        
+        <p>console.log(<code>dataArray</code>, dataArray);</p>
+
+        
+          <div class='highlight'><pre>
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">printNota</span>(<span class="hljs-params">nota, opts</span>) </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-string">`&lt;div&gt;    
+            &lt;br&gt;&lt;small&gt;<span class="hljs-subst">${<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(nota.<span class="hljs-built_in">Date</span>).toLocaleDateString()}</span>&lt;/small&gt;
+            <span class="hljs-subst">${opts.showAuthor ? <span class="hljs-string">`&lt;a href=&quot;/user/<span class="hljs-subst">${nota.by.toString()}</span>&quot;&gt; <span class="hljs-subst">${nota.ByName}</span> &lt;/a&gt;scrive:`</span> : <span class="hljs-string">&quot;&quot;</span>}</span>
+            &lt;br&gt;&lt;div contenteditable=&quot;true&quot;  id=<span class="hljs-subst">${nota._id}</span>&gt;<span class="hljs-subst">${nota.Text}</span>&lt;/div&gt; &lt;div style=&quot;display:inline;&quot;&gt;&lt;/div&gt; 
+            <span class="hljs-subst">${opts.fb ? <span class="hljs-string">`&lt;img src=&quot;/share_icon.svg&quot; class =&quot;my_share_button&quot; alt=&quot;share with facebook&quot; height=&quot;20&quot; width=&quot;20&quot;&gt;`</span> : <span class="hljs-string">&quot;&quot;</span>}</span>
+            <span class="hljs-subst">${opts.goto ? <span class="hljs-string">`&lt;img onclick=&quot;goto(&#x27;<span class="hljs-subst">${nota._id}</span>&#x27;)&quot; src=&quot;/goto_icon.svg&quot; alt=&quot;see it&quot; height=&quot;20&quot; width=&quot;20&quot;&gt;`</span> : <span class="hljs-string">&quot;&quot;</span>}</span>
+            <span class="hljs-subst">${opts.modificabile ? <span class="hljs-string">`&lt;img class=&quot;perModificare&quot; onclick=&quot;modificaNota(&#x27;<span class="hljs-subst">${nota._id}</span>&#x27;)&quot; src=&quot;/edit_icon.svg&quot; alt=&quot;edit&quot; height=&quot;20&quot; width=&quot;20&quot;&gt;`</span> : <span class="hljs-string">&quot;&quot;</span>}</span>
+            <span class="hljs-subst">${opts.con_masto ? <span class="hljs-string">`&lt;img src=&quot;/toot_icon.svg&quot; data-cosa=&quot;<span class="hljs-subst">${nota._id}</span>&quot; class=&quot;masto_share_button&quot; alt=&quot;repost on mastodont&quot; height=&quot;20&quot; width=&quot;20&quot;&gt;`</span> : <span class="hljs-string">&quot;&quot;</span>}</span>
+            &lt;div style=&quot;display:inline&quot;&gt;&lt;/div&gt;
+            <span class="hljs-subst">${opts.modificabile ? <span class="hljs-string">`&lt;img data-post-by=&quot;<span class="hljs-subst">${nota.by}</span>&quot; class=&quot;perModificare&quot; onclick=&quot;delNota(&#x27;<span class="hljs-subst">${nota._id}</span>&#x27;)&quot; src=&quot;/delete_icon.svg&quot; alt=&quot;edit&quot; height=&quot;20&quot; width=&quot;20&quot;&gt;`</span> : <span class="hljs-string">&quot;&quot;</span>}</span>
+            &lt;br&gt;
+        &lt;/div&gt;`</span>
+    }
+
+
+    <span class="hljs-keyword">if</span> (hisPosts.length)
+        hisPosts.forEach(<span class="hljs-function"><span class="hljs-params">nota</span> =&gt;</span> {
+            s += printNota(nota, { <span class="hljs-attr">modificabile</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">goto</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">masto</span>: con_masto, <span class="hljs-attr">fb</span>: <span class="hljs-literal">false</span> })
+        });
+    <span class="hljs-keyword">else</span> s += <span class="hljs-string">&quot;&lt;i&gt;sembra che l&#x27;utente non abbia ancora scritto niente.&lt;/i&gt;&quot;</span>
+
+    s += <span class="hljs-string">`&lt;div&gt;`</span>;
+    <span class="hljs-keyword">if</span> (hisPosts.length)
+        s += <span class="hljs-string">`&lt;canvas style=&quot;width:50%;&quot; id=&quot;grafico&quot;&gt;&lt;/canvas&gt;
+                &lt;/div&gt;
+                &lt;h5&gt;Formula approssimata: <span class="hljs-subst">${formula_post}</span>&lt;/h5&gt;`</span>;
+
+    s += <span class="hljs-string">`   &lt;br&gt;&lt;br&gt;&lt;input type=&quot;button&quot; value=showissueMaker id=showissueMaker&gt;&lt;br&gt;
+
+                &lt;div id=issueMaker style=&quot;display:none&quot;&gt;
+                    &lt;br&gt;
+                    &lt;form id=newIssueForm action=&quot;newIssue&quot; method=post&gt;
+                        title:&lt;input type=&quot;text&quot; name=title&gt;&lt;br&gt;
+                        body:&lt;input type=&quot;text&quot; name=body&gt;&lt;br&gt;  
+                        this ticket is a:&lt;br&gt;                      
+                        bug:&lt;input type=&quot;checkbox&quot; name=&quot;labels[]&quot; value=&quot;bug&quot; &gt;&lt;br&gt;
+                        duplicate:&lt;input type=&quot;checkbox&quot; name=&quot;labels[]&quot; value=&quot;duplicate&quot; &gt;&lt;br&gt;
+                        question:&lt;input type=&quot;checkbox&quot; name=&quot;labels[]&quot; value=&quot;question&quot; &gt;&lt;br&gt;
+                        enhancement:&lt;input type=&quot;checkbox&quot; name=&quot;labels[]&quot; value=&quot;enhancement&quot; &gt;&lt;br&gt;
+                        help wanted:&lt;input type=&quot;checkbox&quot; name=&quot;labels[]&quot; value=&quot;help wanted&quot; &gt;&lt;br&gt;
+                        &lt;input type=&quot;submit&quot; value=&quot;carica&quot;&gt;
+                    &lt;/form&gt;                
+                &lt;/div&gt;
+
+
+                &lt;center&gt;&lt;button type=&quot;button&quot; class=&quot;btn btn-info&quot; onclick=&quot;goBack()&quot;&gt;Go Back&lt;/button&gt;&lt;/center&gt;
+            &lt;/body&gt;
+    
+            &lt;script&gt;
+
+            function goBack() {
+                window.history.back();
+            }
+            
+            $(() =&gt; {
+
+
+                $(&quot;#showissueMaker&quot;).click(()=&gt;$(&quot;#issueMaker&quot;).toggle(100))
+                $(&quot;#newIssueForm&quot;).submit(function(e){
+                    e.preventDefault();
+                    $.ajax({
+                        type : &#x27;POST&#x27;,
+                        url:&quot;/newIssue&quot;,
+                        data: $(&quot;#newIssueForm&quot;).serialize()
+                    });
+                    
+                });
+
+                $(&quot;#nuova_domanda&quot;).click(() =&gt; {
+                    $.post(&quot;/newQuestion&quot;, { domanda: $(&quot;#domanda&quot;).val() })
+                        .done(() =&gt; {
+                            location.reload();                        
+                        })
+                });
+                
+                $(&quot;#logout&quot;).click(() =&gt; {
+                    $.post(&quot;/logout&quot;);
+                    $(&quot;#logout&quot;).next().html(&quot;OK!&quot;).css(&quot;background-color&quot;, &quot;green&quot;);
+                    setTimeout(() =&gt; {
+                        location.reload();
+                    }, 1000)
+                });
+
+               
+
+
+                    $(&quot;#modificaPic&quot;).submit(()=&gt;alert(&quot;ricarica la pagina per vedere la nuova pic&quot;))
+
+
+</span></pre></div>
+        
+      
+        
+        <p>todo picUrl non da richiedere ma prevedibile /user/123/picc con 302 magari</p>
+
+        
+          <div class='highlight'><pre>                    $(<span class="hljs-string">&quot;#pic&quot;</span>).click(<span class="hljs-function">() =&gt;</span> {
+                        $(<span class="hljs-string">&quot;span:eq(0)&quot;</span>).html(\<span class="hljs-string">`Pagina di 
+                        &lt;input type=&quot;text&quot; id=nome placeholder=<span class="hljs-subst">${hisData.Name}</span>&gt;
+                        &lt;input type=&quot;button&quot; id=&quot;nuovoNome&quot; value=&quot;vai&quot;&gt;
+                        \`);
+                        $(&quot;#nuovoNome&quot;).click(() =&gt; {
+                            $.post(&quot;/nuovoNome&quot;, { nome: $(&quot;#nome&quot;).text() }).then(() =&gt; {
+                                $(&quot;span:eq(0)&quot;).html(\`&lt;span&gt;Pagina di \${$(&quot;#nome&quot;).text()}&lt;/span&gt;\`);
+                            })
+                        })            
+                    });        
+                        
+                    $(&quot;#delIco&quot;).click(async ()=&gt;{
+                        let ok = confirm(&quot;sicuro?&quot;)
+                        if(ok) {
+                            await $.post(&quot;/delProfile&quot;)
+                            await $.post(&quot;/logout&quot;)
+                            alert(&quot;ok fatto&quot;)
+                            setTimeout(()=&gt;{window.location=&quot;/&quot;},1000)
+                        }
+                    });
+
+                    <span class="hljs-subst">${con_masto ? <span class="hljs-string">`
+                    $(&#x27;.masto_share_button&#x27;).click(function (e) {
+                        console.log(e.target)
+                        $.post(&quot;/tootIt&quot;, { testo: $(&quot;#&quot; + e.target.getAttribute(&quot;data-cosa&quot;)).val() }).then(() =&gt; {
+                            $(e.target).next().html(&quot;OK!&quot;).css(&quot;background-color&quot;, &quot;green&quot;);
+                            setTimeout(() =&gt; {
+                                $(e.target).next().html(&quot;&quot;)
+                            }, 1000)
+                        })
+                    });
+                    `</span>: <span class="hljs-string">&quot;&quot;</span>}</span>
+                
+                });
+
+            function modificaNota(chi) {
+                console.log($(&quot;#&quot; + chi).text())
+                $.post(&quot;/modificaNota&quot;, { id: &quot;&quot; + chi, text: $(&quot;#&quot; + chi).text() }).then(() =&gt; {
+                    $(&quot;#&quot; + chi).next().html(&quot;OK!&quot;).css(&quot;background-color&quot;, &quot;green&quot;);
+                    setTimeout(() =&gt; {
+                        $(&quot;#&quot; + chi).next().html(&quot;&quot;);
+                    }, 1000)
+                });
+            
+            }
+
+            function delNota(chi) {
+                console.log($(&quot;#&quot; + chi).text())
+                $.post(&quot;/delNota&quot;, { id: &quot;&quot; + chi }).then(() =&gt; {
+                    $(&quot;#&quot; + chi).next().html(&quot;OK!&quot;).css(&quot;background-color&quot;, &quot;green&quot;);
+                    setTimeout(() =&gt; {
+                        $(&quot;#&quot; + chi).parent().remove()
+                    }, 500)
+                });
+            }
+
+            function goto(chi) {
+                console.log(\`chi\`, chi);
+                window.location = &quot;/thread/&quot;+chi
+                }
+
+
+                window.chartColors = {
+                    red: &quot;rgb(255, 99, 132)&quot;,
+                    orange: &quot;rgb(255, 159, 64)&quot;,
+                    yellow: &quot;rgb(255, 205, 86)&quot;,
+                    green: &quot;rgb(75, 192, 192)&quot;,
+                    blue: &quot;rgb(54, 162, 235)&quot;,
+                    purple: &quot;rgb(153, 102, 255)&quot;,
+                    grey: &quot;rgb(201, 203, 207)&quot;
+                  };
+                
+                  var config = {
+                    type: &quot;line&quot;,
+                    data: {
+                      labels: <span class="hljs-subst">${<span class="hljs-built_in">JSON</span>.stringify(dataArray.map(ele =&gt; ele[<span class="hljs-number">0</span>]))}</span>
+                      ,
+                      datasets: [
+                        {
+                          label: &quot;numero post al giorno&quot;,
+                          backgroundColor: window.chartColors.red,
+                          borderColor: window.chartColors.red,
+                          fill: false,
+                          data: <span class="hljs-subst">${<span class="hljs-built_in">JSON</span>.stringify(dataArray.map(ele =&gt; ele[<span class="hljs-number">1</span>]))}</span>
+                        }
+                      ]
+                    },
+                    options: {
+                      responsive: true,
+                      title: {
+                        display: true,
+                        text: &quot;MyForum Usage History&quot;
+                      },
+                      scales: {
+                        xAxes: [
+                          {
+                            display: true
+                          }
+                        ],
+                        yAxes: [
+                          {
+                            display: true
+</span></pre></div>
+        
+      
+        
+        <p>type: ‘logarithmic’,</p>
+
+        
+          <div class='highlight'><pre>                          }
+                        ]
+                      }
+                    }
+                  };
+                
+                  <span class="hljs-keyword">if</span>(<span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">&quot;grafico&quot;</span>)){<span class="hljs-comment">//se 0 post non c&#x27;è</span>
+                  <span class="hljs-keyword">var</span> ctx = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">&quot;grafico&quot;</span>).getContext(<span class="hljs-string">&quot;2d&quot;</span>);
+                  <span class="hljs-built_in">window</span>.myLine = <span class="hljs-keyword">new</span> Chart(ctx, config);     
+                  }
+            &lt;/script&gt;
+        &lt;/html&gt;
+        <span class="hljs-string">`;
+    return s
+};
+
+</span></pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>
