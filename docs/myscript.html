@@ -1,13 +1,13 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script>
-        $(() => {
-            $(".header").append("<h3>Clicca sulle funzionalità per espandere il codice</h3>")
+<script>
+    $(() => {
+        $(".header").append("<h3>Clicca sulle funzionalità per espandere il codice</h3>")
         $("div.highlight:eq(0)").hide()
         let arr = $("body .page p").next()
         $("body .page p").click(e => {
             $(e.target).next().toggle(500)
         })
-        for (let i = 0; i < arr.length; {
+        for (let i = 0; i < arr.length; i++) {
             const element = arr[i];
             $(element).hide()
         }

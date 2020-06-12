@@ -1,7 +1,6 @@
 const regression = require("regression")
 var express = require("express");
 var assert = require("assert");
-// const { check, validationResult } = require('express-validator');
 var bodyParser = require("body-parser");
 const crypto = require("crypto");
 const Mastodon = require('mastodon-api');
