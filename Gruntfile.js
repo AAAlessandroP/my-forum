@@ -16,7 +16,7 @@ module.exports = function (grunt) {
                             return "http://localhost:3000"
                         } else {
                             console.log(11)
-                            return "https://my-forum.glitch.me"
+                            return "https://my-forum101.herokuapp.com"
                         }
                     }
                 }]
