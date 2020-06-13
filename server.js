@@ -1132,7 +1132,7 @@ app.post('/modificaPic', loggedChecker,
             if (req.file) {
 
                 await db.db("forum").collection("utenti").findOneAndUpdate({ _id: ObjectId(req.session.lui.IDUtente) },
-                    { $set: { picUrl: "https://s3.eu-de.cloud-object-storage.appdomain.cloud/forum/" + req.session.lui.Utente.padStart(24, "0") } })
+                    { $set: { picUrl: "https://s3.eu-de.cloud-object-storage.appdomain.cloud/forum/" + req.session.lui.IDUtente.padStart(24, "0") } })
                 res.sendStatus(200)
 
             } else {//it's a url
