@@ -116,7 +116,7 @@ function page(id, hisData, hisPosts, con_masto, formula_post) {
         hisPosts.forEach(nota => {
             s += printNota(nota, { modificabile: true, goto: true, masto: con_masto, fb: false })
         });
-    else s += "<i>sembra che l'utente non abbia ancora scritto niente.</i>"
+    else s += "<i>Sembra che l'utente non abbia ancora scritto niente.</i>"
 
     s += `<div>`;
     if (hisPosts.length)
@@ -124,7 +124,7 @@ function page(id, hisData, hisPosts, con_masto, formula_post) {
                 </div>
                 <h5>Formula approssimata: ${formula_post}</h5>`;
 
-    s += `   <br><br><input type="button" value=showissueMaker id=showissueMaker><br>
+    s += `   <br><br><input type="button" value="riporta problema" id=showissueMaker><br>
 
                 <div id=issueMaker style="display:none">
                     <br>
@@ -186,15 +186,14 @@ function page(id, hisData, hisPosts, con_masto, formula_post) {
                     $("#modificaPic").submit(()=>alert("ricarica la pagina per vedere la nuova pic"))
 
 
-    // todo picUrl non da richiedere ma prevedibile /user/123/picc con 302 magari
                     $("#pic").click(() => {
-                        $("span:eq(0)").html(\`Pagina di 
+                        $("span:eq(1)").html(\`Pagina di 
                         <input type="text" id=nome placeholder=${hisData.Name}>
                         <input type="button" id="nuovoNome" value="vai">
                         \`);
                         $("#nuovoNome").click(() => {
                             $.post("/nuovoNome", { nome: $("#nome").text() }).then(() => {
-                                $("span:eq(0)").html(\`<span>Pagina di \${$("#nome").text()}</span>\`);
+                                $("span:eq(1)").html(\`<span>Pagina di \${$("#nome").text()}</span>\`);
                             })
                         })            
                     });        

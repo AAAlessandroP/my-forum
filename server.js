@@ -163,6 +163,7 @@ app.get("/fromGH", async (req, res) => {
                             _id: ObjectId(userOnGH.id.toString().padStart(24, "0")),
                             token: req.session.token,
                             Name: userOnGH.login,
+                            confirmed: true
                         }, { safe: true, upsert: true });
 
                     req.session.lui = {
