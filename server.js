@@ -68,11 +68,11 @@ const uri = `mongodb+srv://forum:${process.env.MONGO_PASS}@miocluster2-igwb8.mon
     try {
         var db = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
         var tutti = await db.db("forum").collection("utenti").find({}).toArray()
-        // console.log(`tutti`, tutti)
+
     } catch (error) {
         console.log(`error`, error)
     }
-})//()
+})()
 
 //  todo gli STATE del redirect validi in funzione del tempo(cambiano con, non lo stesso sempre)
 //  todo gli STATE del redirect validi in funzione del tempo(cambiano con, non lo stesso sempre)
