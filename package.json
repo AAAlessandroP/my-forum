@@ -28,7 +28,7 @@
     "node-fetch": "^2.6.0",
     "nodemailer": "^6.4.6",
     "nodemon": "^2.0.4",
-    "redis": "^3.0.2",
+    "redis": "^3.1.1",
     "regression": "^2.0.1",
     "telegraf": "^3.38.0",
     "grunt-contrib-concat": "^1.0.1",
