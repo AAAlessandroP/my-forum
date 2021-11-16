@@ -10,7 +10,7 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "aws-sdk": "^2.686.0",
+    "aws-sdk": "^2.814.0",
     "connect-redis": "^4.0.4",
     "connect-sse": "^1.2.0",
     "cors": "*",
